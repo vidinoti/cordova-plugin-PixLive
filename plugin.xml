@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.vidinoti.pixlive" version="1.0">
+    <name>PixLive</name>
+    <description>PixLive SDK plugin for Cordova based hybrid apps</description>
+    <keywords>augmented reality,iBeacon</keywords>
+    <license>GPLv3</license>
+
+    <author>Vidinoti SA</author>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
+    <js-module name="PixLive" src="www/PixLive.js">
+        <clobbers target="cordova.plugins.PixLive" />
+    </js-module>
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="PixLive">
+                <param name="ios-package" value="PixLive" />
+            </feature>
+        </config-file>
+        <source-file src="src/ios/PixLive.m" />
+        <header-file src="src/ios/PixLive.h" />
+        <source-file src="src/ios/MyCameraImageSource.m" />
+        <header-file src="src/ios/MyCameraImageSource.h" />
+        <source-file src="src/ios/IonicARViewController.m" />
+        <header-file src="src/ios/IonicARViewController.h" />
+        <framework src="Accelerate.framework" />
+        <framework src="AudioToolbox.framework" />
+        <framework src="AVFoundation.framework" />
+        <framework src="CoreGraphics.framework" />
+        <framework src="CoreLocation.framework" />
+        <framework src="CoreBluetooth.framework" />
+        <framework src="CoreMedia.framework" />
+        <framework src="CoreMotion.framework" />
+        <framework src="CoreVideo.framework" />
+        <framework src="ImageIO.framework" />
+        <framework src="JavaScriptCore.framework" />
+        <framework src="libc++.dylib" />
+        <framework src="libiconv.dylib" />
+        <framework src="libz.dylib" />
+        <framework src="MediaPlayer.framework" />
+        <framework src="MessageUI.framework" />
+        <framework src="OpenGLES.framework" />
+        <framework src="QuartzCore.framework" />
+        <framework src="Security.framework" />
+        <framework src="Social.framework" />
+        <framework src="VDARSDK.framework" custom="true" />
+    </platform>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="PixLive">
+                <param name="android-package" value="com.vidinoti.pixlive.PixLive" />
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml" />
+        <source-file src="src/android/PixLive.java" target-dir="src/com/vidinoti/pixlive/PixLive" />
+    </platform>
+</plugin>
