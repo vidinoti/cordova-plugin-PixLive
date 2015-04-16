@@ -18,7 +18,7 @@
     </info>
 
     <js-module name="PixLive" src="www/PixLive.js">
-        <clobbers target="cordova.plugins.pixlive" />
+        <clobbers target="cordova.plugins.PixLive" />
     </js-module>
 
     <dependency id="org.apache.cordova.file" />
