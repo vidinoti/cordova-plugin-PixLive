@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.vidinoti.pixlive" version="1.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.vidinoti.cordova.pixlive" version="1.0">
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
@@ -8,18 +8,29 @@
     <author>Vidinoti SA</author>
 
     <engines>
-        <engine name="cordova" version=">=3.0.0" />
+        <engine name="cordova" version=">=3.7.0" />
+        <engine name="cordova-android" version=">=3.7.0" />
+        <engine name="cordova-ios" version=">=3.8.0" />
     </engines>
 
+    <info>
+    You need to have a valid PixLive SDK license to use this plugin. Check http://www.pixlive.info for more information.
+    </info>
+
     <js-module name="PixLive" src="www/PixLive.js">
-        <clobbers target="cordova.plugins.PixLive" />
+        <clobbers target="cordova.plugins.pixlive" />
     </js-module>
+
+    <dependency id="org.apache.cordova.file" />
+
     <platform name="ios">
+        <preference name="PIXLIVE_SDK_IOS_LOCATION" />
         <config-file parent="/*" target="config.xml">
             <feature name="PixLive">
                 <param name="ios-package" value="PixLive" />
             </feature>
         </config-file>
+
         <source-file src="src/ios/PixLive.m" />
         <header-file src="src/ios/PixLive.h" />
         <source-file src="src/ios/MyCameraImageSource.m" />
@@ -46,9 +57,12 @@
         <framework src="QuartzCore.framework" />
         <framework src="Security.framework" />
         <framework src="Social.framework" />
-        <framework src="VDARSDK.framework" custom="true" />
+        <framework src="vendor/PixLive/VDARSDK.framework" custom="true" />
+        <hook type="before_plugin_install" src="scripts/iosBeforeInstall.js" />
     </platform>
+
     <platform name="android">
+        <preference name="PIXLIVE_SDK_ANDROID_LOCATION" />
         <config-file parent="/*" target="res/xml/config.xml">
             <feature name="PixLive">
                 <param name="android-package" value="com.vidinoti.pixlive.PixLive" />
