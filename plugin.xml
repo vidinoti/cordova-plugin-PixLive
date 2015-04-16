@@ -3,8 +3,8 @@
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
-    <license>GPLv3</license>
-    <repo>ssh://git@git.vidinoti.com/products/ionic-plugins-PixLive.git</repo>
+    <license>MIT</license>
+    <repo>https://github.com/vidinoti/ionic-plugins-PixLive.git</repo>
     <author>Vidinoti SA</author>
 
     <engines>
