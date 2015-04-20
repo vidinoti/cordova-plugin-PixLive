@@ -64,14 +64,44 @@ module.exports = function(context) {
 	}
 
 	if(!variables['PIXLIVE_SDK_ANDROID_LOCATION']) {
-		throw new Error("You need to pass the variable PIXLIVE_SDK_ANDROID_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/PixLive/libs\"")
+		throw new Error("You need to pass the variable PIXLIVE_SDK_ANDROID_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/PixLive/libs\"");
 	}
 
-	fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor');
-	fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive');
+	var deleteFolderRecursive = function(path) {
+	    var files = [];
+	    if( fs.existsSync(path) ) {
+	        files = fs.readdirSync(path);
+	        files.forEach(function(file,index){
+	            var curPath = path + "/" + file;
+	            if(fs.lstatSync(curPath).isDirectory()) { // recurse
+	                deleteFolderRecursive(curPath);
+	            } else { // delete file
+	                fs.unlinkSync(curPath);
+	            }
+	        });
+	        fs.rmdirSync(path);
+	    }
+	};
+
+	if(!variables['PIXLIVE_SDK_IOS_LOCATION']) {
+		throw new Error("You need to pass the variable PIXLIVE_SDK_IOS_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\"");
+	}
+
+	try {
+		//deleteFolderRecursive(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs');
+	} catch(e) {
+
+	}
+
+	try {
+		fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor');
+		fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive');
+	} catch(e) {
+
+	}
 
 	var inFile = variables['PIXLIVE_SDK_ANDROID_LOCATION'];
-	var outFile = context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'VDARSDK.framework';
+	var outFile = context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs';
     
     var child=require("child_process");
 
