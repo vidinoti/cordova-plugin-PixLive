@@ -1,0 +1,30 @@
+{
+    "version": "0.0.1",
+    "name": "com.vidinoti.cordova.pixlive",
+    "cordova_name": "PixLive",
+    "description": "PixLive SDK plugin for Cordova based hybrid apps",
+    "license": "MIT",
+    "repo": "https://github.com/vidinoti/cordova-plugin-PixLive.git",
+    "keywords": [
+        "augmented reality",
+        "iBeacon"
+    ],
+    "platforms": [
+        "ios",
+        "android"
+    ],
+    "engines": [
+        {
+            "name": "cordova",
+            "version": ">=3.7.0"
+        },
+        {
+            "name": "cordova-android",
+            "version": ">=3.7.0"
+        },
+        {
+            "name": "cordova-ios",
+            "version": ">=3.8.0"
+        }
+    ]
+}
