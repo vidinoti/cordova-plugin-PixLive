@@ -142,9 +142,12 @@
     
     ctrl.view.frame = viewRect;
     
-    [ctrl.view setNeedsLayout];
+    //Propage a rotation event as the resize might be the result of a device orientation change.
+
+    UIInterfaceOrientation o = ctrl.interfaceOrientation;
     
-    
+    [ctrl willRotateToInterfaceOrientation:self.viewController.interfaceOrientation duration:0];
+    [ctrl didRotateFromInterfaceOrientation:o];
 }
 
 
@@ -199,12 +202,11 @@
     IonicARViewController * ctrl = arViewControllers[[NSNumber numberWithUnsignedInteger:ctrlID]] = [[IonicARViewController alloc] initWithPlugin:self];
     
     [ctrl view]; //Load the view
+
     //Manually triggers the events
     [ctrl viewDidLoad];
     
     ctrl.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
-    //[self.webView.superview addSubview:testView];
     
     [ [ [ self viewController ] view ] addSubview:ctrl.view];
     
