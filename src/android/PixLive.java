@@ -9,8 +9,11 @@ import android.widget.FrameLayout;
 
 import com.vidinoti.android.vdarsdk.DeviceCameraImageSender;
 import com.vidinoti.android.vdarsdk.VDARAnnotationView;
+import com.vidinoti.android.vdarsdk.VDARPrior;
+import com.vidinoti.android.vdarsdk.VDARRemoteController;
 import com.vidinoti.android.vdarsdk.VDARSDKController;
 import com.vidinoti.android.vdarsdk.VDARSDKControllerEventReceiver;
+import com.vidinoti.android.vdarsdk.VDARTagPrior;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -20,7 +23,11 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.Callable;
 
 /**
@@ -129,10 +136,51 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             int ctrlID = args.getInt(0);
             this.resize(x, y, width, height,ctrlID, callbackContext);
             return true;
+        }else if (action.equals("synchronize")) {
+            ArrayList<String> list = new ArrayList<String>();
+
+            if(args.length()>0) {
+                JSONArray a = args.getJSONArray(0);
+                for (int i=0; i<a.length(); i++) {
+                    list.add( a.getString(i) );
+                }
+            }
+
+            this.synchronize(list,callbackContext);
+            return true;
         }
         return false;
     }
 
+    private void synchronize(ArrayList<String> tags, final CallbackContext callbackContext) {
+        final ArrayList<VDARPrior> priors = new ArrayList<VDARPrior>();
+
+        for(String s : tags) {
+            priors.add(new VDARTagPrior(s));
+        }
+
+        VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
+            @Override
+            public void run() {
+                VDARRemoteController.getInstance().syncRemoteContextsAsynchronouslyWithPriors(priors, new Observer() {
+                    @Override
+                    public void update(Observable observable, Object data) {
+                        VDARRemoteController.ObserverUpdateInfo info = (VDARRemoteController.ObserverUpdateInfo) data;
+
+                        if (info.isCompleted()) {
+                            if(info.getError()==null) {
+                                JSONArray ctx = new JSONArray(info.getFetchedContexts());
+
+                                callbackContext.success(ctx);
+                            } else {
+                                callbackContext.error(info.getError());
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
 
     private void beforeLeave(final int ctrlID, CallbackContext callbackContext) {
         cordova.getActivity().runOnUiThread(new Runnable() {
