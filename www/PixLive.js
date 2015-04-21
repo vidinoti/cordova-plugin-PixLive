@@ -27,7 +27,7 @@ PixLive.prototype = {
 		exec(null, null, "PixLive", "destroy", [this.handle]);
 	},
 	resize: function(originx, originy, width, height) {
-		exec(null, null, "PixLive", "destroy", [this.handle, originx, originy, width, height]);
+		exec(null, null, "PixLive", "resize", [this.handle, originx, originy, width, height]);
 	}
 };
 
@@ -41,11 +41,6 @@ PixLive.createARView = function( originx, originy, width, height ) {
 }
 
 PixLive.init = function( storagePath, licenseKey ) {
-	if(PixLive.nextViewHandle==0) {
-   		ionic.EventController.on('resize', function() {
-   			alert('resize');
-   		}, window);
-    }
 	exec(null, null, "PixLive", "init",  [storagePath, licenseKey ]);
 }
 
