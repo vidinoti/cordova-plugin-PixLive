@@ -92,13 +92,12 @@ module.exports = function(context) {
 	try {
 		fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor');
 		fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive');
-		fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs');
 	} catch(e) {
 
 	}
 
-	var inFile = variables['PIXLIVE_SDK_ANDROID_LOCATION']+path.sep+'*';
-	var outFile = context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs';
+	var inFile = variables['PIXLIVE_SDK_ANDROID_LOCATION'];
+	var outFile = context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive';
     
     var child=require("child_process");
 
