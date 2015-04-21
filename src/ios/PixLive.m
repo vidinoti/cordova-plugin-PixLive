@@ -19,6 +19,7 @@
     
     return self;
 }
+
 -(void)beforeLeave:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     
@@ -33,6 +34,7 @@
     
     [ctrl viewWillDisappear:NO];
 }
+
 -(void)afterLeave:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     
@@ -50,6 +52,7 @@
     [ctrl viewDidDisappear:NO];
     
 }
+
 -(void)beforeEnter:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     
@@ -62,12 +65,15 @@
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
     IonicARViewController * ctrl = [arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
+    ctrl.view.frame = ctrl.sizeARView;
+    
     [ [ [ self viewController ] view ] addSubview:ctrl.view];
     
-    [ctrl.view setNeedsLayout];
-    
     [ctrl viewWillAppear:NO];
+    
+    [ctrl.view setNeedsLayout];
 }
+
 -(void)afterEnter:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     
@@ -81,6 +87,7 @@
     IonicARViewController * ctrl = [arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     [ctrl viewDidAppear:NO];
+
 }
 -(void)init:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
@@ -140,14 +147,17 @@
     
     IonicARViewController * ctrl = [arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
-    ctrl.view.frame = viewRect;
+    ctrl.sizeARView = viewRect;
     
-    //Propage a rotation event as the resize might be the result of a device orientation change.
-
-    UIInterfaceOrientation o = ctrl.interfaceOrientation;
+    if(ctrl.view.superview) {
+        ctrl.view.frame = viewRect;
     
-    [ctrl willRotateToInterfaceOrientation:self.viewController.interfaceOrientation duration:0];
-    [ctrl didRotateFromInterfaceOrientation:o];
+        
+        UIInterfaceOrientation o = ctrl.interfaceOrientation;
+        
+        [ctrl willRotateToInterfaceOrientation:self.viewController.interfaceOrientation duration:0];
+        [ctrl didRotateFromInterfaceOrientation:o];
+    }
 }
 
 
@@ -201,8 +211,9 @@
     
     IonicARViewController * ctrl = arViewControllers[[NSNumber numberWithUnsignedInteger:ctrlID]] = [[IonicARViewController alloc] initWithPlugin:self];
     
+    ctrl.sizeARView = viewRect;
+    
     [ctrl view]; //Load the view
-
     //Manually triggers the events
     [ctrl viewDidLoad];
     
