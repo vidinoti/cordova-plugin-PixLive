@@ -1,5 +1,10 @@
 package com.vidinoti.pixlive;
 
+import android.util.Log;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
@@ -20,12 +25,14 @@ import com.vidinoti.android.vdarsdk.VDARRemoteControllerListener;
  */
 public class PixLive extends CordovaPlugin {
 
+    private static final String TAG ="PixLiveCordova";
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("init") && args.length()>=2) {
             String url = args.getString(0);
             String key = args.getString(1);
-            this.coolMethod(url,key, callbackContext);
+            this.init(url,key, callbackContext);
             return true;
         }
         return false;
@@ -33,8 +40,14 @@ public class PixLive extends CordovaPlugin {
 
     private void init(String storageURL, String licenseKey, CallbackContext callbackContext) {
 
-        String storage = new URL(storageURL).getPath();
+        String storage = null;
+        try {
+            storage = new URL(storageURL).getPath();
+        } catch (MalformedURLException e) {
+            VDARSDKController.log(Log.ERROR,TAG,"Invalid storage path for PixLive SDK: "+Log.getStackTraceString(e));
+            return;
+        }
 
-        VDARSDKController.startSDK(cordova.getActivity(), new URL(storageURL),  licenseKey);
+        VDARSDKController.startSDK(cordova.getActivity(), storage,  licenseKey);
     }
 }
