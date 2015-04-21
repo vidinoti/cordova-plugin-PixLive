@@ -20,10 +20,10 @@ module.exports = function(context) {
 	        }
 	        args.push(part);
 	        return args;
-	    }
+	    };
 	    return {
 	        parse: parse
-	    }
+	    };
 	})();
 
 	var Q = context.requireCordovaModule('q');
@@ -83,12 +83,8 @@ module.exports = function(context) {
 	    }
 	};
 
-	if(!variables['PIXLIVE_SDK_IOS_LOCATION']) {
-		throw new Error("You need to pass the variable PIXLIVE_SDK_IOS_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\"");
-	}
-
 	try {
-		//deleteFolderRecursive(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs');
+		deleteFolderRecursive(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs');
 	} catch(e) {
 
 	}
@@ -96,11 +92,12 @@ module.exports = function(context) {
 	try {
 		fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor');
 		fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive');
+		fs.mkdirSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs');
 	} catch(e) {
 
 	}
 
-	var inFile = variables['PIXLIVE_SDK_ANDROID_LOCATION'];
+	var inFile = variables['PIXLIVE_SDK_ANDROID_LOCATION']+path.sep+'*';
 	var outFile = context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs';
     
     var child=require("child_process");
@@ -121,7 +118,7 @@ module.exports = function(context) {
 
 	console.log('Copying PixLive SDK for Android...');
 
-	/*copySync(inFile,outFile, function(error) {
+	copySync(inFile,outFile, function(error) {
 		if(error) {
 			console.error("Copy error: "+error);
 			throw new Error("Unable to copy PixLive SDK Android libs. Check the path of the PIXLIVE_SDK_ANDROID_LOCATION variable. Given: '"+inFile+"'"); 	
@@ -130,5 +127,5 @@ module.exports = function(context) {
 		}
 	});
 
-	return deferral.promise;*/
-}
+	return deferral.promise;
+};

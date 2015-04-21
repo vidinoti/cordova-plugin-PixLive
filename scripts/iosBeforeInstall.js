@@ -20,10 +20,10 @@ module.exports = function(context) {
 	        }
 	        args.push(part);
 	        return args;
-	    }
+	    };
 	    return {
 	        parse: parse
-	    }
+	    };
 	})();
 
 	var Q = context.requireCordovaModule('q');
@@ -126,4 +126,4 @@ module.exports = function(context) {
 	});
 
 	 return deferral.promise;
-}
+};

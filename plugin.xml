@@ -70,5 +70,6 @@
         </config-file>
         <config-file parent="/*" target="AndroidManifest.xml" />
         <source-file src="src/android/PixLive.java" target-dir="src/com/vidinoti/pixlive/PixLive" />
+        <source-file src="vendor/PixLive/vdarsdk.jar" target-dir="libs" />
     </platform>
 </plugin>
