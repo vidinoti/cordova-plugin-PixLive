@@ -127,7 +127,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             int width = args.getInt(3);
             int height = args.getInt(4);
             int ctrlID = args.getInt(0);
-            this.resize(ctrlID, x, y, width, height, callbackContext);
+            this.resize(x, y, width, height,ctrlID, callbackContext);
             return true;
         }
         return false;
@@ -179,10 +179,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             public void run() {
                 VDARAnnotationView annotationView = arViews.get(ctrlID);
 
-                if (annotationView != null)
-
-                {
-
+                if (annotationView != null) {
                     DisplayMetrics displaymetrics = new DisplayMetrics();
 
                     cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -191,11 +188,15 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                     //FrameLayout frameLayout = (FrameLayout) webView.getParent().getParent();
 
                     annotationView.setVisibility(View.VISIBLE);
-                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int) Math.round(width * displaymetrics.scaledDensity), (int) Math.round(height * displaymetrics.scaledDensity));
+                    FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)annotationView.getLayoutParams();
                     params.leftMargin = (int) Math.round(x * displaymetrics.scaledDensity);
                     params.topMargin = (int) Math.round(y * displaymetrics.scaledDensity);
+                    params.width = (int) Math.round(width * displaymetrics.scaledDensity);
+                    params.height = (int) Math.round(height * displaymetrics.scaledDensity);
 
                     annotationView.setLayoutParams(params);
+
+                    annotationView.requestLayout();
                 }
             }
         });
