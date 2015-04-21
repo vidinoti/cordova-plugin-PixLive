@@ -15,6 +15,8 @@
     NSMutableDictionary *arViewControllers;
 }
 
+@property (nonatomic) CGRect sizeARView;
+
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion;
 
 @end
