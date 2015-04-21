@@ -122,8 +122,7 @@
         return;
     }
     
-    CGFloat originx,originy,width;
-    CGFloat height = 30;
+    CGFloat originx,originy,width, height;
     
     originx = [[arguments objectAtIndex:1] floatValue];
     originy = [[arguments objectAtIndex:2] floatValue];
@@ -181,8 +180,7 @@
         return;
     }
     
-    CGFloat originx,originy,width;
-    CGFloat height = 30;
+    CGFloat originx,originy,width,height;
     
     originx = [[arguments objectAtIndex:0] floatValue];
     originy = [[arguments objectAtIndex:1] floatValue];
