@@ -11,11 +11,7 @@
 #import <VDARSDK/VDARSDK.h>
 #import <Cordova/CDV.h>
 
-@interface PixLive : CDVPlugin {
-    NSMutableDictionary *arViewControllers;
-}
-
-@property (nonatomic) CGRect sizeARView;
+@interface PixLive : CDVPlugin
 
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion;
 

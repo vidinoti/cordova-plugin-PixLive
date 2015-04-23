@@ -44,6 +44,10 @@ PixLive.init = function( storagePath, licenseKey ) {
 	exec(null, null, "PixLive", "init",  [storagePath, licenseKey ]);
 }
 
+PixLive.synchronize = function( tags, success, error ) {
+	exec(success, error, "PixLive", "synchronize",  [tags]);
+}
+
 var PixLiveInstance = new PixLive();
 
 module.exports = PixLive;

@@ -8,14 +8,53 @@
 
 
 
-@implementation PixLive
+@implementation PixLive {
+    NSMutableDictionary *arViewControllers;
+    NSMutableDictionary *arViewSizes;
+}
 
+#pragma mark - Cordova methods
+
+- (void)onAppTerminate {
+    //Save SDK
+    [[VDARSDKController sharedInstance] save];
+}
+
+- (void)onMemoryWarning {
+    for(IonicARViewController * ctrl in [arViewControllers allValues]) {
+        [ctrl didReceiveMemoryWarning];
+    }
+}
+
+- (void)onReset {
+    //Destroy all views
+    for(NSNumber *key in [arViewControllers allKeys]) {
+        
+        IonicARViewController * ctrl = [arViewControllers objectForKey:key];
+        
+        if(ctrl.view.superview) {
+            [ctrl viewWillDisappear:NO];
+            [ctrl.view removeFromSuperview];
+            [ctrl viewDidDisappear:NO];
+        }
+    }
+    
+    [arViewControllers removeAllObjects];
+    [arViewSizes removeAllObjects];
+}
+
+- (void)dispose {
+    
+}
+
+#pragma mark - Plugin methods
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
 {
     self = (PixLive*)[super initWithWebView:theWebView];
     
     arViewControllers = [NSMutableDictionary dictionary];
+    arViewSizes = [NSMutableDictionary dictionary];
     
     return self;
 }
@@ -65,7 +104,12 @@
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
     IonicARViewController * ctrl = [arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
-    ctrl.view.frame = ctrl.sizeARView;
+    NSValue * val = arViewSizes[[NSNumber numberWithUnsignedInteger:ctrlID]];
+    
+    if(val) {
+        CGRect r = [val CGRectValue];
+        ctrl.view.frame = r;
+    }
     
     [ [ [ self viewController ] view ] addSubview:ctrl.view];
     
@@ -108,14 +152,6 @@
     MyCameraImageSource *cameraSource=[[MyCameraImageSource alloc] init];
     
     [VDARSDKController sharedInstance].imageSender=cameraSource;
-    
-    [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[VDARRemoteController sharedInstance] syncRemoteModelsAsynchronouslyWithPriors:@[[VDARTagPrior tagWithName:@"release_test"]] withCompletionBlock:^(id result, NSError *err) {
-                NSLog(@"Synced.");
-            }];
-        });
-    }];
 }
 
 - (void) resize:(CDVInvokedUrlCommand *)command
@@ -146,8 +182,8 @@
                                  );
     
     IonicARViewController * ctrl = [arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
-    
-    ctrl.sizeARView = viewRect;
+
+    arViewSizes[[NSNumber numberWithUnsignedInteger:ctrlID]] = [NSValue valueWithCGRect:viewRect];
     
     if(ctrl.view.superview) {
         ctrl.view.frame = viewRect;
@@ -176,6 +212,7 @@
     [ctrl.view removeFromSuperview];
     
     [arViewControllers removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    [arViewSizes removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
 }
 
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
@@ -211,8 +248,6 @@
     
     IonicARViewController * ctrl = arViewControllers[[NSNumber numberWithUnsignedInteger:ctrlID]] = [[IonicARViewController alloc] initWithPlugin:self];
     
-    ctrl.sizeARView = viewRect;
-    
     [ctrl view]; //Load the view
     //Manually triggers the events
     [ctrl viewDidLoad];
@@ -223,12 +258,45 @@
     
     ctrl.view.frame = viewRect;
     
+    arViewSizes[[NSNumber numberWithUnsignedInteger:ctrlID]] = [NSValue valueWithCGRect:viewRect];
+    
     [ctrl.view setNeedsLayout];
     
     [ctrl viewWillAppear:NO];
     
     [ctrl viewDidAppear:NO];
     
+    
+}
+
+#pragma mark - Remote controller
+
+- (void) synchronize:(CDVInvokedUrlCommand *)command
+{
+    
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    NSArray *arrTags = argc > 0 ? arguments[0] : @[];
+
+    [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[VDARRemoteController sharedInstance] syncRemoteModelsAsynchronouslyWithPriors:arrTags withCompletionBlock:^(id result, NSError *err) {
+                
+                CDVPluginResult* pluginResult = nil;
+                
+                if (err==nil && result) {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:result];
+                } else {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[err localizedDescription]];
+                }
+                
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                
+            }];
+        });
+    }];
     
 }
 
