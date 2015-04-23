@@ -190,7 +190,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 if (view != null) {
                     view.onPause();
                     VDARSDKController.getInstance().onPause();
-                    view.setVisibility(View.INVISIBLE);
+                    view.setVisibility(View.GONE);
                 }
             }
         });
