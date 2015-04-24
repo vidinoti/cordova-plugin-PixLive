@@ -1,9 +1,13 @@
 package com.vidinoti.pixlive;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import android.util.Pair;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -17,6 +21,7 @@ import com.vidinoti.android.vdarsdk.VDARTagPrior;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.engine.SystemWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -26,6 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Callable;
@@ -40,9 +46,32 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     /** Your Project ID in Google APIs Console for Push Notification (GCM) */
     //private static final String GOOGLE_API_PROJECT_ID_FOR_NOTIFICATIONS = "000000";
 
-    private HashMap<Integer, VDARAnnotationView> arViews = new HashMap<Integer, VDARAnnotationView>();
+
+    class CordovaARView extends VDARAnnotationView {
+        public boolean touchEnabled = true;
+
+        public CordovaARView(android.content.Context context, boolean renderCamera) {
+            super(context,renderCamera);
+        }
+
+        public void setTouchEnabled(boolean val) {
+            touchEnabled = val;
+        }
+
+        @Override
+        public boolean onTouchEvent (MotionEvent event) {
+            if(!touchEnabled) {
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    private HashMap<Integer, CordovaARView> arViews = new HashMap<Integer, CordovaARView>();
 
     private DeviceCameraImageSender imageSender = null;
+
 
     static void startSDK(final Context c, final String storage, final String licenseKey) {
 
@@ -106,7 +135,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             int width = args.getInt(2);
             int height = args.getInt(3);
             int ctrlID = args.getInt(4);
-            this.createARView(x, y, width, height, ctrlID, callbackContext);
+            this.createARView(x, y, width, height, ctrlID, args.length()>=6 ? args.getBoolean(5) : true, callbackContext);
             return true;
         } else if (action.equals("beforeLeave") && args.length()>=1) {
             int ctrlID = args.getInt(0);
@@ -148,8 +177,26 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             this.synchronize(list,callbackContext);
             return true;
+        } else if (action.equals("enableTouch")) {
+            this.enableTouch();
+            return true;
+        } else if (action.equals("disableTouch")) {
+            this.disableTouch();
+            return true;
         }
         return false;
+    }
+
+    private void enableTouch() {
+        for(Map.Entry<Integer,CordovaARView> s : arViews.entrySet()) {
+            s.getValue().setTouchEnabled(true);
+        }
+    }
+
+    private void disableTouch() {
+        for(Map.Entry<Integer,CordovaARView> s : arViews.entrySet()) {
+            s.getValue().setTouchEnabled(false);
+        }
     }
 
     private void synchronize(ArrayList<String> tags, final CallbackContext callbackContext) {
@@ -232,9 +279,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                     cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
-                    // Add the view to the hierarchy
-                    //FrameLayout frameLayout = (FrameLayout) webView.getParent().getParent();
-
                     annotationView.setVisibility(View.VISIBLE);
                     FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)annotationView.getLayoutParams();
                     params.leftMargin = (int) Math.round(x * displaymetrics.scaledDensity);
@@ -270,7 +314,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
 
-    private void createARView(final int x,final int y, final int width, final int height, final int ctrlID, final CallbackContext callbackContext) {
+    private void createARView(final int x,final int y, final int width, final int height, final int ctrlID, final boolean insertBelow, final CallbackContext callbackContext) {
 
         if (!DeviceCameraImageSender.doesSupportDirectRendering()) {
             VDARSDKController.log(Log.ERROR,TAG,"This device is not supporting SurfaceView and is therefore not supported with PixLive SDK.");
@@ -288,15 +332,27 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 VDARSDKController.getInstance().setImageSender(imageSender);
 
-                VDARAnnotationView annotationView = new VDARAnnotationView(cordova.getActivity());
+                CordovaARView annotationView = new CordovaARView(cordova.getActivity(),true);
 
                 DisplayMetrics displaymetrics = new DisplayMetrics();
 
                 cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
+                SystemWebView v = (SystemWebView)webView.getView();
+                v.setBackgroundColor(Color.TRANSPARENT);
+                if (Build.VERSION.SDK_INT >= 11) {
+                    v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                }
+
+               /* for(int i=0;i<v.getChildCount();i++) {
+                    v.getChildAt(i).setBackgroundColor(0);
+                    if (Build.VERSION.SDK_INT >= 11) {
+                        v.getChildAt(i).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    }
+                }*/
 
                 // Add the view to the hierarchy
-                FrameLayout frameLayout = (FrameLayout) webView.getParent().getParent();
+                FrameLayout frameLayout = (FrameLayout) webView.getView().getParent();
 
                 annotationView.setVisibility(View.VISIBLE);
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int)Math.round(width*displaymetrics.scaledDensity), (int)Math.round(height*displaymetrics.scaledDensity));
@@ -305,7 +361,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 annotationView.setLayoutParams(params);
 
-                frameLayout.addView(annotationView);
+                frameLayout.addView(annotationView,0);
 
                 arViews.put(ctrlID, annotationView);
 
