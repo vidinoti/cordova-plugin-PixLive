@@ -30,10 +30,10 @@ PixLive.prototype = {
 		exec(null, null, "PixLive", "resize", [this.handle, originx, originy, width, height]);
 	},
 	disableTouch: function() {
-		exec(null, null, "PixLive", "disableTouch");
+		exec(null, null, "PixLive", "disableTouch", []);
 	},
 	enableTouch: function() {
-		exec(null, null, "PixLive", "enableTouch");
+		exec(null, null, "PixLive", "enableTouch", []);
 	}
 };
 
