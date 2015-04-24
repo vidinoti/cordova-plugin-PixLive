@@ -15,4 +15,8 @@
 
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion;
 
+@property (nonatomic,readonly,strong)  NSMutableDictionary *arViewControllers;
+@property (nonatomic,readonly,strong)  NSMutableDictionary *arViewSettings;
+
+
 @end
