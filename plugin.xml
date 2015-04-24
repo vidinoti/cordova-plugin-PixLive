@@ -36,6 +36,8 @@
         <header-file src="src/ios/MyCameraImageSource.h" />
         <source-file src="src/ios/IonicARViewController.m" />
         <header-file src="src/ios/IonicARViewController.h" />
+        <source-file src="src/ios/HolesView.m" />
+        <header-file src="src/ios/HolesView.h" />
         <framework src="Accelerate.framework" />
         <framework src="AudioToolbox.framework" />
         <framework src="AVFoundation.framework" />

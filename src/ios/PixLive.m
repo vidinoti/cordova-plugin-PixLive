@@ -50,9 +50,16 @@
     _arViewControllers = [NSMutableDictionary dictionary];
     _arViewSettings = [NSMutableDictionary dictionary];
     
+    self.webView.backgroundColor = [UIColor clearColor];
+    self.webView.opaque = NO;
+    
+    [[NSNotificationCenter defaultCenter] addObserverForName:CDVPageDidLoadNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        self.webView.backgroundColor = [UIColor clearColor];
+        self.webView.opaque = NO;
+    }];
+    
     return self;
 }
-
 
 -(void)disableTouch:(CDVInvokedUrlCommand *)command {
     touchForwarder.arTouchEnabled = NO;
@@ -268,6 +275,7 @@
     IonicARViewController * ctrl = self.arViewControllers[[NSNumber numberWithUnsignedInteger:ctrlID]] = [[IonicARViewController alloc] initWithPlugin:self];
     
     [ctrl view]; //Load the view
+    
     //Manually triggers the events
     [ctrl viewDidLoad];
     

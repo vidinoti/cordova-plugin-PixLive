@@ -7,7 +7,7 @@ module.exports = function(context) {
 	//If iOS and Android already exists, don't do anything
 	if( fs.existsSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'VDARSDK.framework') &&
 		fs.existsSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs')) {
-        return;
+        return true;
     }
 
 	var CommandParser = (function() {
