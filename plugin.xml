@@ -21,7 +21,7 @@
         <clobbers target="cordova.plugins.PixLive" />
     </js-module>
 
-    <dependency id="org.apache.cordova.file" />
+    <dependency id="cordova-plugin-file" />
 
     <platform name="ios">
         <preference name="PIXLIVE_SDK_IOS_LOCATION" />

@@ -28,6 +28,12 @@ PixLive.prototype = {
 	},
 	resize: function(originx, originy, width, height) {
 		exec(null, null, "PixLive", "resize", [this.handle, originx, originy, width, height]);
+	},
+	disableTouch: function() {
+		exec(null, null, "PixLive", "disableTouch", [this.handle]);
+	},
+	enableTouch: function() {
+		exec(null, null, "PixLive", "enableTouch", [this.handle]);
 	}
 };
 

@@ -10,7 +10,7 @@
 
 @implementation PixLive {
     NSMutableDictionary *arViewControllers;
-    NSMutableDictionary *arViewSizes;
+    NSMutableDictionary *arViewSettings;
 }
 
 #pragma mark - Cordova methods
@@ -40,11 +40,7 @@
     }
     
     [arViewControllers removeAllObjects];
-    [arViewSizes removeAllObjects];
-}
-
-- (void)dispose {
-    
+    [arViewSettings removeAllObjects];
 }
 
 #pragma mark - Plugin methods
@@ -54,7 +50,7 @@
     self = (PixLive*)[super initWithWebView:theWebView];
     
     arViewControllers = [NSMutableDictionary dictionary];
-    arViewSizes = [NSMutableDictionary dictionary];
+    arViewSettings = [NSMutableDictionary dictionary];
     
     return self;
 }
@@ -104,14 +100,18 @@
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
     IonicARViewController * ctrl = [arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
-    NSValue * val = arViewSizes[[NSNumber numberWithUnsignedInteger:ctrlID]];
+    NSDictionary * val = arViewSettings[[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     if(val) {
-        CGRect r = [val CGRectValue];
+        CGRect r = [val[@"rect"] CGRectValue];
         ctrl.view.frame = r;
     }
     
-    [ [ [ self viewController ] view ] addSubview:ctrl.view];
+    if(![val[@"insertBelow"] boolValue]) {
+        [self.webView.superview addSubview:ctrl.view];
+    } else {
+        [self.webView.superview insertSubview:ctrl.view belowSubview:self.webView];
+    }
     
     [ctrl viewWillAppear:NO];
     
@@ -182,8 +182,14 @@
                                  );
     
     IonicARViewController * ctrl = [arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
-
-    arViewSizes[[NSNumber numberWithUnsignedInteger:ctrlID]] = [NSValue valueWithCGRect:viewRect];
+    
+    if(!ctrl) return;
+    
+    NSDictionary * original = arViewSettings[[NSNumber numberWithUnsignedInteger:ctrlID]];
+    
+    NSDictionary * val = @{@"rect" : [NSValue valueWithCGRect:viewRect], @"insertBelow":original[@"insertBelow"]};
+    
+    arViewSettings[[NSNumber numberWithUnsignedInteger:ctrlID]] = val;
     
     if(ctrl.view.superview) {
         ctrl.view.frame = viewRect;
@@ -209,10 +215,13 @@
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
     IonicARViewController * ctrl = [arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
+    if(!ctrl) return;
+    
     [ctrl.view removeFromSuperview];
     
     [arViewControllers removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
-    [arViewSizes removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    
+    [arViewSettings removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
 }
 
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
@@ -245,7 +254,7 @@
                                  width,
                                  height
                                  );
-    
+
     IonicARViewController * ctrl = arViewControllers[[NSNumber numberWithUnsignedInteger:ctrlID]] = [[IonicARViewController alloc] initWithPlugin:self];
     
     [ctrl view]; //Load the view
@@ -254,12 +263,27 @@
     
     ctrl.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
-    [ [ [ self viewController ] view ] addSubview:ctrl.view];
+    BOOL insertBelow;
+    
+    if(argc<6) {
+        insertBelow = YES;
+    } else {
+        insertBelow = [arguments[5] boolValue];
+    }
+    
+    NSDictionary * val = @{@"rect" : [NSValue valueWithCGRect:viewRect], @"insertBelow": [NSNumber numberWithBool:insertBelow]};
+    
+    arViewSettings[[NSNumber numberWithUnsignedInteger:ctrlID]] = val;
+    
+    
+    if(!insertBelow) {
+        [self.webView.superview addSubview:ctrl.view];
+    } else {
+        [self.webView.superview insertSubview:ctrl.view belowSubview:self.webView];
+    }
     
     ctrl.view.frame = viewRect;
-    
-    arViewSizes[[NSNumber numberWithUnsignedInteger:ctrlID]] = [NSValue valueWithCGRect:viewRect];
-    
+
     [ctrl.view setNeedsLayout];
     
     [ctrl viewWillAppear:NO];
@@ -278,8 +302,14 @@
     
     NSUInteger argc = [arguments count];
     
-    NSArray *arrTags = argc > 0 ? arguments[0] : @[];
+    NSMutableArray *arrTags = [NSMutableArray arrayWithCapacity:argc];
 
+    if(argc>0) {
+        for(NSString * t in arguments[0]) {
+            [arrTags addObject:[VDARTagPrior tagWithName:t]];
+        }
+    }
+    
     [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [[VDARRemoteController sharedInstance] syncRemoteModelsAsynchronouslyWithPriors:arrTags withCompletionBlock:^(id result, NSError *err) {
