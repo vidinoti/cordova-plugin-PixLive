@@ -61,6 +61,22 @@
     return self;
 }
 
+-(void)setNotificationsSupport:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1) {
+        return;
+    }
+
+    if([arguments objectAtIndex:0] == [NSNull null]) {
+        [VDARSDKController sharedInstance].enableNotifications=NO;
+    } else {
+        [VDARSDKController sharedInstance].enableNotifications=YES;
+    }
+}
+
 -(void)disableTouch:(CDVInvokedUrlCommand *)command {
     touchForwarder.arTouchEnabled = NO;
 }
@@ -164,7 +180,6 @@
     [VDARSDKController startSDK:[url path] withLicenseKey:arguments[1]];
     
     [VDARSDKController sharedInstance].enableCodesRecognition=YES;
-    [VDARSDKController sharedInstance].enableNotifications=YES;
     
     MyCameraImageSource *cameraSource=[[MyCameraImageSource alloc] init];
     

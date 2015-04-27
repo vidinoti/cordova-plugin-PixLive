@@ -50,6 +50,10 @@ PixLive.init = function( storagePath, licenseKey ) {
 	exec(null, null, "PixLive", "init",  [storagePath, licenseKey ]);
 }
 
+PixLive.setNotificationsSupport = function( enabled, apiKey ) {
+	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? apiKey : null]);
+}
+
 PixLive.synchronize = function( tags, success, error ) {
 	exec(success, error, "PixLive", "synchronize",  [tags]);
 }

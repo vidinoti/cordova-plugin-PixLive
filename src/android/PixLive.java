@@ -1,17 +1,25 @@
 package com.vidinoti.pixlive;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
-
-import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.ionicframework.test2887093.MainActivity;
 import com.vidinoti.android.vdarsdk.DeviceCameraImageSender;
+import com.vidinoti.android.vdarsdk.NotificationCompat;
+import com.vidinoti.android.vdarsdk.NotificationFactory;
 import com.vidinoti.android.vdarsdk.VDARAnnotationView;
 import com.vidinoti.android.vdarsdk.VDARPrior;
 import com.vidinoti.android.vdarsdk.VDARRemoteController;
@@ -21,7 +29,6 @@ import com.vidinoti.android.vdarsdk.VDARTagPrior;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.engine.SystemWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -30,11 +37,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Callable;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -43,70 +48,188 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     private static final String TAG ="PixLiveCordova";
 
-    /** Your Project ID in Google APIs Console for Push Notification (GCM) */
-    //private static final String GOOGLE_API_PROJECT_ID_FOR_NOTIFICATIONS = "000000";
-
-
-    class CordovaARView extends VDARAnnotationView {
+    class TouchInterceptorView extends FrameLayout {
         public boolean touchEnabled = true;
 
-        public CordovaARView(android.content.Context context, boolean renderCamera) {
-            super(context,renderCamera);
+        private boolean intercepting = false;
+
+        private View.OnTouchListener privateListener = null;
+
+        public TouchInterceptorView(android.content.Context context) {
+            super(context);
         }
 
         public void setTouchEnabled(boolean val) {
             touchEnabled = val;
         }
 
+        private int getRelativeLeft(View myView) {
+            if (myView.getParent() == myView.getRootView())
+                return myView.getLeft();
+            else
+                return myView.getLeft() + getRelativeLeft((View) myView.getParent());
+        }
+
+        private int getRelativeTop(View myView) {
+            if (myView.getParent() == myView.getRootView())
+                return myView.getTop();
+            else
+                return myView.getTop() + getRelativeTop((View) myView.getParent());
+        }
+
         @Override
-        public boolean onTouchEvent (MotionEvent event) {
-            if(!touchEnabled) {
+        public boolean onInterceptTouchEvent (MotionEvent ev) {
+
+            //We are already intercepting this
+            if(intercepting && ev.getAction() != MotionEvent.ACTION_DOWN) {
+                return true;
+            }
+
+            intercepting = false;
+
+            if(!touchEnabled || arViews.size()==0) {
                 return false;
             }
 
-            return true;
+            int thisViewLeft = getRelativeLeft(this);
+            int thisViewTop = getRelativeTop(this);
+
+            //Check if we fall into one AR view
+
+            for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
+                VDARAnnotationView view = s.getValue();
+
+                if(view.getVisibility() != View.VISIBLE || view.getParent()==null) {
+                    continue;
+                }
+
+                //WARNING: We assume here that the AR view share the same parent as this view.
+
+                float arViewX = view.getLeft();
+                float arViewY = view.getTop();
+
+                for(int i=0;i<ev.getPointerCount();i++) {
+
+                    float xPos = ev.getX(i) - thisViewLeft;
+                    float yPos = ev.getY(i) - thisViewTop;
+
+                    if(xPos>=arViewX && xPos < arViewX + view.getWidth() && yPos>=arViewY && yPos < arViewY + view.getHeight()) {
+                        intercepting = true;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean onTouchEvent (MotionEvent ev) {
+            if(!intercepting) {
+                return false;
+            } else {
+                //Forward it to ar views
+                for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
+                    VDARAnnotationView view = s.getValue();
+
+                    if(view.dispatchTouchEvent(ev)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
     }
 
-    private HashMap<Integer, CordovaARView> arViews = new HashMap<Integer, CordovaARView>();
+    private HashMap<Integer, VDARAnnotationView> arViews = new HashMap<Integer, VDARAnnotationView>();
 
     private DeviceCameraImageSender imageSender = null;
 
+    private TouchInterceptorView touchView = null;
 
-    static void startSDK(final Context c, final String storage, final String licenseKey) {
+
+    protected void pluginInitialize() {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                if (touchView == null)
+
+                {
+                    View v = webView.getView();
+
+
+                    touchView = new TouchInterceptorView(cordova.getActivity());
+
+                    touchView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+                    FrameLayout parent = ((FrameLayout) v.getParent());
+                    parent.removeView(v);
+                    touchView.addView(v);
+                    parent.addView(touchView);
+
+                    v.setBackgroundColor(Color.TRANSPARENT);
+
+                    if (Build.VERSION.SDK_INT >= 11) {
+                        v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    }
+                }
+            }
+        });
+    }
+
+    static void startSDK(final Context c, String storage, String licenseKey) {
 
         if(VDARSDKController.getInstance()!=null) {
             return;
         }
-        VDARSDKController.startSDK(c, storage,  licenseKey);
 
+        if(storage != null) {
+            // Save the storage path in the settings
+            c.getSharedPreferences("pixlive",Context.MODE_PRIVATE).edit().putString("pixlive.sdk.storagedir",storage);
+        } else {
+            storage = c.getSharedPreferences("pixlive",Context.MODE_PRIVATE).getString("pixlive.sdk.storagedir",null);
+        }
+
+        if(licenseKey != null) {
+            // Save the storage path in the settings
+            c.getSharedPreferences("pixlive",Context.MODE_PRIVATE).edit().putString("pixlive.sdk.licensekey",licenseKey);
+        } else {
+            licenseKey = c.getSharedPreferences("pixlive",Context.MODE_PRIVATE).getString("pixlive.sdk.licensekey",null);
+        }
+
+        if(storage == null || licenseKey == null) {
+            Log.e(TAG,"Unable to start PixLive SDK without valid storage and license key.");
+            return;
+        }
+
+        VDARSDKController.startSDK(c, storage,  licenseKey);
 
         /* Comment out to disable QR code detection */
         VDARSDKController.getInstance().setEnableCodesRecognition(true);
-        //  VDARRemoteController.getInstance().setUseRemoteTestServer(true);
 
-        /* Enable push notifications */
-        /* ------------------------- */
-
-        /* See the documentation at http://doc.vidinoti.com/vdarsdk/web/android/latest for instructions on how to setup it */
-        /* You need your app project ID from the Google APIs Console at https://code.google.com/apis/console */
-        //VDARSDKController.getInstance().setNotificationsSupport(true, GOOGLE_API_PROJECT_ID_FOR_NOTIFICATIONS);
-
-        /*VDARSDKController.getInstance().setNotificationFactory(new NotificationFactory() {
+        VDARSDKController.getInstance().setNotificationFactory(new NotificationFactory() {
 
             @Override
             public Notification createNotification(String title, String message, String notificationID) {
-                Intent appintent = new Intent(c, MainActivity.class);
+                return createNotification(title,message,notificationID,true);
+            }
 
-                appintent.putExtra("nid", notificationID);
-                appintent.putExtra("remote", false);
+            @Override
+            public Notification createNotification(String title, String message, String notificationID, boolean needARView) {
+
+                Intent appIntent = c.getPackageManager().getLaunchIntentForPackage(c.getPackageName());
+
+                appIntent.putExtra("nid", notificationID);
+                appIntent.putExtra("remote", false);
+                appIntent.putExtra("needARView", needARView);
 
                 PendingIntent contentIntent = PendingIntent.getActivity(c, 0,
-                        appintent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                ApplicationInfo ai = c.getApplicationInfo();
 
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(c)
-                                .setSmallIcon(R.drawable.ic_launcher)
+                                .setSmallIcon(ai.icon!=0 ? ai.icon : android.R.drawable.star_big_off)
                                 .setContentTitle(title)
                                 .setContentText(message)
                                 .setContentIntent(contentIntent)
@@ -118,7 +241,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 return mBuilder.getNotification();
             }
-        });*/
+        });
 
     }
 
@@ -183,19 +306,68 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("disableTouch")) {
             this.disableTouch();
             return true;
+        } else if (action.equals("setNotificationsSupport") && args.length()>=1) {
+            this.setNotificationsSupport(args.getString(0));
+            return true;
         }
         return false;
     }
 
+    private void setNotificationsSupport(String googleProjectKey) {
+        VDARSDKController.getInstance().setNotificationsSupport(googleProjectKey!=null, googleProjectKey);
+    }
+
     private void enableTouch() {
-        for(Map.Entry<Integer,CordovaARView> s : arViews.entrySet()) {
-            s.getValue().setTouchEnabled(true);
+        if(touchView!=null) {
+            touchView.setTouchEnabled(true);
         }
     }
 
     private void disableTouch() {
-        for(Map.Entry<Integer,CordovaARView> s : arViews.entrySet()) {
-            s.getValue().setTouchEnabled(false);
+        if(touchView!=null) {
+            touchView.setTouchEnabled(false);
+        }
+    }
+
+    /**
+     * Called when the system is about to start resuming a previous activity.
+     *
+     * @param multitasking      Flag indicating if multitasking is turned on for app
+     */
+    public void onPause(boolean multitasking) {
+        for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
+            VDARAnnotationView view = s.getValue();
+
+            if(view.getParent()!=null && view.getVisibility()==View.VISIBLE) {
+                view.onPause();
+                VDARSDKController.getInstance().onPause();
+            }
+        }
+    }
+
+    public void onDestroy() {
+        for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
+            VDARAnnotationView view = s.getValue();
+
+            touchView.removeView(view);
+        }
+
+        arViews.clear();
+    }
+
+    /**
+     * Called when the activity will start interacting with the user.
+     *
+     * @param multitasking      Flag indicating if multitasking is turned on for app
+     */
+    public void onResume(boolean multitasking) {
+        for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
+            VDARAnnotationView view = s.getValue();
+
+            if(view.getParent()!=null && view.getVisibility()==View.VISIBLE) {
+                view.onResume();
+                VDARSDKController.getInstance().onResume();
+            }
         }
     }
 
@@ -304,7 +476,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 if (view != null) {
 
                     if (view.getParent() != null) {
-                        ((FrameLayout) view.getParent()).removeView(view);
+                        touchView.removeView(view);
                     }
 
                     arViews.remove(ctrlID);
@@ -330,38 +502,25 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                     VDARSDKController.log(Log.ERROR, TAG, Log.getStackTraceString(e));
                 }
 
+
+
                 VDARSDKController.getInstance().setImageSender(imageSender);
 
-                CordovaARView annotationView = new CordovaARView(cordova.getActivity(),true);
+                VDARAnnotationView annotationView = new VDARAnnotationView(cordova.getActivity());
 
                 DisplayMetrics displaymetrics = new DisplayMetrics();
 
                 cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
-                SystemWebView v = (SystemWebView)webView.getView();
-                v.setBackgroundColor(Color.TRANSPARENT);
-                if (Build.VERSION.SDK_INT >= 11) {
-                    v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                }
-
-               /* for(int i=0;i<v.getChildCount();i++) {
-                    v.getChildAt(i).setBackgroundColor(0);
-                    if (Build.VERSION.SDK_INT >= 11) {
-                        v.getChildAt(i).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    }
-                }*/
-
-                // Add the view to the hierarchy
-                FrameLayout frameLayout = (FrameLayout) webView.getView().getParent();
-
                 annotationView.setVisibility(View.VISIBLE);
+
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int)Math.round(width*displaymetrics.scaledDensity), (int)Math.round(height*displaymetrics.scaledDensity));
                 params.leftMargin = (int)Math.round(x*displaymetrics.scaledDensity);
                 params.topMargin = (int)Math.round(y*displaymetrics.scaledDensity);
 
                 annotationView.setLayoutParams(params);
 
-                frameLayout.addView(annotationView,0);
+                touchView.addView(annotationView,0);
 
                 arViews.put(ctrlID, annotationView);
 
