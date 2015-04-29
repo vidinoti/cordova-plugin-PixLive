@@ -21,6 +21,10 @@
         <clobbers target="cordova.plugins.PixLive" />
     </js-module>
 
+    <js-module name="PixLiveEvent" src="www/PixLiveEvent.js">
+        <runs />
+    </js-module>
+
     <dependency id="cordova-plugin-file" />
 
     <platform name="ios">

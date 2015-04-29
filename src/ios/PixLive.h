@@ -11,7 +11,7 @@
 #import <VDARSDK/VDARSDK.h>
 #import <Cordova/CDV.h>
 
-@interface PixLive : CDVPlugin
+@interface PixLive : CDVPlugin<VDARSDKControllerDelegate>
 
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion;
 

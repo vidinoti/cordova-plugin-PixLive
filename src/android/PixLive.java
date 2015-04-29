@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.util.DisplayMetrics;
@@ -16,11 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.ionicframework.test2887093.MainActivity;
 import com.vidinoti.android.vdarsdk.DeviceCameraImageSender;
 import com.vidinoti.android.vdarsdk.NotificationCompat;
 import com.vidinoti.android.vdarsdk.NotificationFactory;
 import com.vidinoti.android.vdarsdk.VDARAnnotationView;
+import com.vidinoti.android.vdarsdk.VDARCode;
+import com.vidinoti.android.vdarsdk.VDARCodeType;
 import com.vidinoti.android.vdarsdk.VDARPrior;
 import com.vidinoti.android.vdarsdk.VDARRemoteController;
 import com.vidinoti.android.vdarsdk.VDARSDKController;
@@ -29,8 +29,10 @@ import com.vidinoti.android.vdarsdk.VDARTagPrior;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -128,13 +130,21 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             if(!intercepting) {
                 return false;
             } else {
+
                 //Forward it to ar views
                 for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
                     VDARAnnotationView view = s.getValue();
 
+                    float arViewX = view.getLeft();
+                    float arViewY = view.getTop();
+
+                    ev.offsetLocation(-arViewX,-arViewY);
+
                     if(view.dispatchTouchEvent(ev)) {
                         return true;
                     }
+
+                    ev.offsetLocation(arViewX,arViewY);
                 }
                 return false;
             }
@@ -146,6 +156,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private DeviceCameraImageSender imageSender = null;
 
     private TouchInterceptorView touchView = null;
+
+    private CallbackContext eventHandler = null;
 
 
     protected void pluginInitialize() {
@@ -309,9 +321,17 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("setNotificationsSupport") && args.length()>=1) {
             this.setNotificationsSupport(args.getString(0));
             return true;
+        } else if (action.equals("installEventHandler")) {
+            this.installEventHandler(callbackContext);
+            return true;
         }
         return false;
     }
+
+    private void installEventHandler(CallbackContext callback) {
+        this.eventHandler = callback;
+    }
+
 
     private void setNotificationsSupport(String googleProjectKey) {
         VDARSDKController.getInstance().setNotificationsSupport(googleProjectKey!=null, googleProjectKey);
@@ -496,15 +516,16 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
 
-                try {
-                    imageSender = new DeviceCameraImageSender(null);
-                } catch (IOException e) {
-                    VDARSDKController.log(Log.ERROR, TAG, Log.getStackTraceString(e));
+                if(imageSender == null) {
+                    try {
+                        imageSender = new DeviceCameraImageSender(null);
+                    } catch (IOException e) {
+                        VDARSDKController.log(Log.ERROR, TAG, Log.getStackTraceString(e));
+                    }
+
+
+                    VDARSDKController.getInstance().setImageSender(imageSender);
                 }
-
-
-
-                VDARSDKController.getInstance().setImageSender(imageSender);
 
                 VDARAnnotationView annotationView = new VDARAnnotationView(cordova.getActivity());
 
@@ -550,8 +571,45 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     }
 
-    public void onCodesRecognized(java.util.ArrayList<com.vidinoti.android.vdarsdk.VDARCode> arrayList) {
+    private String getCodeTypeAsString(VDARCodeType c) {
+        switch (c) {
+            default:
+            case VDAR_CODE_TYPE_NONE      :   return "none";
+            case VDAR_CODE_TYPE_EAN2      :   return "ean2";
+            case VDAR_CODE_TYPE_EAN5      :   return "ean5";
+            case VDAR_CODE_TYPE_EAN8      :   return "ean8";
+            case VDAR_CODE_TYPE_UPCE      :   return "upce";
+            case VDAR_CODE_TYPE_ISBN10    :   return "isbn10";
+            case VDAR_CODE_TYPE_UPCA      :   return "upca";
+            case VDAR_CODE_TYPE_EAN13     :   return "ean13";
+            case VDAR_CODE_TYPE_ISBN13    :   return "isbn13";
+            case VDAR_CODE_TYPE_COMPOSITE :   return "composite";
+            case VDAR_CODE_TYPE_I25       :   return "i25";
+            case VDAR_CODE_TYPE_CODE39    :   return "code39";
+            case VDAR_CODE_TYPE_QRCODE    :   return "qrcode";
+        }
+    }
 
+    public void onCodesRecognized(java.util.ArrayList<com.vidinoti.android.vdarsdk.VDARCode> arrayList) {
+        if(this.eventHandler != null) {
+            for(VDARCode code : arrayList) {
+                if(!code.isSpecialCode()) {
+                    JSONObject o = new JSONObject();
+
+                    try {
+                        o.put("type", "codeRecognize");
+                        o.put("codeType", getCodeTypeAsString(code.getCodeType()));
+                        o.put("code", code.getCodeData());
+                    } catch (JSONException e) {
+
+                    }
+
+                    PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+                    p.setKeepCallback(true);
+                    this.eventHandler.sendPluginResult(p);
+                }
+            }
+        }
     }
 
     public void onFatalError(java.lang.String s) {
@@ -571,10 +629,36 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     public void onEnterContext(com.vidinoti.android.vdarsdk.VDARContext vdarContext) {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
 
+            try {
+                o.put("type", "enterContext");
+                o.put("context", vdarContext.getRemoteID());
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            this.eventHandler.sendPluginResult(p);
+        }
     }
 
     public void onExitContext(com.vidinoti.android.vdarsdk.VDARContext vdarContext) {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
 
+            try {
+                o.put("type", "exitContext");
+                o.put("context", vdarContext.getRemoteID());
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            this.eventHandler.sendPluginResult(p);
+        }
     }
 }

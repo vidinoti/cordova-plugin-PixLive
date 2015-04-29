@@ -46,6 +46,8 @@ PixLive.createARView = function( originx, originy, width, height ) {
     return new PixLive(handle);
 }
 
+PixLive.onEventReceived = null;
+
 PixLive.init = function( storagePath, licenseKey ) {
 	exec(null, null, "PixLive", "init",  [storagePath, licenseKey ]);
 }

@@ -9,6 +9,7 @@
 
 @implementation PixLive {
     HolesView *touchForwarder;
+    NSString *eventCallbackId;
 }
 
 #pragma mark - Cordova methods
@@ -59,22 +60,6 @@
     }];
     
     return self;
-}
-
--(void)setNotificationsSupport:(CDVInvokedUrlCommand *)command {
-    NSArray* arguments = [command arguments];
-    
-    NSUInteger argc = [arguments count];
-    
-    if (argc < 1) {
-        return;
-    }
-
-    if([arguments objectAtIndex:0] == [NSNull null]) {
-        [VDARSDKController sharedInstance].enableNotifications=NO;
-    } else {
-        [VDARSDKController sharedInstance].enableNotifications=YES;
-    }
 }
 
 -(void)disableTouch:(CDVInvokedUrlCommand *)command {
@@ -166,12 +151,37 @@
     [ctrl viewDidAppear:NO];
     
 }
+
+-(void)setNotificationsSupport:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1) {
+        return;
+    }
+    
+    if([arguments objectAtIndex:0] == [NSNull null]) {
+        [VDARSDKController sharedInstance].enableNotifications=NO;
+    } else {
+        [VDARSDKController sharedInstance].enableNotifications=YES;
+    }
+}
+
+-(void)installEventHandler:(CDVInvokedUrlCommand *)command {
+    eventCallbackId = command.callbackId;
+}
+
 -(void)init:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     
     NSUInteger argc = [arguments count];
     
     if (argc < 2) {
+        return;
+    }
+    
+    if([VDARSDKController sharedInstance]) {
         return;
     }
     
@@ -184,6 +194,8 @@
     MyCameraImageSource *cameraSource=[[MyCameraImageSource alloc] init];
     
     [VDARSDKController sharedInstance].imageSender=cameraSource;
+    
+    [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
 }
 
 - (void) resize:(CDVInvokedUrlCommand *)command
@@ -377,5 +389,62 @@
     
 }
 
+#pragma mark - PixLive SDK Delegate
+
+-(NSString*)codeTypeAsString:(VDARCodeType)t {
+    switch(t) {
+        case VDAR_CODE_TYPE_NONE      :   return @"none";
+        case VDAR_CODE_TYPE_EAN2      :   return @"ean2";
+        case VDAR_CODE_TYPE_EAN5      :   return @"ean5";
+        case VDAR_CODE_TYPE_EAN8      :   return @"ean8";
+        case VDAR_CODE_TYPE_UPCE      :   return @"upce";
+        case VDAR_CODE_TYPE_ISBN10    :   return @"isbn10";
+        case VDAR_CODE_TYPE_UPCA      :   return @"upca";
+        case VDAR_CODE_TYPE_EAN13     :   return @"ean13";
+        case VDAR_CODE_TYPE_ISBN13    :   return @"isbn13";
+        case VDAR_CODE_TYPE_COMPOSITE :   return @"composite";
+        case VDAR_CODE_TYPE_I25       :   return @"i25";
+        case VDAR_CODE_TYPE_CODE39    :   return @"code39";
+        case VDAR_CODE_TYPE_QRCODE    :   return @"qrcode";
+    }
+}
+
+-(void)codesDetected:(NSArray *)codes {
+    if(eventCallbackId) {
+        for (VDARCode* c in codes) {
+            if(!c.isSpecialCode) {
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"codeRecognize", @"code": c.codeData, @"codeType": [self codeTypeAsString:c.codeType]}];
+                
+                pluginResult.keepCallback = @YES;
+                
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+            }
+        }
+    }
+}
+
+-(void)didEnterContext:(VDARContext *)context {
+    if(eventCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"enterContext", @"context": context.remoteID}];
+
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+}
+
+-(void)didExitContext:(VDARContext *)context {
+    if(eventCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"exitContext", @"context": context.remoteID}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+}
+
+-(void)errorOccuredOnModelManager:(NSError*)err {
+    NSLog(@"Error within PixLive SDK: %@",err);
+}
 
 @end
