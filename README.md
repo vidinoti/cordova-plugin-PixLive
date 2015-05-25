@@ -2,7 +2,7 @@
 
 This allows a seamless bridge for using Augmented Reality PixLive SDK into your own Cordova application.
 
-Check http://www.pixlive.info for more information
+Check [http://www.pixlive.info](http://www.pixlive.info) for more information
 
 ## Installation
 
