@@ -24,15 +24,6 @@
     
     return self;
 }
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 -(void)presentModalViewController:(UIViewController *)modalViewController animated:(BOOL)animated {
     [self presentViewController:modalViewController animated:animated completion:nil];
@@ -45,5 +36,19 @@
     
     [plugin presentViewController:viewControllerToPresent animated:flag completion:completion];
 }
+
+-(void)annotationViewDidBecomeEmpty {
+    [super annotationViewDidBecomeEmpty];
+
+    [plugin annotationViewDidBecomeEmpty];
+}
+
+
+-(void)annotationViewDidPresentAnnotations {
+    [super annotationViewDidPresentAnnotations];
+
+    [plugin annotationViewDidPresentAnnotations];
+}
+
 
 @end

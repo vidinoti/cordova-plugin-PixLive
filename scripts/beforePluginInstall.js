@@ -6,7 +6,7 @@ module.exports = function(context) {
 
 	//If iOS and Android already exists, don't do anything
 	if( fs.existsSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'VDARSDK.framework') &&
-		fs.existsSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs')) {
+		fs.existsSync(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'vdarsdk-release.aar')) {
         return true;
     }
 
@@ -94,13 +94,13 @@ module.exports = function(context) {
 	}
 
 	if(!variables['PIXLIVE_SDK_ANDROID_LOCATION']) {
-		console.error("You need to pass the variable PIXLIVE_SDK_ANDROID_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/PixLive/libs\"");
+		console.error("You need to pass the variable PIXLIVE_SDK_ANDROID_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/PixLive/vdarsdk-release.aar\"");
 		return null;
 	}
 
 	try {
 		deleteFolderRecursive(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'VDARSDK.framework');
-		deleteFolderRecursive(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'libs');
+		deleteFolderRecursive(context.opts.plugin.dir+path.sep+'vendor'+path.sep+'PixLive'+path.sep+'vdarsdk-release.aar');
 	} catch(e) {
 
 	}
@@ -147,7 +147,7 @@ module.exports = function(context) {
 			copySync(inFile,outFile, function(error) {
 				if(error) {
 					console.error("Copy error: "+error);
-					throw new Error("Unable to copy PixLive SDK Android libs. Check the path of the PIXLIVE_SDK_ANDROID_LOCATION variable. Given: '"+inFile+"'"); 	
+					throw new Error("Unable to copy PixLive SDK Android AAR library. Check the path of the PIXLIVE_SDK_ANDROID_LOCATION variable. Given: '"+inFile+"'"); 	
 				} else {
 					deferral.resolve();
 				}

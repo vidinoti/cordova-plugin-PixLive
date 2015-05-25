@@ -447,4 +447,25 @@
     NSLog(@"Error within PixLive SDK: %@",err);
 }
 
+-(void)annotationViewDidBecomeEmpty {
+    if(eventCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"hideAnnotations"}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+}
+
+
+-(void)annotationViewDidPresentAnnotations {
+    if(eventCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"presentAnnotations"}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+}
+
 @end

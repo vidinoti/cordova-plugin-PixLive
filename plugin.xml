@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.vidinoti.cordova.pixlive" version="0.0.5">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.vidinoti.cordova.pixlive" version="0.0.6">
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
@@ -11,6 +11,7 @@
         <engine name="cordova" version=">=3.7.0" />
         <engine name="cordova-android" version=">=4.0.0" />
         <engine name="cordova-ios" version=">=3.8.0" />
+        <engine name="cordova-plugman" version=">=4.2.0" /><!-- needed for gradleReference support -->
     </engines>
 
     <info>
@@ -73,22 +74,6 @@
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-feature
-                android:name="android.hardware.camera.autofocus"
-                android:required="false" />
-            <uses-feature android:name="android.hardware.telephony" android:required="false" />
-            
-            <uses-permission android:name="android.permission.VIBRATE" />
-            <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-            <uses-permission android:name="android.permission.CAMERA" />
-            <uses-permission android:name="android.permission.INTERNET" />
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-            <uses-permission android:name="android.permission.WAKE_LOCK" />
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-            <uses-permission android:name="android.permission.CALL_PHONE" />
-            
              <!--  Permissions for notifications -->
             <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
             <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -96,36 +81,9 @@
             <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE"
                 android:protectionLevel="signature" />
             <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
-            
-            <!--  Permission for beacon -->
-            <uses-permission android:name="android.permission.BLUETOOTH" />
-            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <activity
-                android:configChanges="orientation|keyboardHidden"
-                android:name="com.vidinoti.android.vdarsdk.VDARModalWebView"
-                android:label="web_view"
-                android:launchMode="standard"
-                android:theme="@android:style/Theme.NoTitleBar" >
-            </activity>
-            <activity
-                android:configChanges="orientation|keyboardHidden"
-                android:name="com.vidinoti.android.vdarsdk.MoviePlayerActivity"
-                android:label="movie_player"
-                android:launchMode="standard"
-                android:theme="@android:style/Theme.NoTitleBar" >
-            </activity>
-
-            <!-- Custom internal Facebook & Twitter Share View -->
-            <activity android:name="com.vidinoti.android.vdarsdk.VDARFacebookShareActivity"
-                      android:label="Social share"
-                      android:launchMode="standard"
-                android:configChanges="orientation|keyboardHidden" 
-                android:theme="@android:style/Theme.NoTitleBar">
-            </activity>
             
             <!--<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>-->
             
@@ -142,39 +100,19 @@
             -->
 
             <!-- For beacons -->
-            <service android:enabled="true"
-                android:exported="true"
-                android:isolatedProcess="false"
-                android:label="beacon"
-                android:name="com.vidinoti.vidibeacon.service.BeaconService"
-                />
-
-            <service android:enabled="true"
-                android:name="com.vidinoti.vidibeacon.BeaconIntentProcessor"
-                />
 
             <receiver android:name="com.vidinoti.android.pixliveplayer.StartSDKReceiver">
                 <intent-filter>
                     <action android:name="com.vidinoti.android.pixliveplayer.START_SDK"/>
                 </intent-filter>
             </receiver>
-            <receiver android:name="com.vidinoti.vidibeacon.startup.StartupBroadcastReceiver">
-                <intent-filter>
-                    <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                    <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-                    <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
-                </intent-filter>
-            </receiver>
         </config-file>
 
         <source-file src="src/android/PixLive.java" target-dir="src/com/vidinoti/pixlive/PixLive" />
-        <source-file src="vendor/PixLive/libs/vdarsdk.jar" target-dir="libs" />
-        <source-file src="vendor/PixLive/libs/google-play-services.jar" target-dir="libs" />
-        <source-file src="vendor/PixLive/libs/facebook_sdk_3.8.0.jar" target-dir="libs" />
-        <source-file src="vendor/PixLive/libs/android-support-v4.jar" target-dir="libs" />
-        <source-file src="vendor/PixLive/libs/armeabi-v7a/libVDARSDKEngine.so" target-dir="libs/armeabi-v7a" />
-        <source-file src="vendor/PixLive/libs/armeabi-v7a/libVDARSDKEngineNoNEON.so" target-dir="libs/armeabi-v7a" />
-        <source-file src="vendor/PixLive/libs/armeabi-v7a/libCPUFeatureJava.so" target-dir="libs/armeabi-v7a" />
+
+        <source-file src="vendor/PixLive/vdarsdk-release.aar" target-dir="libs" />
+        <framework src="src/android/vdarsdk.gradle" custom="true" type="gradleReference" />
+
         <hook type="before_plugin_install" src="scripts/beforePluginInstall.js" />
     </platform>
 </plugin>

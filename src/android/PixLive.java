@@ -222,17 +222,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             @Override
             public Notification createNotification(String title, String message, String notificationID) {
-                return createNotification(title,message,notificationID,true);
-            }
-
-            @Override
-            public Notification createNotification(String title, String message, String notificationID, boolean needARView) {
 
                 Intent appIntent = c.getPackageManager().getLaunchIntentForPackage(c.getPackageName());
 
                 appIntent.putExtra("nid", notificationID);
                 appIntent.putExtra("remote", false);
-                appIntent.putExtra("needARView", needARView);
 
                 PendingIntent contentIntent = PendingIntent.getActivity(c, 0,
                         appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -617,14 +611,38 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     public void onPresentAnnotations() {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
 
+            try {
+                o.put("type", "presentAnnotations");
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            this.eventHandler.sendPluginResult(p);
+        }
     }
 
     public void onAnnotationsHidden() {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
 
+            try {
+                o.put("type", "hideAnnotations");
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            this.eventHandler.sendPluginResult(p);
+        }
     }
 
-    public void onTrackingStarted(int i, int i1) {
+    public void onTrackingStarted(int w, int h) {
 
     }
 

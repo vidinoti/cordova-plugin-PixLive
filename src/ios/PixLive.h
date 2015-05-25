@@ -14,6 +14,8 @@
 @interface PixLive : CDVPlugin<VDARSDKControllerDelegate>
 
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion;
+-(void)annotationViewDidBecomeEmpty;
+-(void)annotationViewDidPresentAnnotations;
 
 @property (nonatomic,readonly,strong)  NSMutableDictionary *arViewControllers;
 @property (nonatomic,readonly,strong)  NSMutableDictionary *arViewSettings;

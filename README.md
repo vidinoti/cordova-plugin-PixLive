@@ -6,8 +6,8 @@ Check http://www.pixlive.info for more information
 
 ## Installation
 
-Install the plugin by passing VDARSDK.framework and libs/ directory of the PixLive SDK to the plugin installation command line:
+Install the plugin by passing the VDARSDK.framework and vdarsdk-release.aar file of the PixLive SDK to the plugin installation command line:
 
 ```bash
-cordova plugin add com.vidinoti.cordova.pixlive --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/libs\"
+cordova plugin add com.vidinoti.cordova.pixlive --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/vdarsdk-release.aar\"
 ```
