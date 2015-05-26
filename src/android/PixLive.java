@@ -542,6 +542,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 annotationView.onResume();
 
+                enableTouch();
+
             }
         });
     }
