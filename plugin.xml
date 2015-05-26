@@ -83,9 +83,9 @@
             <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+        <!--<config-file target="AndroidManifest.xml" parent="/manifest/application">
             
-            <!--<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>-->
+            <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>-->
             
             <!-- For notifications 
              <receiver
@@ -97,17 +97,10 @@
                 </intent-filter>
             </receiver>
             <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-            -->
-
-            <!-- For beacons -->
-
-            <receiver android:name="com.vidinoti.android.pixliveplayer.StartSDKReceiver">
-                <intent-filter>
-                    <action android:name="com.vidinoti.android.pixliveplayer.START_SDK"/>
-                </intent-filter>
-            </receiver>
+            
         </config-file>
-
+        -->
+        
         <source-file src="src/android/PixLive.java" target-dir="src/com/vidinoti/pixlive/PixLive" />
 
         <source-file src="vendor/PixLive/vdarsdk-release.aar" target-dir="libs" />
