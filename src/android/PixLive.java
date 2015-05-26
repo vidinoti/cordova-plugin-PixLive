@@ -82,16 +82,16 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         @Override
         public boolean onInterceptTouchEvent (MotionEvent ev) {
 
+            if(!intercepting && (!touchEnabled || arViews.size()==0)) {
+                return super.onInterceptTouchEvent(ev);
+            }
+
             //We are already intercepting this
             if(intercepting && ev.getAction() != MotionEvent.ACTION_DOWN) {
                 return true;
             }
 
             intercepting = false;
-
-            if(!touchEnabled || arViews.size()==0) {
-                return false;
-            }
 
             int thisViewLeft = getRelativeLeft(this);
             int thisViewTop = getRelativeTop(this);
@@ -122,13 +122,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 }
             }
 
-            return false;
+            return super.onInterceptTouchEvent(ev);
         }
 
         @Override
         public boolean onTouchEvent (MotionEvent ev) {
             if(!intercepting) {
-                return false;
+                return super.onTouchEvent(ev);
             } else {
 
                 //Forward it to ar views
@@ -168,21 +168,18 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 {
                     View v = webView.getView();
 
+                    FrameLayout parent = ((FrameLayout) v.getParent());
+                    parent.removeView(v);
 
                     touchView = new TouchInterceptorView(cordova.getActivity());
 
                     touchView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-                    FrameLayout parent = ((FrameLayout) v.getParent());
-                    parent.removeView(v);
+                    cordova.getActivity().setContentView(touchView);
+
                     touchView.addView(v);
-                    parent.addView(touchView);
 
                     v.setBackgroundColor(Color.TRANSPARENT);
-
-                    if (Build.VERSION.SDK_INT >= 11) {
-                        v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    }
                 }
             }
         });
