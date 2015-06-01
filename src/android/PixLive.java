@@ -232,12 +232,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(c)
-                                .setSmallIcon(ai.icon!=0 ? ai.icon : android.R.drawable.star_big_off)
+                                .setSmallIcon(ai.icon != 0 ? ai.icon : android.R.drawable.star_big_off)
                                 .setContentTitle(title)
                                 .setContentText(message)
                                 .setContentIntent(contentIntent)
                                 .setAutoCancel(true)
-                                .setVibrate(new long[] { 100, 200, 200, 400 })
+                                .setVibrate(new long[]{100, 200, 200, 400})
                                 .setLights(Color.BLUE, 500, 1500);
 
                 mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
@@ -246,6 +246,24 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             }
         });
 
+    }
+
+    public void onReset() {
+        VDARSDKController.getInstance().onPause();
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                for (VDARAnnotationView view : arViews.values()) {
+
+                    view.onPause();
+
+                    if (view.getParent() != null) {
+                        touchView.removeView(view);
+                    }
+                }
+                arViews.clear();
+            }
+        });
     }
 
     @Override
@@ -541,8 +559,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 VDARSDKController.getInstance().onResume();
 
                 annotationView.onResume();
-
-                enableTouch();
 
             }
         });

@@ -330,8 +330,6 @@
         [touchForwarder addSubview:webView];
         
         [superview addSubview:touchForwarder];
-        
-        touchForwarder.arTouchEnabled = YES;
     }
     
     self.arViewSettings[[NSNumber numberWithUnsignedInteger:ctrlID]] = val;
