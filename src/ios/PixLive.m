@@ -7,6 +7,53 @@
 #import "IonicARViewController.h"
 #import "HolesView.h"
 
+@interface AppDelegate (VDARAPPRegisterUserNotificationSettings)
+
+// Tells the delegate what types of notifications may be used
+- (void)                    application:(UIApplication*)application
+    didRegisterUserNotificationSettings:(UIUserNotificationSettings*)settings;
+
+@end
+
+
+static NSString* const VDARApplicationRegisterUserNotificationSettings = @"UIApplicationRegisterUserNotificationSettings";
+
+@implementation AppDelegate (VDARAPPRegisterUserNotificationSettings)
+
+/**
+ * Tells the delegate what types of notifications may be used
+ * to get the user’s attention.
+ */
+- (void) application:(UIApplication*)application
+    didRegisterUserNotificationSettings:(UIUserNotificationSettings*)settings
+{
+    NSNotificationCenter* center = [NSNotificationCenter
+                                    defaultCenter];
+    
+    // re-post (broadcast)
+    [center postNotificationName:VDARApplicationRegisterUserNotificationSettings
+                          object:settings];
+}
+
+
+- (void)application:(UIApplication * nonnull)application
+didReceiveRemoteNotification:(NSDictionary * nonnull)userInfo
+fetchCompletionHandler:(void (^ nonnull)(UIBackgroundFetchResult result))handler {
+    if(application.applicationState==UIApplicationStateInactive || application.applicationState==UIApplicationStateActive) {
+        [[VDARSDKController sharedInstance] application:application didReceiveRemoteNotification:userInfo];
+    }
+
+    handler(UIBackgroundFetchResultNoData);
+}
+
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void(^)())completionHandler
+{
+    [[VDARSDKController sharedInstance] application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo completionHandler:completionHandler];
+}
+
+@end
+
+
 @implementation PixLive {
     HolesView *touchForwarder;
     NSString *eventCallbackId;
@@ -42,6 +89,13 @@
     [self.arViewSettings removeAllObjects];
 }
 
+
+#pragma mark - Notifications methods
+
+- (void)application:(UIApplication *)app didFailToRegisterForRemoteNotificationsWithError:(NSError *)err {
+    [[VDARSDKController sharedInstance] application:app didFailToRegisterForRemoteNotificationsWithError:err];
+}
+
 #pragma mark - Plugin methods
 
 -(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
@@ -57,6 +111,18 @@
     [[NSNotificationCenter defaultCenter] addObserverForName:CDVPageDidLoadNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         self.webView.backgroundColor = [UIColor clearColor];
         self.webView.opaque = NO;
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:CDVRemoteNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:note.object];
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:CDVRemoteNotificationError object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didFailToRegisterForRemoteNotificationsWithError:note.object];
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:VDARApplicationRegisterUserNotificationSettings object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
     }];
     
     return self;
@@ -245,7 +311,6 @@
         [ctrl didRotateFromInterfaceOrientation:o];
     }
 }
-
 
 -(void)destroy:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
