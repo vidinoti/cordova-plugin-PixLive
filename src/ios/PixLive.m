@@ -6,6 +6,7 @@
 #import "MyCameraImageSource.h"
 #import "IonicARViewController.h"
 #import "HolesView.h"
+#import "AppDelegate.h"
 
 @interface AppDelegate (VDARAPPRegisterUserNotificationSettings)
 
@@ -36,9 +37,9 @@ static NSString* const VDARApplicationRegisterUserNotificationSettings = @"UIApp
 }
 
 
-- (void)application:(UIApplication * nonnull)application
-didReceiveRemoteNotification:(NSDictionary * nonnull)userInfo
-fetchCompletionHandler:(void (^ nonnull)(UIBackgroundFetchResult result))handler {
+- (void)application:(UIApplication *)application
+didReceiveRemoteNotification:(NSDictionary *)userInfo
+fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
     if(application.applicationState==UIApplicationStateInactive || application.applicationState==UIApplicationStateActive) {
         [[VDARSDKController sharedInstance] application:application didReceiveRemoteNotification:userInfo];
     }
