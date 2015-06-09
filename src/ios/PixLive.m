@@ -55,6 +55,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 @implementation PixLive {
     HolesView *touchForwarder;
     NSString *eventCallbackId;
+    NSDictionary *launchDictToProcess;
 }
 
 #pragma mark - Cordova methods
@@ -142,6 +143,20 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [[NSNotificationCenter defaultCenter] addObserverForName:VDARApplicationRegisterUserNotificationSettings object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     }];
+    
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notif) {
+        if([notif.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
+            if(![VDARSDKController sharedInstance]) {
+                launchDictToProcess = notif.userInfo;
+            } else {
+                [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:notif.userInfo[UIApplicationLaunchOptionsRemoteNotificationKey]];
+            }
+        }
+
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }];
+    
+    
     
     return self;
 }
@@ -280,6 +295,17 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [VDARSDKController sharedInstance].imageSender=cameraSource;
     
     [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
+    
+    if(launchDictToProcess) {
+        NSDictionary *d = launchDictToProcess;
+        launchDictToProcess = nil;
+        [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:d[UIApplicationLaunchOptionsRemoteNotificationKey]];
+            });
+        }];
+    }
+    
 }
 
 - (void) resize:(CDVInvokedUrlCommand *)command

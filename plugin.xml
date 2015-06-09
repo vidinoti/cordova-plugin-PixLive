@@ -32,6 +32,7 @@
         <config-file parent="/*" target="config.xml">
             <feature name="PixLive">
                 <param name="ios-package" value="PixLive" />
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 
@@ -71,6 +72,7 @@
         <config-file parent="/*" target="res/xml/config.xml">
             <feature name="PixLive">
                 <param name="android-package" value="com.vidinoti.pixlive.PixLive" />
+                <param name="onload" value="true" />
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest">
