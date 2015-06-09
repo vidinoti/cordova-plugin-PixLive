@@ -38,13 +38,10 @@ static NSString* const VDARApplicationRegisterUserNotificationSettings = @"UIApp
 
 
 - (void)application:(UIApplication *)application
-didReceiveRemoteNotification:(NSDictionary *)userInfo
-fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
+didReceiveRemoteNotification:(NSDictionary *)userInfo {
     if(application.applicationState==UIApplicationStateInactive || application.applicationState==UIApplicationStateActive) {
         [[VDARSDKController sharedInstance] application:application didReceiveRemoteNotification:userInfo];
     }
-
-    handler(UIBackgroundFetchResultNoData);
 }
 
 - (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void(^)())completionHandler
