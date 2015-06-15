@@ -31,7 +31,7 @@ public class GcmService extends GcmListenerService {
 
         appIntent.putExtra("nid", nid).putExtra("remote",true);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, appIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         int stringId = getApplicationInfo().labelRes;
 
