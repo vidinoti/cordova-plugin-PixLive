@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.media.RingtoneManager;
-import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -163,9 +162,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     protected void pluginInitialize() {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                if (touchView == null)
-
-                {
+                if (touchView == null) {
                     View v = webView.getView();
 
                     FrameLayout parent = ((FrameLayout) v.getParent());
@@ -210,7 +207,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             return;
         }
 
-        VDARSDKController.startSDK(c, storage,  licenseKey);
+        VDARSDKController.startSDK(c, storage, licenseKey);
 
         /* Comment out to disable QR code detection */
         VDARSDKController.getInstance().setEnableCodesRecognition(true);
@@ -245,11 +242,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 return mBuilder.getNotification();
             }
         });
-
     }
 
     public void onReset() {
-        VDARSDKController.getInstance().onPause();
+        if(VDARSDKController.getInstance()!=null) {
+            VDARSDKController.getInstance().onPause();
+        }
+
 
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
@@ -264,6 +263,17 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 arViews.clear();
             }
         });
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        if (intent != null && intent.getExtras() != null
+                && intent.getExtras().getString("nid") != null) {
+
+            VDARSDKController.getInstance().processNotification(
+                    intent.getExtras().getString("nid"),
+                    intent.getExtras().getBoolean("remote"));
+        }
     }
 
     @Override
@@ -578,6 +588,20 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         VDARSDKController.getInstance().setActivity(cordova.getActivity());
         VDARSDKController.getInstance().registerEventReceiver(this);
 
+        VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = cordova.getActivity().getIntent();
+
+                if (intent != null && intent.getExtras() != null
+                        && intent.getExtras().getString("nid") != null) {
+
+                    VDARSDKController.getInstance().processNotification(
+                            intent.getExtras().getString("nid"),
+                            intent.getExtras().getBoolean("remote"));
+                }
+            }
+        });
     }
 
     private String getCodeTypeAsString(VDARCodeType c) {
