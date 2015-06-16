@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.gcm.GcmListenerService;
-import com.ionicframework.test2194887.R;
 
 /**
  * Service used for receiving GCM messages. When a message is received this service will log it.
@@ -35,8 +34,10 @@ public class GcmService extends GcmListenerService {
 
         int stringId = getApplicationInfo().labelRes;
 
+        ApplicationInfo ai = getApplicationInfo();
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                this).setSmallIcon(R.drawable.icon)
+                this).setSmallIcon(ai.icon!=0 ? ai.icon : android.R.drawable.star_big_off)
                 .setContentTitle(getString(stringId))
                 .setContentText(message).setContentIntent(contentIntent).setAutoCancel(true);
 
