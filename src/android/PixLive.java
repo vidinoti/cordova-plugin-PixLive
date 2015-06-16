@@ -268,7 +268,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     @Override
     public void onNewIntent(Intent intent) {
         if (intent != null && intent.getExtras() != null
-                && intent.getExtras().getString("nid") != null) {
+                && intent.getExtras().getString("nid") != null && VDARSDKController.getInstance()!=null) {
 
             VDARSDKController.getInstance().processNotification(
                     intent.getExtras().getString("nid"),
@@ -591,6 +591,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
             @Override
             public void run() {
+
+                VDARSDKController.getInstance().setAppForeground(true);
+
                 Intent intent = cordova.getActivity().getIntent();
 
                 if (intent != null && intent.getExtras() != null
