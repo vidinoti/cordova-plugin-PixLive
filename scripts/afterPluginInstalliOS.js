@@ -50,28 +50,28 @@ module.exports = function(context) {
 
 	var translations = {
 		'en': {
-			"NSCameraUsageDescription":"$APP_NAME uses your camera to recognize articles & images.",
-			"NSLocationAlwaysUsageDescription":"$APP_NAME tailors content based on your location.",
-			"NSLocationUsageDescription":"$APP_NAME tailors content based on your location.",
-			"NSLocationWhenInUseUsageDescription":"$APP_NAME tailors content based on your location."
+			"NSCameraUsageDescription":"${PRODUCT_NAME} uses your camera to recognize articles & images.",
+			"NSLocationAlwaysUsageDescription":"${PRODUCT_NAME} tailors content based on your location.",
+			"NSLocationUsageDescription":"${PRODUCT_NAME} tailors content based on your location.",
+			"NSLocationWhenInUseUsageDescription":"${PRODUCT_NAME} tailors content based on your location."
 		},
 		'fr': {
-			"NSCameraUsageDescription": "$APP_NAME utilise votre caméra pour reconnaître les articles & images.",
-			"NSLocationAlwaysUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
-			"NSLocationUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
-			"NSLocationWhenInUseUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position."
+			"NSCameraUsageDescription": "${PRODUCT_NAME} utilise votre caméra pour reconnaître les articles & images.",
+			"NSLocationAlwaysUsageDescription": "${PRODUCT_NAME} vous fournit du contenu personnalisé en utilisant votre position.",
+			"NSLocationUsageDescription": "${PRODUCT_NAME} vous fournit du contenu personnalisé en utilisant votre position.",
+			"NSLocationWhenInUseUsageDescription": "${PRODUCT_NAME} vous fournit du contenu personnalisé en utilisant votre position."
 		},
 		'de': {
-			"NSCameraUsageDescription": "$APP_NAME verwendet Ihre Kamera, um Artikel und Bilder zu erkennen.",
-			"NSLocationAlwaysUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
-			"NSLocationUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
-			"NSLocationWhenInUseUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort."
+			"NSCameraUsageDescription": "${PRODUCT_NAME} verwendet Ihre Kamera, um Artikel und Bilder zu erkennen.",
+			"NSLocationAlwaysUsageDescription": "${PRODUCT_NAME} liefert den passenden Inhalt zu Ihrem Standort.",
+			"NSLocationUsageDescription": "${PRODUCT_NAME} liefert den passenden Inhalt zu Ihrem Standort.",
+			"NSLocationWhenInUseUsageDescription": "${PRODUCT_NAME} liefert den passenden Inhalt zu Ihrem Standort."
 		},
 		'nl': {
-			"NSCameraUsageDescription": "$APP_NAME gebruikt uw camera om artikels en beelden te herkennen.",
-			"NSLocationAlwaysUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
-			"NSLocationUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
-			"NSLocationWhenInUseUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden."
+			"NSCameraUsageDescription": "${PRODUCT_NAME} gebruikt uw camera om artikels en beelden te herkennen.",
+			"NSLocationAlwaysUsageDescription": "${PRODUCT_NAME} maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
+			"NSLocationUsageDescription": "${PRODUCT_NAME} maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
+			"NSLocationWhenInUseUsageDescription": "${PRODUCT_NAME} maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden."
 
 		}
 	};

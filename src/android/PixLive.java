@@ -6,8 +6,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.RingtoneManager;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -35,8 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -161,6 +161,30 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
 
     protected void pluginInitialize() {
+
+        startSDK(cordova.getActivity());
+
+        VDARSDKController.getInstance().setEnableCodesRecognition(true);
+
+        VDARSDKController.getInstance().setActivity(cordova.getActivity());
+        VDARSDKController.getInstance().registerEventReceiver(this);
+
+        VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
+            @Override
+            public void run() {
+
+                Intent intent = cordova.getActivity().getIntent();
+
+                if (intent != null && intent.getExtras() != null
+                        && intent.getExtras().getString("nid") != null) {
+
+                    VDARSDKController.getInstance().processNotification(
+                            intent.getExtras().getString("nid"),
+                            intent.getExtras().getBoolean("remote"));
+                }
+            }
+        });
+
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 if (touchView == null) {
@@ -183,24 +207,28 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         });
     }
 
-    static void startSDK(final Context c, String storage, String licenseKey) {
+    static void startSDK(final Context c) {
 
         if(VDARSDKController.getInstance()!=null) {
             return;
         }
 
-        if(storage != null) {
-            // Save the storage path in the settings
-            c.getSharedPreferences("pixlive",Context.MODE_PRIVATE).edit().putString("pixlive.sdk.storagedir",storage);
-        } else {
-            storage = c.getSharedPreferences("pixlive",Context.MODE_PRIVATE).getString("pixlive.sdk.storagedir",null);
-        }
 
-        if(licenseKey != null) {
-            // Save the storage path in the settings
-            c.getSharedPreferences("pixlive",Context.MODE_PRIVATE).edit().putString("pixlive.sdk.licensekey",licenseKey);
-        } else {
-            licenseKey = c.getSharedPreferences("pixlive",Context.MODE_PRIVATE).getString("pixlive.sdk.licensekey",null);
+        String storage = c.getApplicationContext().getFilesDir()
+                .getAbsolutePath() + "/pixliveSDK";
+        
+        String licenseKey = null;
+
+        try {
+            ApplicationInfo ai = c.getPackageManager().getApplicationInfo(c.getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = ai.metaData;
+            licenseKey = bundle.getString("com.vidinoti.pixlive.LicenseKey");
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG,"Unable to start PixLive SDK without valid storage and license key.");
+            return;
+        } catch (NullPointerException e) {
+            Log.e(TAG,"Unable to start PixLive SDK without valid storage and license key.");
+            return;        
         }
 
         if(storage == null || licenseKey == null) {
@@ -279,12 +307,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals("init") && args.length()>=2) {
-            String url = args.getString(0);
-            String key = args.getString(1);
-            this.init(url,key, callbackContext);
-            return true;
-        } else if (action.equals("createARView") && args.length()>=5) {
+        if (action.equals("createARView") && args.length()>=5) {
             int x = args.getInt(0);
             int y = args.getInt(1);
             int width = args.getInt(2);
@@ -584,39 +607,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 annotationView.onResume();
 
-            }
-        });
-    }
-
-    private void init(String storageURL, String licenseKey, CallbackContext callbackContext) {
-
-        try {
-            startSDK(cordova.getActivity(), new URL(storageURL).getPath(), licenseKey);
-        } catch(MalformedURLException e) {
-            VDARSDKController.log(Log.ERROR,TAG,"Invalid storage URL: "+storageURL+". PixLive SDK cannot start.");
-            return;
-        }
-
-        VDARSDKController.getInstance().setEnableCodesRecognition(true);
-
-        VDARSDKController.getInstance().setActivity(cordova.getActivity());
-        VDARSDKController.getInstance().registerEventReceiver(this);
-
-        VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
-            @Override
-            public void run() {
-
-                VDARSDKController.getInstance().setAppForeground(true);
-
-                Intent intent = cordova.getActivity().getIntent();
-
-                if (intent != null && intent.getExtras() != null
-                        && intent.getExtras().getString("nid") != null) {
-
-                    VDARSDKController.getInstance().processNotification(
-                            intent.getExtras().getString("nid"),
-                            intent.getExtras().getBoolean("remote"));
-                }
             }
         });
     }

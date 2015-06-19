@@ -55,7 +55,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 @implementation PixLive {
     HolesView *touchForwarder;
     NSString *eventCallbackId;
-    NSDictionary *launchDictToProcess;
 }
 
 #pragma mark - Cordova methods
@@ -96,7 +95,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 }
 
 - (void)didReceiveLocalNotification:(NSNotification *)notification {
-    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveLocalNotification:notification.userInfo[UIApplicationLaunchOptionsLocalNotificationKey]];
+    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveLocalNotification:notification.object];
 }
 
 #pragma mark - Plugin methods
@@ -128,11 +127,32 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     self.webView.backgroundColor = [UIColor clearColor];
     self.webView.opaque = NO;
+
+    NSDictionary* infoDict = [[NSBundle mainBundle] infoDictionary];
+
+    NSString* apiKey = [infoDict objectForKey:@"PixLiveLicense"];
+
+    if(!apiKey || apiKey.length==0) {
+        [NSException raise:@"No API Key in Info.plist for PixLive SDK" format:@"No API Key in Info.plist for PixLive SDK"];
+    }
+
+    NSString *modelDir=[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"pixliveSDK"];
+    
+    [VDARSDKController startSDK:modelDir withLicenseKey:apiKey];
+    
+    [VDARSDKController sharedInstance].enableCodesRecognition=YES;
+    
+    MyCameraImageSource *cameraSource=[[MyCameraImageSource alloc] init];
+    
+    [VDARSDKController sharedInstance].imageSender=cameraSource;
+    
+    [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
     
     [[NSNotificationCenter defaultCenter] addObserverForName:CDVPageDidLoadNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         self.webView.backgroundColor = [UIColor clearColor];
         self.webView.opaque = NO;
     }];
+
 
     [[NSNotificationCenter defaultCenter] addObserverForName:CDVRemoteNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         NSData *d = [self dataWithHexString:note.object];
@@ -149,24 +169,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notif) {
-        if([notif.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] || [notif.userInfo objectForKey:UIApplicationLaunchOptionsLocalNotificationKey]) {
-            if(![VDARSDKController sharedInstance]) {
-                launchDictToProcess = notif.userInfo;
-            } else {
-                if([notif.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey])
-                    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:notif.userInfo[UIApplicationLaunchOptionsRemoteNotificationKey]];
-            
-                if([notif.userInfo objectForKey:UIApplicationLaunchOptionsLocalNotificationKey])
-                    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveLocalNotification:notif.userInfo[UIApplicationLaunchOptionsLocalNotificationKey]];
-            
-            }
-        }
-
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    }];
-    
     
     
     return self;
@@ -280,46 +282,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 -(void)installEventHandler:(CDVInvokedUrlCommand *)command {
     eventCallbackId = command.callbackId;
-}
-
--(void)init:(CDVInvokedUrlCommand *)command {
-    NSArray* arguments = [command arguments];
-    
-    NSUInteger argc = [arguments count];
-    
-    if (argc < 2) {
-        return;
-    }
-    
-    if([VDARSDKController sharedInstance]) {
-        return;
-    }
-    
-    NSURL *url = [NSURL URLWithString:arguments[0]];
-    
-    [VDARSDKController startSDK:[url path] withLicenseKey:arguments[1]];
-    
-    [VDARSDKController sharedInstance].enableCodesRecognition=YES;
-    
-    MyCameraImageSource *cameraSource=[[MyCameraImageSource alloc] init];
-    
-    [VDARSDKController sharedInstance].imageSender=cameraSource;
-    
-    [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
-    
-    if(launchDictToProcess) {
-        NSDictionary *d = launchDictToProcess;
-        launchDictToProcess = nil;
-        [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if(d[UIApplicationLaunchOptionsRemoteNotificationKey])
-                    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:d[UIApplicationLaunchOptionsRemoteNotificationKey]];
-                if(d[UIApplicationLaunchOptionsLocalNotificationKey])
-                     [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveLocalNotification:d[UIApplicationLaunchOptionsLocalNotificationKey]];
-            });
-        }];
-    }
-    
 }
 
 - (void) resize:(CDVInvokedUrlCommand *)command

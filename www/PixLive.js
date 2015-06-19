@@ -48,10 +48,6 @@ PixLive.createARView = function( originx, originy, width, height ) {
 
 PixLive.onEventReceived = null;
 
-PixLive.init = function( storagePath, licenseKey ) {
-	exec(null, null, "PixLive", "init",  [storagePath, licenseKey ]);
-}
-
 PixLive.setNotificationsSupport = function( enabled, apiKey ) {
 	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? (apiKey ? apiKey : true) : null]);
 }
