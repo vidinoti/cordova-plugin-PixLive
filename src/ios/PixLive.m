@@ -496,6 +496,22 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
 }
 
+- (void) presentNotificationsList:(CDVInvokedUrlCommand *)command
+{
+    
+    NSInteger l= [[VDARSDKController sharedInstance].pendingNotifications count];
+    NSLog(@"length notification: %ld",(long)l);
+    
+    CDVPluginResult* pluginResult = nil;
+    if (0==[[VDARSDKController sharedInstance].pendingNotifications count]) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"empty"];
+    } else {
+        [[VDARSDKController sharedInstance] presentNotificationsList];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 #pragma mark - PixLive SDK Delegate
 
 -(NSString*)codeTypeAsString:(VDARCodeType)t {

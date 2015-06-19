@@ -60,6 +60,10 @@ PixLive.synchronize = function( tags, success, error ) {
 	exec(success, error, "PixLive", "synchronize",  [tags]);
 }
 
+PixLive.presentNotificationsList = function(success, error) {
+	exec(success, error, "PixLive", "presentNotificationsList",  []);
+}
+
 var PixLiveInstance = new PixLive();
 
 module.exports = PixLive;

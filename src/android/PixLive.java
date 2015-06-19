@@ -1,3 +1,4 @@
+
 package com.vidinoti.pixlive;
 
 import android.app.Notification;
@@ -343,6 +344,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("installEventHandler")) {
             this.installEventHandler(callbackContext);
             return true;
+        }else if (action.equals("presentNotificationsList")) {
+            this.presentNotificationsList(callbackContext);
+            return true;
         }
         return false;
     }
@@ -407,6 +411,16 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 view.onResume();
                 VDARSDKController.getInstance().onResume();
             }
+        }
+    }
+
+    private void presentNotificationsList(final CallbackContext callbackContext) {
+
+        if(0 == VDARSDKController.getInstance().getPendingNotifications().size()){
+            callbackContext.error("empty");
+        }else{
+            callbackContext.success();
+            VDARSDKController.getInstance().presentNotificationsList();
         }
     }
 
@@ -712,6 +726,31 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             try {
                 o.put("type", "exitContext");
                 o.put("context", vdarContext.getRemoteID());
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            this.eventHandler.sendPluginResult(p);
+        }
+    }
+
+    public void onRequireSynchronization(ArrayList<com.vidinoti.android.vdarsdk.VDARPrior> priors) {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
+
+            try {
+                 JSONArray arr = new JSONArray();
+
+                 for(VDARPrior p : priors) {
+                    if(p instanceof VDARTagPrior) {
+                        arr.put(((VDARTagPrior)p).getTag());
+                    }
+                 }
+
+                o.put("type", "requireSync");
+                o.put("tags", arr);
             } catch (JSONException e) {
 
             }
