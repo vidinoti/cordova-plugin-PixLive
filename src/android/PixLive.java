@@ -721,4 +721,29 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             this.eventHandler.sendPluginResult(p);
         }
     }
+
+    public void onRequireSynchronization(ArrayList<com.vidinoti.android.vdarsdk.VDARPrior> priors) {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
+
+            try {
+                 JSONArray arr = new JSONArray();
+
+                 for(VDARPrior p : priors) {
+                    if(p instanceof VDARTagPrior) {
+                        arr.put(((VDARTagPrior)p).getTag());
+                    }
+                 }
+
+                o.put("type", "requireSync");
+                o.put("tags", arr);
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            this.eventHandler.sendPluginResult(p);
+        }
+    }
 }
