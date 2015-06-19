@@ -570,6 +570,26 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog(@"Error within PixLive SDK: %@",err);
 }
 
+-(void)contextDidRequireSynchronization:(NSArray*)priors {
+    if(eventCallbackId) {
+
+        NSMutableArray *tags = [NSMutableArray array];
+
+        for(VDARPrior *p in priors) {
+            if([p isKindOfClass:[VDARTagPrior class]]) {
+                VDARTagPrior * tag = (VDARTagPrior*)p;
+                [tags addObject:tag.tagName];
+            }
+        }
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"requireSync", @"tags": tags}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+}
+
 -(void)annotationViewDidBecomeEmpty {
     if(eventCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"hideAnnotations"}];
