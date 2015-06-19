@@ -95,6 +95,10 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [[VDARSDKController sharedInstance] application:app didFailToRegisterForRemoteNotificationsWithError:err];
 }
 
+- (void)didReceiveLocalNotification:(NSNotification *)notification {
+    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveLocalNotification:notification.userInfo[UIApplicationLaunchOptionsLocalNotificationKey]];
+}
+
 #pragma mark - Plugin methods
 
 -(NSData*)dataWithHexString:(NSString *)hex
@@ -143,13 +147,20 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [[NSNotificationCenter defaultCenter] addObserverForName:VDARApplicationRegisterUserNotificationSettings object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notif) {
-        if([notif.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
+        if([notif.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] || [notif.userInfo objectForKey:UIApplicationLaunchOptionsLocalNotificationKey]) {
             if(![VDARSDKController sharedInstance]) {
                 launchDictToProcess = notif.userInfo;
             } else {
-                [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:notif.userInfo[UIApplicationLaunchOptionsRemoteNotificationKey]];
+                if([notif.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey])
+                    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:notif.userInfo[UIApplicationLaunchOptionsRemoteNotificationKey]];
+            
+                if([notif.userInfo objectForKey:UIApplicationLaunchOptionsLocalNotificationKey])
+                    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveLocalNotification:notif.userInfo[UIApplicationLaunchOptionsLocalNotificationKey]];
+            
             }
         }
 
@@ -301,7 +312,10 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         launchDictToProcess = nil;
         [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:d[UIApplicationLaunchOptionsRemoteNotificationKey]];
+                if(d[UIApplicationLaunchOptionsRemoteNotificationKey])
+                    [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:d[UIApplicationLaunchOptionsRemoteNotificationKey]];
+                if(d[UIApplicationLaunchOptionsLocalNotificationKey])
+                     [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveLocalNotification:d[UIApplicationLaunchOptionsLocalNotificationKey]];
             });
         }];
     }
