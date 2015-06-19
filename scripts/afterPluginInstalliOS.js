@@ -32,7 +32,7 @@ module.exports = function(context) {
 		var k = Object.keys(loc);
 
 		for(var i = 0; i < k.length; i++) {
-			fs.writeSync(fd,  '"'+k[i].replace('"',"\\\"")+'" = "'+loc[k[i]].replace('"',"\\\"")+'";'+"\n",null,'utf-8');
+			fs.writeSync(fd,  '"'+k[i].replace(/"/g,"\\\"")+'" = "'+loc[k[i]].replace(/"/g,"\\\"")+'";'+"\n",null,'utf-8');
 		}
 
 		fs.closeSync(fd);
@@ -82,6 +82,27 @@ module.exports = function(context) {
 
 	var languages = Object.keys(translations);
 
+	if (typeof String.prototype.endsWith !== 'function') {
+	    String.prototype.endsWith = function(suffix) {
+	        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+	    };
+	}
+
+	//Replace the info.plist
+	var files = fs.readdirSync(xcodeProjectPath);
+	for(var i = 0;i<files.length;i++) {
+		if(files[i].endsWith('-Info.plist')) {
+			console.log('Changing app name in '+path.join(xcodeProjectPath,files[i]));
+			var file = fs.readFileSync(path.join(xcodeProjectPath,files[i]), 'utf-8');
+
+			file = file.replace(/\$APP_NAME/g,xcodeProjectName);
+			var fd = fs.openSync(path.join(xcodeProjectPath,files[i]), 'w');
+			fs.writeSync(fd,file);
+			fs.closeSync(fd);
+			break;
+		}
+	}
+
 	for(var i = 0; i<languages.length; i++) {
 		var f = path.join(xcodeProjectPath,languages[i]+'.lproj','InfoPlist.strings');
 		try {
@@ -97,7 +118,7 @@ module.exports = function(context) {
 		var locStrings = Object.keys(translations[languages[i]]);
 
 		for(var j = 0; j < locStrings.length; j++) {
-			loc[locStrings[j]] = translations[languages[i]][locStrings[j]].replace('$APP_NAME',xcodeProjectName);
+			loc[locStrings[j]] = translations[languages[i]][locStrings[j]].replace(/\$APP_NAME/g,xcodeProjectName);
 		}
 
 		//Write it back
