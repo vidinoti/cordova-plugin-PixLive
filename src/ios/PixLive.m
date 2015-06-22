@@ -167,7 +167,15 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [[NSNotificationCenter defaultCenter] addObserverForName:VDARApplicationRegisterUserNotificationSettings object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     }];
-
+    
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notif) {
+        NSDictionary *userInfo = notif.userInfo;
+        
+        if([userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
+            [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didReceiveRemoteNotification:[userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
+        }
+    }];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
     
     
