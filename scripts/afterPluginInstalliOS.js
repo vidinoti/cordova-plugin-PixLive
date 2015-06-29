@@ -7,10 +7,9 @@ module.exports = function(context) {
 	var exec = require('child_process').exec;
 
 	function getProjectName(protoPath){
-	  var content = fs.readFileSync('package.json', 'utf-8'),
-		  json = JSON.parse(content);
+	  var content = fs.readFileSync('config.xml', 'utf-8');
 
-	  return json.name;
+	   	return /<name>([^<]+)<\/name>/.exec(content)[1];
 	}
 
 	function readStrings(file) {
@@ -42,36 +41,68 @@ module.exports = function(context) {
 		exec('iconv -f UTF-8 -t UTF-16 "'+file+'" > '+file+'"', function(){});
 	}
 
-	
-	var xcodeProjectName = getProjectName('.'),
-		xcodeProjectPath = path.join('platforms', 'ios', xcodeProjectName);
 
+	function getXcodeProj(protoPath) {
+		var files = fs.readdirSync(path.join(protoPath, 'platforms', 'ios'));
+		for (var i = files.length - 1; i >= 0; i--) {
+			if(path.extname(files[i])=='.xcodeproj') {
+				return files[i];
+			}
+		}
+		
+		throw new Error('Unable to find the XCode project.');
+
+		return null;
+	}
+
+	function getXCodeProjectDir(protoPath) {
+		var files = fs.readdirSync(path.join(protoPath, 'platforms', 'ios'));
+		for (var i = files.length - 1; i >= 0; i--) {
+
+			if(fs.lstatSync(path.join(protoPath, 'platforms', 'ios',files[i])).isDirectory()) {
+				var files2 = fs.readdirSync(path.join(protoPath, 'platforms', 'ios',files[i]));
+				for (var j = files2.length - 1; j >= 0; j--) {
+					if(files2[j]=='Plugins') {
+						return files[i];
+					}
+				}
+			}
+		}
+
+		throw new Error('Unable to find the XCode source dir.');
+
+		return null;
+	}
+
+
+	var xcodeProjectName = getProjectName('.'),
+		xcodeProjectPath = path.join('platforms', 'ios',getXCodeProjectDir('.'));
 
 
 	var translations = {
 		'en': {
-			"NSCameraUsageDescription":"${PRODUCT_NAME} uses your camera to recognize articles & images.",
-			"NSLocationAlwaysUsageDescription":"${PRODUCT_NAME} tailors content based on your location.",
-			"NSLocationUsageDescription":"${PRODUCT_NAME} tailors content based on your location.",
-			"NSLocationWhenInUseUsageDescription":"${PRODUCT_NAME} tailors content based on your location."
+			"NSCameraUsageDescription":"$APP_NAME uses your camera to recognize articles & images.",
+			"NSLocationAlwaysUsageDescription":"$APP_NAME tailors content based on your location.",
+			"NSLocationUsageDescription":"$APP_NAME tailors content based on your location.",
+			"NSLocationWhenInUseUsageDescription":"$APP_NAME tailors content based on your location."
 		},
 		'fr': {
-			"NSCameraUsageDescription": "${PRODUCT_NAME} utilise votre caméra pour reconnaître les articles & images.",
-			"NSLocationAlwaysUsageDescription": "${PRODUCT_NAME} vous fournit du contenu personnalisé en utilisant votre position.",
-			"NSLocationUsageDescription": "${PRODUCT_NAME} vous fournit du contenu personnalisé en utilisant votre position.",
-			"NSLocationWhenInUseUsageDescription": "${PRODUCT_NAME} vous fournit du contenu personnalisé en utilisant votre position."
+			"NSCameraUsageDescription": "$APP_NAME utilise votre caméra pour reconnaître les articles & images.",
+			"NSLocationAlwaysUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
+			"NSLocationUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
+			"NSLocationWhenInUseUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position."
 		},
 		'de': {
-			"NSCameraUsageDescription": "${PRODUCT_NAME} verwendet Ihre Kamera, um Artikel und Bilder zu erkennen.",
-			"NSLocationAlwaysUsageDescription": "${PRODUCT_NAME} liefert den passenden Inhalt zu Ihrem Standort.",
-			"NSLocationUsageDescription": "${PRODUCT_NAME} liefert den passenden Inhalt zu Ihrem Standort.",
-			"NSLocationWhenInUseUsageDescription": "${PRODUCT_NAME} liefert den passenden Inhalt zu Ihrem Standort."
+			"NSCameraUsageDescription": "$APP_NAME verwendet Ihre Kamera, um Artikel und Bilder zu erkennen.",
+			"NSLocationAlwaysUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
+			"NSLocationUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
+			"NSLocationWhenInUseUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort."
 		},
 		'nl': {
-			"NSCameraUsageDescription": "${PRODUCT_NAME} gebruikt uw camera om artikels en beelden te herkennen.",
-			"NSLocationAlwaysUsageDescription": "${PRODUCT_NAME} maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
-			"NSLocationUsageDescription": "${PRODUCT_NAME} maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
-			"NSLocationWhenInUseUsageDescription": "${PRODUCT_NAME} maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden."
+			"NSCameraUsageDescription": "$APP_NAME gebruikt uw camera om artikels en beelden te herkennen.",
+			"NSLocationAlwaysUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
+			"NSLocationUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
+			"NSLocationWhenInUseUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden."
 
 		}
 	};
@@ -124,12 +155,12 @@ module.exports = function(context) {
 		//Write it back
 		writeStrings(loc,f);
 	}
-	var xcodeProjectPath2 = path.join('platforms', 'ios', xcodeProjectName+'.xcodeproj','project.pbxproj');
+	var xcodeProjectPath2 = path.join('platforms', 'ios',getXcodeProj('.'),'project.pbxproj');
 	var xcodeProject = xcode(xcodeProjectPath2);
 
 	xcodeProject.parse(function(err){
 		if(err){
-		  console.log('An error occured during parsing of [' + xcodeProjectPath + ']: ' + JSON.stringify(err));
+		  console.log('An error occured during parsing of [' + xcodeProjectPath2 + ']: ' + JSON.stringify(err));
 		}else{
 			console.log('Adding files to Xcode project...');
 
@@ -159,7 +190,7 @@ module.exports = function(context) {
     				isa: 'PBXFileReference',
     				lastKnownFileType: 'text.plist.strings',
     				name: languages[i],
-    				path: xcodeProjectName+'/'+languages[i]+'.lproj/InfoPlist.strings',
+    				path: '"'+getXCodeProjectDir('.')+'/'+languages[i]+'.lproj/InfoPlist.strings"',
     				sourceTree: '"<group>"'
     			};
 

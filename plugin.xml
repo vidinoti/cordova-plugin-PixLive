@@ -43,19 +43,19 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-            <string>${PRODUCT_NAME} tailors content based on your location.</string>
+            <string>$APP_NAME tailors content based on your location.</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-            <string>${PRODUCT_NAME} tailors content based on your location.</string>
+            <string>$APP_NAME tailors content based on your location.</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSLocationUsageDescription">
-            <string>${PRODUCT_NAME} tailors content based on your location.</string>
+            <string>$APP_NAME tailors content based on your location.</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
-            <string>${PRODUCT_NAME}uses your camera to recognize articles & images.</string>
+            <string>$APP_NAME uses your camera to recognize articles & images.</string>
         </config-file>
 
         <source-file src="src/ios/PixLive.m" />
