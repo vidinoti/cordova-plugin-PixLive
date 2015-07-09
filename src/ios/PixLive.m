@@ -483,10 +483,10 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 - (void) presentNotificationsList:(CDVInvokedUrlCommand *)command
 {
     
-    NSInteger l= [[VDARSDKController sharedInstance].pendingNotifications count];
+    NSUInteger l = [[VDARSDKController sharedInstance].pendingNotifications count];
     
     CDVPluginResult* pluginResult = nil;
-    if (0==[[VDARSDKController sharedInstance].pendingNotifications count]) {
+    if (l == 0) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"empty"];
     } else {
         [[VDARSDKController sharedInstance] presentNotificationsList];
@@ -503,7 +503,9 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     if(argc>0 && [arguments[0] isKindOfClass:[NSString class]]) {
         NSURL * url = [NSURL URLWithString:arguments[0]];
-        [[VDARSDKController sharedInstance] openURLInInternalBrowser:url];
+        if(url) {
+            [[VDARSDKController sharedInstance] openURLInInternalBrowser:url];
+        }
     }
 }
 
