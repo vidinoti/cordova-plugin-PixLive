@@ -442,7 +442,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    private void presentNotificationsList(String url, final CallbackContext callbackContext) {
+    private void presentNotificationsList(final CallbackContext callbackContext) {
 
         if(0 == VDARSDKController.getInstance().getPendingNotifications().size()){
             callbackContext.error("empty");
@@ -457,7 +457,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             URL urlObj = new URL(url);
 
             VDARSDKController.getInstance().openURLInInternalBrowser(urlObj);
-        catch(MalformedURLException e) {
+        } catch(MalformedURLException e) {
 
         }
     }
