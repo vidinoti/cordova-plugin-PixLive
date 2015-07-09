@@ -484,7 +484,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 {
     
     NSInteger l= [[VDARSDKController sharedInstance].pendingNotifications count];
-    NSLog(@"length notification: %ld",(long)l);
     
     CDVPluginResult* pluginResult = nil;
     if (0==[[VDARSDKController sharedInstance].pendingNotifications count]) {
@@ -494,6 +493,18 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) openURLInInternalBrowser:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if(argc>0 && [arguments[0] isKindOfClass:[NSString class]]) {
+        NSURL * url = [NSURL URLWithString:arguments[0]];
+        [[VDARSDKController sharedInstance] openURLInInternalBrowser:url];
+    }
 }
 
 #pragma mark - PixLive SDK Delegate

@@ -79,7 +79,7 @@ module.exports = function(context) {
 		xcodeProjectPath = path.join('platforms', 'ios',getXCodeProjectDir('.'));
 
 
-	var translations = {
+	var translationsInfoPlist = {
 		'en': {
 			"NSCameraUsageDescription":"$APP_NAME uses your camera to recognize articles & images.",
 			"NSLocationAlwaysUsageDescription":"$APP_NAME tailors content based on your location.",
@@ -107,11 +107,27 @@ module.exports = function(context) {
 		}
 	};
 
+	var translations = {
+		'en': {
+			"Loading...":"Loading...",
+		},
+		'fr': {
+			"Loading...":"Chargement...",
+		},
+		'de': {
+			"Loading...":"Laden...",
+		},
+		'nl': {
+			"Loading...":"Het laden...",
+		}
+	};
+
+	translationsInfoPlist['Base'] = translationsInfoPlist['en'];
 	translations['Base'] = translations['en'];
 
 	console.log('Adding translations in iOS project for Beacons...');
 
-	var languages = Object.keys(translations);
+	var languages = Object.keys(translationsInfoPlist);
 
 	if (typeof String.prototype.endsWith !== 'function') {
 	    String.prototype.endsWith = function(suffix) {
@@ -136,9 +152,13 @@ module.exports = function(context) {
 
 	for(var i = 0; i<languages.length; i++) {
 		var f = path.join(xcodeProjectPath,languages[i]+'.lproj','InfoPlist.strings');
+		var fLoc = path.join(xcodeProjectPath,languages[i]+'.lproj','Localizable.strings');
 		try {
 			fs.mkdirSync(path.join(xcodeProjectPath,languages[i]+'.lproj'));
 			fs.closeSync(fs.openSync(f, 'w'));
+
+			if(!fs.existsSync(fLoc))
+				fs.closeSync(fs.openSync(fLoc, 'w'));
 		} catch(e) {
 
 		}
@@ -146,15 +166,28 @@ module.exports = function(context) {
 		//Read the InfoPlist file and parse
 		var loc = readStrings(f);
 
-		var locStrings = Object.keys(translations[languages[i]]);
+		var locStrings = Object.keys(translationsInfoPlist[languages[i]]);
 
 		for(var j = 0; j < locStrings.length; j++) {
-			loc[locStrings[j]] = translations[languages[i]][locStrings[j]].replace(/\$APP_NAME/g,xcodeProjectName);
+			loc[locStrings[j]] = translationsInfoPlist[languages[i]][locStrings[j]].replace(/\$APP_NAME/g,xcodeProjectName);
 		}
 
 		//Write it back
 		writeStrings(loc,f);
+
+		//Read the Localizable file and parse
+		loc = readStrings(fLoc);
+
+		locStrings = Object.keys(translations[languages[i]]);
+
+		for(var j = 0; j < locStrings.length; j++) {
+			loc[locStrings[j]] = translations[languages[i]][locStrings[j]];
+		}
+
+		//Write it back
+		writeStrings(loc,fLoc);
 	}
+
 	var xcodeProjectPath2 = path.join('platforms', 'ios',getXcodeProj('.'),'project.pbxproj');
 	var xcodeProject = xcode(xcodeProjectPath2);
 
@@ -166,11 +199,22 @@ module.exports = function(context) {
 
 			var uuidInfoPlist = xcodeProject.generateUuid();
 			var uuidInfoPlistFileSection = xcodeProject.generateUuid();
+
+			var uuidLocalizable = xcodeProject.generateUuid();
+			var uuidLocalizableFileSection = xcodeProject.generateUuid();
 			
 			xcodeProject.pbxVariantGroup()[uuidInfoPlist] = {
 				isa: 'PBXVariantGroup',
 				children: [],
 				name: 'InfoPlist.strings',
+				path: '../..',
+				sourceTree: '"<group>"'
+			};
+
+			xcodeProject.pbxVariantGroup()[uuidLocalizable] = {
+				isa: 'PBXVariantGroup',
+				children: [],
+				name: 'Localizable.strings',
 				path: '../..',
 				sourceTree: '"<group>"'
 			};
@@ -181,7 +225,13 @@ module.exports = function(context) {
 				fileRef: uuidInfoPlist
 			};
 
+			xcodeProject.pbxBuildFileSection()[uuidLocalizableFileSection] = {
+				isa: 'PBXBuildFile',
+				fileRef: uuidLocalizable
+			};
+
 			xcodeProject.pbxBuildFileSection()[uuidInfoPlistFileSection+'_comment'] = 'InfoPlist.strings in Resources';
+			xcodeProject.pbxBuildFileSection()[uuidLocalizableFileSection+'_comment'] = 'Localizable.strings in Resources';
 
 			for(var i = 0; i<languages.length; i++) {
 				var uuidLanguage = xcodeProject.generateUuid();
@@ -198,14 +248,29 @@ module.exports = function(context) {
 
 				xcodeProject.pbxVariantGroup()[uuidInfoPlist]['children'].push({'value': uuidLanguage,'comment': languages[i]});
 
+				var uuidLanguage2 = xcodeProject.generateUuid();
+			
+    			xcodeProject.pbxFileReferenceSection()[uuidLanguage2] = {
+    				isa: 'PBXFileReference',
+    				lastKnownFileType: 'text.plist.strings',
+    				name: languages[i],
+    				path: '"'+getXCodeProjectDir('.')+'/'+languages[i]+'.lproj/Localizable.strings"',
+    				sourceTree: '"<group>"'
+    			};
+
+    			xcodeProject.pbxFileReferenceSection()[uuidLanguage2+'_comment'] = languages[i];
+
+				xcodeProject.pbxVariantGroup()[uuidLocalizable]['children'].push({'value': uuidLanguage2,'comment': languages[i]});
 
 			}
 
-
 			xcodeProject.pbxGroupByName('Resources').children.push({'value': uuidInfoPlist,'comment': 'InfoPlist.strings'});
+			xcodeProject.pbxGroupByName('Resources').children.push({'value': uuidLocalizable,'comment': 'Localizable.strings'});
 
 			xcodeProject.pbxVariantGroup()[uuidInfoPlist+'_comment'] = 'InfoPlist.strings';
+			xcodeProject.pbxVariantGroup()[uuidLocalizable+'_comment'] = 'Localizable.strings';
 
+			xcodeProject.pbxResourcesBuildPhaseObj(Object.keys(xcodeProject.pbxNativeTarget())[0]).files.push({'value': uuidLocalizableFileSection,'comment': 'Localizable.strings in Resources'});
 			xcodeProject.pbxResourcesBuildPhaseObj(Object.keys(xcodeProject.pbxNativeTarget())[0]).files.push({'value': uuidInfoPlistFileSection,'comment': 'InfoPlist.strings in Resources'});
 
 			fs.writeFileSync(xcodeProjectPath2, xcodeProject.writeSync(), 'utf-8');

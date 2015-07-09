@@ -37,8 +37,6 @@ PixLive.prototype = {
 	}
 };
 
-
-
 PixLive.createARView = function( originx, originy, width, height ) {
 	var handle = PixLive.nextViewHandle++;
 
@@ -52,6 +50,10 @@ PixLive.setNotificationsSupport = function( enabled, apiKey ) {
 	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? (apiKey ? apiKey : true) : null]);
 }
 
+PixLive.setNotificationsSupport = function( enabled, apiKey ) {
+	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? (apiKey ? apiKey : true) : null]);
+}
+
 PixLive.synchronize = function( tags, success, error ) {
 	exec(success, error, "PixLive", "synchronize",  [tags]);
 }
@@ -59,6 +61,11 @@ PixLive.synchronize = function( tags, success, error ) {
 PixLive.presentNotificationsList = function(success, error) {
 	exec(success, error, "PixLive", "presentNotificationsList",  []);
 }
+
+PixLive.openURLInInternalBrowser = function(url) {
+	exec(success, error, "PixLive", "openURLInInternalBrowser",  [url]);
+}
+
 
 var PixLiveInstance = new PixLive();
 

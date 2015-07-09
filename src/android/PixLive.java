@@ -42,6 +42,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -367,8 +369,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("installEventHandler")) {
             this.installEventHandler(callbackContext);
             return true;
-        }else if (action.equals("presentNotificationsList")) {
+        } else if (action.equals("presentNotificationsList")) {
             this.presentNotificationsList(callbackContext);
+            return true;
+        } else if (action.equals("openURLInInternalBrowser") && args.length()>=1) {
+            this.openURLInInternalBrowser(args.getString(0), callbackContext);
             return true;
         }
         return false;
@@ -437,13 +442,23 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    private void presentNotificationsList(final CallbackContext callbackContext) {
+    private void presentNotificationsList(String url, final CallbackContext callbackContext) {
 
         if(0 == VDARSDKController.getInstance().getPendingNotifications().size()){
             callbackContext.error("empty");
         }else{
             callbackContext.success();
             VDARSDKController.getInstance().presentNotificationsList();
+        }
+    }
+
+    private void openURLInInternalBrowser(String url, final CallbackContext callbackContext) {
+        try {
+            URL urlObj = new URL(url);
+
+            VDARSDKController.getInstance().openURLInInternalBrowser(urlObj);
+        catch(MalformedURLException e) {
+
         }
     }
 
