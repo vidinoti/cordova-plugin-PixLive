@@ -545,7 +545,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 -(void)didEnterContext:(VDARContext *)context {
     if(eventCallbackId) {
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"enterContext", @"context": context.remoteID}];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"enterContext", @"context": context.remoteID ? context.remoteID : @""}];
 
         pluginResult.keepCallback = @YES;
         
@@ -555,7 +555,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 -(void)didExitContext:(VDARContext *)context {
     if(eventCallbackId) {
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"exitContext", @"context": context.remoteID}];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"exitContext", @"context": context.remoteID ? context.remoteID : @""}];
         
         pluginResult.keepCallback = @YES;
         
