@@ -2,7 +2,6 @@
 
 #import "PixLive.h"
 #import <Cordova/CDV.h>
-#import <VDARSDK/VDARSDK.h>
 #import "MyCameraImageSource.h"
 #import "IonicARViewController.h"
 #import "HolesView.h"
@@ -85,6 +84,27 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [self.arViewControllers removeAllObjects];
     [self.arViewSettings removeAllObjects];
+}
+
+- (void)dispose
+{
+    //Destroy all views
+    for(NSNumber *key in [self.arViewControllers allKeys]) {
+        
+        IonicARViewController * ctrl = [self.arViewControllers objectForKey:key];
+        
+        if(ctrl.view.superview) {
+            [ctrl viewWillDisappear:NO];
+            [ctrl.view removeFromSuperview];
+            [ctrl viewDidDisappear:NO];
+        }
+    }
+    
+    [self.arViewControllers removeAllObjects];
+    [self.arViewSettings removeAllObjects];
+
+    [[VDARSDKController sharedInstance].detectionDelegates removeObject:self];
+    [VDARRemoteController sharedInstance].delegate=nil;
 }
 
 
@@ -178,6 +198,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
     
+    [VDARRemoteController sharedInstance].delegate=self;
     
     return self;
 }
@@ -443,6 +464,36 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [ctrl viewDidAppear:NO];
 }
 
+- (void) presentNotificationsList:(CDVInvokedUrlCommand *)command
+{
+    
+    NSUInteger l = [[VDARSDKController sharedInstance].pendingNotifications count];
+    
+    CDVPluginResult* pluginResult = nil;
+    if (l == 0) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"empty"];
+    } else {
+        [[VDARSDKController sharedInstance] presentNotificationsList];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) openURLInInternalBrowser:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if(argc>0 && [arguments[0] isKindOfClass:[NSString class]]) {
+        NSURL * url = [NSURL URLWithString:arguments[0]];
+        if(url) {
+            [[VDARSDKController sharedInstance] openURLInInternalBrowser:url];
+        }
+    }
+}
+
+
 #pragma mark - Remote controller
 
 - (void) synchronize:(CDVInvokedUrlCommand *)command
@@ -480,32 +531,13 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
 }
 
-- (void) presentNotificationsList:(CDVInvokedUrlCommand *)command
-{
-    
-    NSUInteger l = [[VDARSDKController sharedInstance].pendingNotifications count];
-    
-    CDVPluginResult* pluginResult = nil;
-    if (l == 0) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"empty"];
-    } else {
-        [[VDARSDKController sharedInstance] presentNotificationsList];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    }
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
-
-- (void) openURLInInternalBrowser:(CDVInvokedUrlCommand *)command
-{
-    NSArray* arguments = [command arguments];
-    
-    NSUInteger argc = [arguments count];
-    
-    if(argc>0 && [arguments[0] isKindOfClass:[NSString class]]) {
-        NSURL * url = [NSURL URLWithString:arguments[0]];
-        if(url) {
-            [[VDARSDKController sharedInstance] openURLInInternalBrowser:url];
-        }
+-(void)remoteController:(VDARRemoteController*)controller didProgress:(float)prc isReady:(bool)isReady folder:(NSString*)folder {
+    if(eventCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"syncProgress", @"progress": [NSNumber numberWithFloat:prc]}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
     }
 }
 

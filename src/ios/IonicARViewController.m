@@ -21,6 +21,8 @@
     self = [super init];
 
     plugin = _plugin;
+
+    self.annotationView.darkScreen = false;
     
     return self;
 }
