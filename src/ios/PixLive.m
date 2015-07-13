@@ -374,9 +374,11 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     IonicARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     if(!ctrl) return;
-    
+
+    [ctrl viewWillDisappear:NO];
     [ctrl.view removeFromSuperview];
-    
+    [ctrl viewDidDisappear:NO];
+
     [self.arViewControllers removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     [self.arViewSettings removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
