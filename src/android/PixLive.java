@@ -27,7 +27,6 @@ import com.vidinoti.android.vdarsdk.VDARPrior;
 import com.vidinoti.android.vdarsdk.VDARRemoteController;
 import com.vidinoti.android.vdarsdk.VDARSDKController;
 import com.vidinoti.android.vdarsdk.VDARSDKControllerEventReceiver;
-import com.vidinoti.android.vdarsdk.VDARRemoteControllerListener;
 import com.vidinoti.android.vdarsdk.VDARTagPrior;
 
 import org.apache.cordova.CallbackContext;
@@ -49,14 +48,12 @@ import java.net.MalformedURLException;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver, VDARRemoteControllerListener {
+public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver {
 
     private static final String TAG ="PixLiveCordova";
 
     class TouchInterceptorView extends FrameLayout {
         public boolean touchEnabled = true;
-
-        private boolean intercepting = false;
 
         private View.OnTouchListener privateListener = null;
 
@@ -84,17 +81,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
         @Override
         public boolean onInterceptTouchEvent (MotionEvent ev) {
+            //Log.v(TAG,"touch: action:" + ev.getAction() + " touchEnabled: " + touchEnabled +" intercepting " + intercepting);
 
-            if(!intercepting && (!touchEnabled || arViews.size()==0)) {
+            if((!touchEnabled || arViews.size()==0)) {
                 return super.onInterceptTouchEvent(ev);
             }
-
-            //We are already intercepting this
-            if(intercepting && ev.getAction() != MotionEvent.ACTION_DOWN) {
-                return true;
-            }
-
-            intercepting = false;
 
             int thisViewLeft = getRelativeLeft(this);
             int thisViewTop = getRelativeTop(this);
@@ -119,7 +110,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                     float yPos = ev.getY(i) - thisViewTop;
 
                     if(xPos>=arViewX && xPos < arViewX + view.getWidth() && yPos>=arViewY && yPos < arViewY + view.getHeight()) {
-                        intercepting = true;
                         return true;
                     }
                 }
@@ -130,9 +120,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
         @Override
         public boolean onTouchEvent (MotionEvent ev) {
-            if(!intercepting) {
-                return super.onTouchEvent(ev);
-            } else {
 
                 //Forward it to ar views
                 for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
@@ -151,7 +138,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 }
                 return false;
             }
-        }
+
     }
 
     private HashMap<Integer, VDARAnnotationView> arViews = new HashMap<Integer, VDARAnnotationView>();
@@ -171,10 +158,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
         VDARSDKController.getInstance().setActivity(cordova.getActivity());
         VDARSDKController.getInstance().registerEventReceiver(this);
-        VDARRemoteController.getInstance().addProgressListener(this);
+
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
             @Override
             public void run() {
+
                 Intent intent = cordova.getActivity().getIntent();
 
                 if (intent != null && intent.getExtras() != null
@@ -424,14 +412,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
 
         arViews.clear();
-
-        if(VDARSDKController.getInstance()!=null) {
-            VDARSDKController.getInstance().unregisterEventReceiver(this);
-        }
-
-         if(VDARRemoteController.getInstance()!=null) {
-            VDARRemoteController.getInstance().removeProgressListener(this);
-        }
     }
 
     /**
@@ -571,10 +551,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 VDARAnnotationView view = arViews.get(ctrlID);
-
+                Log.v(TAG,"destroy");
                 if (view != null) {
                     view.onPause();
-                    
+
                     if (view.getParent() != null) {
                         touchView.removeView(view);
                     }
@@ -602,6 +582,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                     } catch (IOException e) {
                         VDARSDKController.log(Log.ERROR, TAG, Log.getStackTraceString(e));
                     }
+
 
                     VDARSDKController.getInstance().setImageSender(imageSender);
                 }
@@ -653,7 +634,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    @Override
     public void onCodesRecognized(java.util.ArrayList<com.vidinoti.android.vdarsdk.VDARCode> arrayList) {
         if(this.eventHandler != null) {
             for(VDARCode code : arrayList) {
@@ -676,12 +656,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    @Override
-    public void onFatalError(String s) {
+    public void onFatalError(java.lang.String s) {
 
     }
 
-    @Override
     public void onPresentAnnotations() {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
@@ -698,7 +676,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    @Override
     public void onAnnotationsHidden() {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
@@ -715,19 +692,17 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    @Override
     public void onTrackingStarted(int w, int h) {
 
     }
 
-    @Override
     public void onEnterContext(com.vidinoti.android.vdarsdk.VDARContext vdarContext) {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
 
             try {
                 o.put("type", "enterContext");
-                o.put("context", vdarContext!=null && vdarContext.getRemoteID()!=null ? vdarContext.getRemoteID() : "");
+                o.put("context", vdarContext.getRemoteID());
             } catch (JSONException e) {
 
             }
@@ -738,14 +713,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    @Override
     public void onExitContext(com.vidinoti.android.vdarsdk.VDARContext vdarContext) {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
 
             try {
                 o.put("type", "exitContext");
-                o.put("context", vdarContext!=null && vdarContext.getRemoteID()!=null ? vdarContext.getRemoteID() : "");
+                o.put("context", vdarContext.getRemoteID());
             } catch (JSONException e) {
 
             }
@@ -756,7 +730,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    @Override
     public void onRequireSynchronization(ArrayList<com.vidinoti.android.vdarsdk.VDARPrior> priors) {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
@@ -772,26 +745,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 o.put("type", "requireSync");
                 o.put("tags", arr);
-            } catch (JSONException e) {
-
-            }
-
-            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
-            p.setKeepCallback(true);
-            this.eventHandler.sendPluginResult(p);
-        }
-    }
-
-    @Override
-    public void onSyncProgress(VDARRemoteController controller, float progress,
-            boolean isReady, String folder) {
-
-        if(this.eventHandler != null) {
-            JSONObject o = new JSONObject();
-
-            try {
-                o.put("type", "syncProgress");
-                o.put("progress", progress);
             } catch (JSONException e) {
 
             }
