@@ -573,7 +573,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 VDARAnnotationView view = arViews.get(ctrlID);
 
                 if (view != null) {
-
+                    view.onPause();
+                    
                     if (view.getParent() != null) {
                         touchView.removeView(view);
                     }
@@ -601,7 +602,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                     } catch (IOException e) {
                         VDARSDKController.log(Log.ERROR, TAG, Log.getStackTraceString(e));
                     }
-
 
                     VDARSDKController.getInstance().setImageSender(imageSender);
                 }
