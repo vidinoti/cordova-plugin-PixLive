@@ -272,7 +272,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 for (VDARAnnotationView view : arViews.values()) {
-
                     view.onPause();
 
                     if (view.getParent() != null) {
@@ -398,8 +397,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             VDARAnnotationView view = s.getValue();
 
             if(view.getParent()!=null && view.getVisibility()==View.VISIBLE) {
-                view.onPause();
                 VDARSDKController.getInstance().onPause();
+                view.onPause();
             }
         }
     }
@@ -486,8 +485,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 VDARAnnotationView view = arViews.get(ctrlID);
 
                 if (view != null) {
-                    view.onPause();
                     VDARSDKController.getInstance().onPause();
+                    view.onPause();
                     view.setVisibility(View.GONE);
                 }
             }
@@ -551,8 +550,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 VDARAnnotationView view = arViews.get(ctrlID);
-                Log.v(TAG,"destroy");
                 if (view != null) {
+                    if(arViews.size() == 1)
+                        VDARSDKController.getInstance().onPause();
+
                     view.onPause();
 
                     if (view.getParent() != null) {
