@@ -69,6 +69,7 @@
         <framework src="Accelerate.framework" />
         <framework src="AudioToolbox.framework" />
         <framework src="AVFoundation.framework" />
+        <framework src="AVKit.framework" />
         <framework src="CoreGraphics.framework" />
         <framework src="CoreLocation.framework" />
         <framework src="CoreBluetooth.framework" />
