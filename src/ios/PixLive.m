@@ -6,6 +6,7 @@
 #import "IonicARViewController.h"
 #import "HolesView.h"
 #import "AppDelegate.h"
+#import "VDARLocalizationManager.h"
 
 @interface AppDelegate (VDARAPPRegisterUserNotificationSettings)
 
@@ -207,6 +208,8 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
     
     [VDARRemoteController sharedInstance].delegate=self;
+
+    [VDARLocalizationManager sharedInstance];
     
     return self;
 }

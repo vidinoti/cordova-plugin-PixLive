@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.0.7">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.0.8">
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
@@ -64,6 +64,8 @@
         <header-file src="src/ios/MyCameraImageSource.h" />
         <source-file src="src/ios/IonicARViewController.m" />
         <header-file src="src/ios/IonicARViewController.h" />
+        <source-file src="src/ios/VDARLocalizationManager.m" />
+        <header-file src="src/ios/VDARLocalizationManager.h" />
         <source-file src="src/ios/HolesView.m" />
         <header-file src="src/ios/HolesView.h" />
         <framework src="Accelerate.framework" />
