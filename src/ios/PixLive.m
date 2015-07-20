@@ -105,6 +105,14 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
     [[VDARSDKController sharedInstance].detectionDelegates removeObject:self];
     [VDARRemoteController sharedInstance].delegate=nil;
+
+    [touchForwarder removeFromSuperview];
+    touchForwarder=nil;
+}
+
+-(void)dealloc {
+    [touchForwarder removeFromSuperview];
+    touchForwarder=nil;
 }
 
 

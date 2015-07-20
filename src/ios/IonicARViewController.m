@@ -32,9 +32,33 @@
 }
 
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion {
-    // Artificially generate those events as this controller is not in the event hierarchy
-    [self viewWillDisappear:NO];
-    [self viewDidDisappear:NO];
+    
+    switch(viewControllerToPresent.modalPresentationStyle) {
+        case UIModalPresentationFullScreen:
+        case UIModalPresentationCustom:
+        case UIModalPresentationOverFullScreen:
+        case UIModalPresentationNone:
+            // Artificially generate those events as this controller is not in the event hierarchy
+            [self viewWillDisappear:NO];
+            [self viewDidDisappear:NO];
+            break;
+            
+        case UIModalPresentationPageSheet:
+        case UIModalPresentationFormSheet:
+            if(UI_USER_INTERFACE_IDIOM()!=UIUserInterfaceIdiomPad) {
+                [self viewWillDisappear:NO];
+                [self viewDidDisappear:NO];
+            }
+            
+        default:
+        case UIModalPresentationPopover:
+        case UIModalPresentationCurrentContext:
+            case UIModalPresentationOverCurrentContext:
+            break;
+    }
+    
+    
+   
     
     [plugin presentViewController:viewControllerToPresent animated:flag completion:completion];
 }
