@@ -108,6 +108,11 @@
                 android:protectionLevel="signature" />
 
             <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+
+
+            <uses-permission android:name="android.permisssion.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permisssion.ACCESS_COARSE_LOCATION" />
+
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
