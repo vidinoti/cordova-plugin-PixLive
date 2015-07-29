@@ -264,10 +264,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     public void onReset() {
-        if(VDARSDKController.getInstance()!=null) {
-            VDARSDKController.getInstance().onPause();
-        }
-
 
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
@@ -397,7 +393,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             VDARAnnotationView view = s.getValue();
 
             if(view.getParent()!=null && view.getVisibility()==View.VISIBLE) {
-                VDARSDKController.getInstance().onPause();
                 view.onPause();
             }
         }
@@ -426,7 +421,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             if(view.getParent()!=null && view.getVisibility()==View.VISIBLE) {
                 view.onResume();
-                VDARSDKController.getInstance().onResume();
             }
         }
 
@@ -489,7 +483,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 VDARAnnotationView view = arViews.get(ctrlID);
 
                 if (view != null) {
-                    VDARSDKController.getInstance().onPause();
                     view.onPause();
                     view.setVisibility(View.GONE);
                 }
@@ -508,7 +501,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 if (view != null) {
 
-                    VDARSDKController.getInstance().onResume();
                     view.onResume();
 
                     view.setVisibility(View.VISIBLE);
@@ -555,8 +547,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             public void run() {
                 VDARAnnotationView view = arViews.get(ctrlID);
                 if (view != null) {
-                    if(arViews.size() == 1)
-                        VDARSDKController.getInstance().onPause();
 
                     view.onPause();
 
@@ -572,18 +562,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
 
     private void createARView(final int x,final int y, final int width, final int height, final int ctrlID, final boolean insertBelow, final CallbackContext callbackContext) {
-
-        if (!DeviceCameraImageSender.doesSupportDirectRendering()) {
-            VDARSDKController.log(Log.ERROR,TAG,"This device is not supporting SurfaceView and is therefore not supported with PixLive SDK.");
-            throw new RuntimeException("Device not supporting direct rendering");
-        }
-
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
 
                 if(imageSender == null) {
                     try {
-                        imageSender = new DeviceCameraImageSender(null);
+                        imageSender = new DeviceCameraImageSender();
                     } catch (IOException e) {
                         VDARSDKController.log(Log.ERROR, TAG, Log.getStackTraceString(e));
                     }
@@ -611,8 +595,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 arViews.put(ctrlID, annotationView);
 
                 VDARSDKController.getInstance().setActivity(cordova.getActivity());
-
-                VDARSDKController.getInstance().onResume();
 
                 annotationView.onResume();
 
