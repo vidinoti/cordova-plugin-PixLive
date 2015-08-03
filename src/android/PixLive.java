@@ -383,6 +383,21 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
+    private boolean isWebViewDestroyed() {
+        
+        if(webView == null) {
+            return true;
+        }
+
+        final String url = webView.getUrl();
+        if (url == null ||
+            url.equals("about:blank")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Called when the system is about to start resuming a previous activity.
      *
@@ -408,6 +423,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
 
         arViews.clear();
+
+        this.eventHandler = null;
     }
 
     /**
@@ -465,10 +482,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                         if (info.isCompleted()) {
                             if(info.getError()==null) {
                                 JSONArray ctx = new JSONArray(info.getFetchedContexts());
-
-                                callbackContext.success(ctx);
+                                if(!isWebViewDestroyed()) {
+                                    callbackContext.success(ctx);
+                                }
                             } else {
-                                callbackContext.error(info.getError());
+                                if(!isWebViewDestroyed()) {
+                                    callbackContext.error(info.getError());
+                                }
                             }
                         }
                     }
