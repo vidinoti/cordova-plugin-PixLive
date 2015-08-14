@@ -121,23 +121,23 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         @Override
         public boolean onTouchEvent (MotionEvent ev) {
 
-                //Forward it to ar views
-                for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
-                    VDARAnnotationView view = s.getValue();
+            //Forward it to ar views
+            for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
+                VDARAnnotationView view = s.getValue();
 
-                    float arViewX = view.getLeft();
-                    float arViewY = view.getTop();
+                float arViewX = view.getLeft();
+                float arViewY = view.getTop();
 
-                    ev.offsetLocation(-arViewX,-arViewY);
+                ev.offsetLocation(-arViewX,-arViewY);
 
-                    if(view.dispatchTouchEvent(ev)) {
-                        return true;
-                    }
-
-                    ev.offsetLocation(arViewX,arViewY);
+                if(view.dispatchTouchEvent(ev)) {
+                    return true;
                 }
-                return false;
+
+                ev.offsetLocation(arViewX,arViewY);
             }
+            return false;
+        }
 
     }
 
@@ -148,6 +148,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private TouchInterceptorView touchView = null;
 
     private CallbackContext eventHandler = null;
+
+    private ArrayList<Runnable> foregroundCallbacks = new ArrayList<Runnable>();
+
+    private boolean activityActive = false;
+
+    private boolean pageLoaded = false;
 
 
     protected void pluginInitialize() {
@@ -206,7 +212,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
         String storage = c.getApplicationContext().getFilesDir()
                 .getAbsolutePath() + "/pixliveSDK";
-        
+
         String licenseKey = null;
 
         try {
@@ -218,7 +224,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             return;
         } catch (NullPointerException e) {
             Log.e(TAG,"Unable to start PixLive SDK without valid storage and license key.");
-            return;        
+            return;
         }
 
         if(storage == null || licenseKey == null) {
@@ -264,9 +270,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     public void onReset() {
-
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
+                pageLoaded = false;
                 for (VDARAnnotationView view : arViews.values()) {
                     view.onPause();
 
@@ -358,6 +364,15 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("openURLInInternalBrowser") && args.length()>=1) {
             this.openURLInInternalBrowser(args.getString(0), callbackContext);
             return true;
+        } else if (action.equals("pageLoaded")) {
+            if(activityActive) {
+                for(Runnable r : foregroundCallbacks) {
+                    r.run();
+                }
+
+                foregroundCallbacks.clear();
+            }
+            return true;
         }
         return false;
     }
@@ -384,14 +399,14 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     private boolean isWebViewDestroyed() {
-        
+
         if(webView == null) {
             return true;
         }
 
         final String url = webView.getUrl();
         if (url == null ||
-            url.equals("about:blank")) {
+                url.equals("about:blank")) {
             return true;
         } else {
             return false;
@@ -404,6 +419,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
      * @param multitasking      Flag indicating if multitasking is turned on for app
      */
     public void onPause(boolean multitasking) {
+
+        activityActive = false;
+
         for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
             VDARAnnotationView view = s.getValue();
 
@@ -433,6 +451,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
      * @param multitasking      Flag indicating if multitasking is turned on for app
      */
     public void onResume(boolean multitasking) {
+
+        activityActive = true;
+
         for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
             VDARAnnotationView view = s.getValue();
 
@@ -442,6 +463,14 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
 
         VDARSDKController.getInstance().getLocalizationManager().startLocalization();
+
+        if(pageLoaded) {
+            for(Runnable r : foregroundCallbacks) {
+                r.run();
+            }
+
+            foregroundCallbacks.clear();
+        }
     }
 
     private void presentNotificationsList(final CallbackContext callbackContext) {
@@ -737,29 +766,42 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    public void onRequireSynchronization(ArrayList<com.vidinoti.android.vdarsdk.VDARPrior> priors) {
-        if(this.eventHandler != null) {
-            JSONObject o = new JSONObject();
+    public void onRequireSynchronization(final ArrayList<com.vidinoti.android.vdarsdk.VDARPrior> priors) {
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                if(PixLive.this.eventHandler != null) {
+                    JSONObject o = new JSONObject();
 
-            try {
-                 JSONArray arr = new JSONArray();
+                    try {
+                        JSONArray arr = new JSONArray();
 
-                 for(VDARPrior p : priors) {
-                    if(p instanceof VDARTagPrior) {
-                        arr.put(((VDARTagPrior)p).getTag());
+                        for(VDARPrior p : priors) {
+                            if(p instanceof VDARTagPrior) {
+                                arr.put(((VDARTagPrior)p).getTag());
+                            }
+                        }
+
+                        o.put("type", "requireSync");
+                        o.put("tags", arr);
+                    } catch (JSONException e) {
+
                     }
-                 }
 
-                o.put("type", "requireSync");
-                o.put("tags", arr);
-            } catch (JSONException e) {
-
+                    PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+                    p.setKeepCallback(true);
+                    PixLive.this.eventHandler.sendPluginResult(p);
+                }
             }
+        };
 
-            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
-            p.setKeepCallback(true);
-            this.eventHandler.sendPluginResult(p);
+
+        if(activityActive && pageLoaded) {
+            r.run();
+        } else {
+            foregroundCallbacks.add(r);
         }
+
     }
 }
 

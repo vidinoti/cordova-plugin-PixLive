@@ -66,7 +66,9 @@ PixLive.openURLInInternalBrowser = function(url) {
 	exec(success, error, "PixLive", "openURLInInternalBrowser",  [url]);
 }
 
-
-var PixLiveInstance = new PixLive();
+// Used to signal the plugin that the page is fully loaded
+document.addEventListener("deviceready", function() {
+	exec(null, null, "PixLive", "pageLoaded",  []);
+}, false);
 
 module.exports = PixLive;

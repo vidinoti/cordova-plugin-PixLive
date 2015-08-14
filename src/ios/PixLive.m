@@ -55,6 +55,8 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 @implementation PixLive {
     HolesView *touchForwarder;
     NSString *eventCallbackId;
+    BOOL pageLoaded;
+    NSOperationQueue *foregroundOperationQueue; //Queue containing tasks that are ran only when app is loaded and ready
 }
 
 #pragma mark - Cordova methods
@@ -85,6 +87,8 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [self.arViewControllers removeAllObjects];
     [self.arViewSettings removeAllObjects];
+    
+    pageLoaded = NO;
 }
 
 - (void)dispose
@@ -109,6 +113,8 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
     [touchForwarder removeFromSuperview];
     touchForwarder=nil;
+    
+    pageLoaded = NO;
 }
 
 -(void)dealloc {
@@ -153,6 +159,11 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     _arViewControllers = [NSMutableDictionary dictionary];
     _arViewSettings = [NSMutableDictionary dictionary];
+
+    foregroundOperationQueue = [[NSOperationQueue alloc] init];
+    [foregroundOperationQueue setMaxConcurrentOperationCount:1];
+
+    [foregroundOperationQueue setSuspended:YES];
     
     self.webView.backgroundColor = [UIColor clearColor];
     self.webView.opaque = NO;
@@ -207,12 +218,34 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserverForName:VDARApplicationRegisterUserNotificationSettings object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        if(pageLoaded) {
+            [foregroundOperationQueue setSuspended:NO];
+        }
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        [foregroundOperationQueue setSuspended:YES];
+    }];
+
     [VDARRemoteController sharedInstance].delegate=self;
 
     [VDARLocalizationManager sharedInstance];
     
     return self;
 }
+
+-(void)pageLoaded:(CDVInvokedUrlCommand *)command {
+    if([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+        [foregroundOperationQueue setSuspended:NO];
+        pageLoaded = YES;
+    }
+}
+
 
 -(void)disableTouch:(CDVInvokedUrlCommand *)command {
     touchForwarder.arTouchEnabled = NO;
@@ -613,23 +646,27 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 }
 
 -(void)contextDidRequireSynchronization:(NSArray*)priors {
-    if(eventCallbackId) {
+    [foregroundOperationQueue addOperationWithBlock: ^() {
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            if(eventCallbackId) {
 
-        NSMutableArray *tags = [NSMutableArray array];
+                NSMutableArray *tags = [NSMutableArray array];
 
-        for(VDARPrior *p in priors) {
-            if([p isKindOfClass:[VDARTagPrior class]]) {
-                VDARTagPrior * tag = (VDARTagPrior*)p;
-                [tags addObject:tag.tagName];
+                for(VDARPrior *p in priors) {
+                    if([p isKindOfClass:[VDARTagPrior class]]) {
+                        VDARTagPrior * tag = (VDARTagPrior*)p;
+                        [tags addObject:tag.tagName];
+                    }
+                }
+
+                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"requireSync", @"tags": tags}];
+                
+                pluginResult.keepCallback = @YES;
+                
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
             }
-        }
-
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"requireSync", @"tags": tags}];
-        
-        pluginResult.keepCallback = @YES;
-        
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
-    }
+        });
+    }];
 }
 
 -(void)annotationViewDidBecomeEmpty {
