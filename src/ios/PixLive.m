@@ -2,7 +2,6 @@
 
 #import "PixLive.h"
 #import <Cordova/CDV.h>
-#import "MyCameraImageSource.h"
 #import "IonicARViewController.h"
 #import "HolesView.h"
 #import "AppDelegate.h"
@@ -182,9 +181,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [VDARSDKController sharedInstance].enableCodesRecognition=YES;
     
-    MyCameraImageSource *cameraSource=[[MyCameraImageSource alloc] init];
-    
-    [VDARSDKController sharedInstance].imageSender=cameraSource;
+    [VDARSDKController sharedInstance].imageSender = [[VDARCameraImageSource alloc] init];
     
     [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
     
