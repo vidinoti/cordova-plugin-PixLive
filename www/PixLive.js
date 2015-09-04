@@ -10,6 +10,23 @@ var PixLive = function(handle) {
 PixLive.nextViewHandle = 1;
 
 
+PixLive.Context = function(prop) {
+	// Apply properties to the context object
+	var keys = Object.keys(prop);
+	for (var j = keys.length - 1; j >= 0; j--) {
+		this[keys[j]] = prop[keys[j]];
+	}
+};
+
+PixLive.Context.prototype = {
+	activate: function() {
+		exec(null, null, "PixLive", "activateContext", [this.contextId]);
+	},
+	ignore: function() {
+		exec(null, null, "PixLive", "ignoreContext", [this.contextId]);
+	}
+};
+
 PixLive.prototype = {
 	beforeEnter: function() {
 		exec(null, null, "PixLive", "beforeEnter", [this.handle]);
@@ -42,29 +59,46 @@ PixLive.createARView = function( originx, originy, width, height ) {
 
     exec(null, null, "PixLive", "createARView",  [originx, originy, width, height, handle ]);
     return new PixLive(handle);
-}
+};
 
 PixLive.onEventReceived = null;
 
 PixLive.setNotificationsSupport = function( enabled, apiKey ) {
 	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? (apiKey ? apiKey : true) : null]);
-}
+};
 
 PixLive.setNotificationsSupport = function( enabled, apiKey ) {
 	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? (apiKey ? apiKey : true) : null]);
-}
+};
 
 PixLive.synchronize = function( tags, success, error ) {
 	exec(success, error, "PixLive", "synchronize",  [tags]);
-}
+};
 
 PixLive.presentNotificationsList = function(success, error) {
 	exec(success, error, "PixLive", "presentNotificationsList",  []);
-}
+};
 
 PixLive.openURLInInternalBrowser = function(url) {
 	exec(success, error, "PixLive", "openURLInInternalBrowser",  [url]);
-}
+};
+
+PixLive.getContexts = function(success, error) {
+	exec(function(list) {
+		if(success !== null) {
+			var ret = [];
+			for (var i = 0; i < list.length; i++) {
+				var prop = list[i];
+				var object = new PixLive.Context(prop);
+
+				// Add the object to the array
+				ret.push(object);
+
+			}
+			success(ret);
+		}
+	}, error, "PixLive", "getContexts",  []);
+};
 
 // Used to signal the plugin that the page is fully loaded
 document.addEventListener("deviceready", function() {

@@ -522,6 +522,65 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) getContexts:(CDVInvokedUrlCommand *)command
+{
+    NSArray *contextIds = [[VDARSDKController sharedInstance] contextIDs];
+    NSMutableArray *output = [NSMutableArray array];
+
+    for(NSString* ctxId in contextIds) {
+        VDARContext * c  = [[VDARSDKController sharedInstance] getContext:ctxId];
+        if(c) {
+
+            NSDictionary *dict = @{
+                                   @"contextId": ctxId,
+                                   @"name": c.name ? c.name : [NSNull null],
+                                   @"lastUpdate": c.lastmodif ? [c.lastmodif descriptionWithLocale:nil] : [NSNull null],
+                                   @"description": c.contextDescription ? c.contextDescription : [NSNull null],
+                                   @"notificationTitle": c.notificationTitle ? c.notificationTitle : [NSNull null],
+                                   @"notificationMessage":  c.notificationMessage ? c.notificationMessage : [NSNull null],
+                                   @"imageThumbnailURL": c.imageThumbnailURL.absoluteString,
+                                   @"imageHiResURL": c.imageHiResURL.absoluteString,
+                                   };
+
+            [output addObject:dict];
+        }
+    }
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:output];
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+- (void) activateContext:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if(argc>0 && [arguments[0] isKindOfClass:[NSString class]]) {
+        VDARContext * c  = [[VDARSDKController sharedInstance] getContext:arguments[0]];
+        if(c) {
+            [c activate];
+        }
+    }
+}
+
+- (void) ignoreContext:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if(argc>0 && [arguments[0] isKindOfClass:[NSString class]]) {
+        VDARContext * c  = [[VDARSDKController sharedInstance] getContext:arguments[0]];
+        if(c) {
+            [c ignore];
+        }
+    }
+}
+
+
 - (void) openURLInInternalBrowser:(CDVInvokedUrlCommand *)command
 {
     NSArray* arguments = [command arguments];

@@ -23,6 +23,7 @@ import com.vidinoti.android.vdarsdk.NotificationFactory;
 import com.vidinoti.android.vdarsdk.VDARAnnotationView;
 import com.vidinoti.android.vdarsdk.VDARCode;
 import com.vidinoti.android.vdarsdk.VDARCodeType;
+import com.vidinoti.android.vdarsdk.VDARContext;
 import com.vidinoti.android.vdarsdk.VDARPrior;
 import com.vidinoti.android.vdarsdk.VDARRemoteController;
 import com.vidinoti.android.vdarsdk.VDARSDKController;
@@ -37,13 +38,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -364,6 +366,15 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("openURLInInternalBrowser") && args.length()>=1) {
             this.openURLInInternalBrowser(args.getString(0), callbackContext);
             return true;
+        } else if (action.equals("getContexts")) {
+            this.getContexts(callbackContext);
+            return true;
+        }else if (action.equals("activateContext") && args.length()>=1) {
+            this.activateContext(args.getString(0),callbackContext);
+            return true;
+        }else if (action.equals("ignoreContext") && args.length()>=1) {
+            this.ignoreContext(args.getString(0),callbackContext);
+            return true;
         } else if (action.equals("pageLoaded")) {
             if(activityActive) {
                 for(Runnable r : foregroundCallbacks) {
@@ -524,6 +535,51 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 });
             }
         });
+    }
+
+    private void activateContext(String contextId, final CallbackContext callbackContext) {
+        VDARContext c = VDARSDKController.getInstance().getContext(contextId);
+        if(c != null) {
+            c.activate();
+        }
+    }
+
+    private void ignoreContext(String contextId, final CallbackContext callbackContext) {
+        VDARContext c = VDARSDKController.getInstance().getContext(contextId);
+        if(c != null) {
+            c.ignore();
+        }
+    }
+
+    private void getContexts(final CallbackContext callbackContext) {
+        final ArrayList<String> contextIds = VDARSDKController.getInstance().getAllContextIDs();
+        JSONArray ret = new JSONArray();
+        
+        SimpleDateFormat format = new SimpleDateFormat("Z");
+
+        for(String ctxId : contextIds) {
+            VDARContext c = VDARSDKController.getInstance().getContext(ctxId);
+            if(c != null) {
+                JSONObject obj = new JSONObject();
+
+                try {
+                    obj.put("contextId",ctxId);
+                    obj.put("name",c.getName());
+                    obj.put("lastUpdate",format.format(c.getLastModifiedDate()));
+                    obj.put("description",c.getDescription());
+                    obj.put("notificationTitle",c.getNotificationTitle());
+                    obj.put("notificationMessage",c.getNotificationMessage());
+                    obj.put("imageThumbnailURL",c.getImageThumbnailURL());
+                    obj.put("imageHiResURL",c.getImageHiResURL());
+                } catch (JSONException e) {
+
+                }
+                
+                ret.put(obj);
+            }
+        }
+
+        callbackContext.success(ret);
     }
 
     private void beforeLeave(final int ctrlID, CallbackContext callbackContext) {
