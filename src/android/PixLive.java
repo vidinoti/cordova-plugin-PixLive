@@ -487,9 +487,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private void presentNotificationsList(final CallbackContext callbackContext) {
 
         if(0 == VDARSDKController.getInstance().getPendingNotifications().size()){
-            callbackContext.error("empty");
+            if(!isWebViewDestroyed()) {
+                callbackContext.error("empty");
+            }
         }else{
-            callbackContext.success();
+            if(!isWebViewDestroyed()) {
+                callbackContext.success();
+            }
             VDARSDKController.getInstance().presentNotificationsList();
         }
     }
@@ -578,8 +582,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 ret.put(obj);
             }
         }
-
-        callbackContext.success(ret);
+        if(!isWebViewDestroyed()) {
+            callbackContext.success(ret);
+        }
     }
 
     private void beforeLeave(final int ctrlID, CallbackContext callbackContext) {
