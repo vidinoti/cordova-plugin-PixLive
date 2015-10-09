@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -415,10 +416,14 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             return true;
         }
 
-        final String url = webView.getUrl();
-        if (url == null ||
-                url.equals("about:blank")) {
-            return true;
+        if(Thread.currentThread().equals(Looper.getMainLooper().getThread())) {
+            final String url = webView.getUrl();
+            if (url == null ||
+                    url.equals("about:blank")) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
