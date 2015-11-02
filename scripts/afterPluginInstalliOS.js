@@ -270,8 +270,8 @@ module.exports = function(context) {
 			xcodeProject.pbxVariantGroup()[uuidInfoPlist+'_comment'] = 'InfoPlist.strings';
 			xcodeProject.pbxVariantGroup()[uuidLocalizable+'_comment'] = 'Localizable.strings';
 
-			xcodeProject.pbxResourcesBuildPhaseObj(Object.keys(xcodeProject.pbxNativeTarget())[0]).files.push({'value': uuidLocalizableFileSection,'comment': 'Localizable.strings in Resources'});
-			xcodeProject.pbxResourcesBuildPhaseObj(Object.keys(xcodeProject.pbxNativeTarget())[0]).files.push({'value': uuidInfoPlistFileSection,'comment': 'InfoPlist.strings in Resources'});
+			xcodeProject.pbxResourcesBuildPhaseObj(Object.keys(xcodeProject.pbxNativeTargetSection())[0]).files.push({'value': uuidLocalizableFileSection,'comment': 'Localizable.strings in Resources'});
+			xcodeProject.pbxResourcesBuildPhaseObj(Object.keys(xcodeProject.pbxNativeTargetSection())[0]).files.push({'value': uuidInfoPlistFileSection,'comment': 'InfoPlist.strings in Resources'});
 
 			fs.writeFileSync(xcodeProjectPath2, xcodeProject.writeSync(), 'utf-8');
 
