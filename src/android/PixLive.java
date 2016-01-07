@@ -201,6 +201,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                     touchView.addView(v);
 
                     v.setBackgroundColor(Color.TRANSPARENT);
+
+                    if (Build.VERSION.SDK_INT <= 16) {
+                       v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    }
                 }
             }
         });
