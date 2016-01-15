@@ -15,6 +15,9 @@
 // The radius used by Vidinoti servers to search for AR Model around the given GPS position (in meters)
 #define SEARCH_RADIUS 500
 
+static dispatch_once_t pred;
+static id shared = nil;
+
 @implementation VDARLocalizationManager
 
 @synthesize localizationPrior,hasPositionForVDARSDK,positionPrecision;
@@ -75,13 +78,15 @@
 #pragma mark -
 #pragma mark Singleton methods
 
-+ (VDARLocalizationManager*)sharedInstance
-{
-    static dispatch_once_t pred;
-    static id shared = nil;
++(void)startManager {
     dispatch_once(&pred, ^{
         shared = [[super alloc] initPrivate];
     });
+    return shared;
+}
+
++ (VDARLocalizationManager*)sharedInstance
+{
     return shared;
 }
 

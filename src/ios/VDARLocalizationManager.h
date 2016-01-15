@@ -25,6 +25,7 @@
 @property (nonatomic,readonly) float positionPrecision;
 
 + (VDARLocalizationManager*)sharedInstance;
++ (void)startManager;
 
 // clue for improper use (produces compile time error)
 +(instancetype) alloc __attribute__((unavailable("alloc not available, call sharedInstance instead")));

@@ -237,8 +237,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }];
 
     [VDARRemoteController sharedInstance].delegate=self;
-
-    [VDARLocalizationManager sharedInstance];
     
     return self;
 }
@@ -355,6 +353,10 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     } else {
         [VDARSDKController sharedInstance].enableNotifications=YES;
     }
+}
+
+-(void)setLocalizationEnabled:(CDVInvokedUrlCommand *)command {
+    [VDARLocalizationManager startManager];
 }
 
 -(void)installEventHandler:(CDVInvokedUrlCommand *)command {
