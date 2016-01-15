@@ -12,7 +12,7 @@
 #import <Cordova/CDV.h>
 #import <VDARSDK/VDARSDK.h>
 
-@interface PixLive : CDVPlugin<VDARSDKControllerDelegate,RemoteControllerDelegate>
+@interface PixLive : CDVPlugin<VDARSDKControllerDelegate,VDARSDKSensorDelegate,RemoteControllerDelegate>
 
 -(void)presentViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag completion:(void (^)(void))completion;
 -(void)annotationViewDidBecomeEmpty;

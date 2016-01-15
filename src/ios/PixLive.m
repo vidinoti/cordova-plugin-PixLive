@@ -191,6 +191,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [VDARSDKController sharedInstance].imageSender = [[VDARCameraImageSource alloc] init];
     
     [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
+    [[VDARSDKController sharedInstance].sensorDelegates addObject:self];
     
     [[NSNotificationCenter defaultCenter] addObserverForName:CDVPageDidLoadNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         self.webView.backgroundColor = [UIColor clearColor];
@@ -748,6 +749,42 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 -(void)annotationViewDidPresentAnnotations {
     if(eventCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"presentAnnotations"}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+}
+
+#pragma mark - PixLive SDK Sensor Delegate
+
+
+-(void)didTriggerSensor:(VDARSensor*)sensor {
+    if(eventCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type": sensor.triggered ? @"sensorTriggered" : @"sensorUntriggered",@"sensorId": sensor.sensorId,@"sensorType": sensor.type}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+}
+
+-(void)didUpdateSensorValues:(VDARSensor*)sensor {
+    if(eventCallbackId) {
+
+        NSMutableDictionary* dict = [NSMutableDictionary new];
+        dict[@"type"]=@"sensorUpdate";
+        dict[@"sensorId"]=sensor.sensorId;
+        dict[@"sensorType"]=sensor.type;
+
+        if([sensor isKindOfClass:[VDARVidiBeaconSensor class]]) {
+            dict[@"rssi"]=[NSNumber numberWithFloat:((VDARVidiBeaconSensor*)sensor).rssi];
+        } else if([sensor isKindOfClass:[VDARIBeaconSensor class]]) {
+            dict[@"rssi"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).rssi];
+            dict[@"distance"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).distance];
+        }
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         
         pluginResult.keepCallback = @YES;
         
