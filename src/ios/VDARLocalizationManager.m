@@ -82,7 +82,6 @@ static id shared = nil;
     dispatch_once(&pred, ^{
         shared = [[super alloc] initPrivate];
     });
-    return shared;
 }
 
 + (VDARLocalizationManager*)sharedInstance
