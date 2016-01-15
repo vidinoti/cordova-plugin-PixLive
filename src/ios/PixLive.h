@@ -1,10 +1,10 @@
 //
 //  PixLive.h
-//  VDARSDK Ionic
+//  PixLive SDK Cordova plugin
 //
 //  Created by Mathieu Monney on 15.04.15.
 //
-//  Copyright 2010-2015 Vidinoti SA. All rights reserved.
+//  Copyright 2010-2016 Vidinoti SA. All rights reserved.
 //
 
 

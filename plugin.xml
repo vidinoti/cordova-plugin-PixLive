@@ -72,8 +72,8 @@
 
         <source-file src="src/ios/PixLive.m" />
         <header-file src="src/ios/PixLive.h" />
-        <source-file src="src/ios/IonicARViewController.m" />
-        <header-file src="src/ios/IonicARViewController.h" />
+        <source-file src="src/ios/CordovaARViewController.m" />
+        <header-file src="src/ios/CordovaARViewController.h" />
         <source-file src="src/ios/VDARLocalizationManager.m" />
         <header-file src="src/ios/VDARLocalizationManager.h" />
         <source-file src="src/ios/HolesView.m" />

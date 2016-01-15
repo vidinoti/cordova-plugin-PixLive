@@ -4,11 +4,12 @@
 //
 //  Created by Mathieu Monney on 24.04.15.
 //
+//  Copyright 2010-2016 Vidinoti SA. All rights reserved.
 //
 
 #import "HolesView.h"
 #import "PixLive.h"
-#import "IonicARViewController.h"
+#import "CordovaARViewController.h"
 
 @implementation HolesView
 
@@ -33,7 +34,7 @@
     
     //Check if we fall into one AR view
     
-    for(IonicARViewController *ctrl in plugin.arViewControllers.allValues) {
+    for(CordovaARViewController *ctrl in plugin.arViewControllers.allValues) {
         if(!ctrl.view.superview || ctrl.view.hidden) {
             continue;
         }

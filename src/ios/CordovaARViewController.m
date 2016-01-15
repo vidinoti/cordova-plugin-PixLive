@@ -1,21 +1,22 @@
 //
-//  IonicARViewController.m
+//  CordovaARViewController.m
 //  myApp
 //
 //  Created by Mathieu Monney on 15.04.15.
 //
+//  Copyright 2010-2016 Vidinoti SA. All rights reserved.
 //
 
-#import "IonicARViewController.h"
+#import "CordovaARViewController.h"
 #import "PixLive.h"
 
-@interface IonicARViewController () {
+@interface CordovaARViewController () {
     __weak PixLive* plugin;
 }
 
 @end
 
-@implementation IonicARViewController
+@implementation CordovaARViewController
 
 -(id)initWithPlugin:(PixLive*)_plugin {
     self = [super init];

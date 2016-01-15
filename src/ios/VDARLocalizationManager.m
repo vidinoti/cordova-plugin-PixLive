@@ -3,7 +3,8 @@
 //  VDARSDK
 //
 //  Created by Laurent Rime on 5/30/11.
-//  Copyright 2011 Vidinoti SA. All rights reserved.
+//
+//  Copyright 2011-2016 Vidinoti SA. All rights reserved.
 //
 
 #import "VDARLocalizationManager.h"

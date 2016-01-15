@@ -4,6 +4,7 @@
 //
 //  Created by Mathieu Monney on 24.04.15.
 //
+//  Copyright 2010-2016 Vidinoti SA. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

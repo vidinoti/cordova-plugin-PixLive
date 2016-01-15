@@ -1,8 +1,15 @@
-/********* PixLive.m Cordova Plugin Implementation *******/
+//
+//  PixLive.m
+//  PixLive SDK Cordova plugin
+//
+//  Created by Mathieu Monney on 15.04.15.
+//
+//  Copyright 2010-2016 Vidinoti SA. All rights reserved.
+//
 
 #import "PixLive.h"
 #import <Cordova/CDV.h>
-#import "IonicARViewController.h"
+#import "CordovaARViewController.h"
 #import "HolesView.h"
 #import "AppDelegate.h"
 #import "VDARLocalizationManager.h"
@@ -66,7 +73,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 }
 
 - (void)onMemoryWarning {
-    for(IonicARViewController * ctrl in [self.arViewControllers allValues]) {
+    for(CordovaARViewController * ctrl in [self.arViewControllers allValues]) {
         [ctrl didReceiveMemoryWarning];
     }
 }
@@ -75,7 +82,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     //Destroy all views
     for(NSNumber *key in [self.arViewControllers allKeys]) {
         
-        IonicARViewController * ctrl = [self.arViewControllers objectForKey:key];
+        CordovaARViewController * ctrl = [self.arViewControllers objectForKey:key];
         
         if(ctrl.view.superview) {
             [ctrl viewWillDisappear:NO];
@@ -95,7 +102,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     //Destroy all views
     for(NSNumber *key in [self.arViewControllers allKeys]) {
         
-        IonicARViewController * ctrl = [self.arViewControllers objectForKey:key];
+        CordovaARViewController * ctrl = [self.arViewControllers objectForKey:key];
         
         if(ctrl.view.superview) {
             [ctrl viewWillDisappear:NO];
@@ -262,7 +269,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
     
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
-    IonicARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    CordovaARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     [ctrl viewWillDisappear:NO];
 }
@@ -277,7 +284,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
     
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
-    IonicARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    CordovaARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     [ctrl.view removeFromSuperview];
     
@@ -295,7 +302,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
     
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
-    IonicARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    CordovaARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     NSDictionary * val = self.arViewSettings[[NSNumber numberWithUnsignedInteger:ctrlID]];
     
@@ -328,7 +335,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
     
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
-    IonicARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    CordovaARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     [ctrl viewDidAppear:NO];
     
@@ -381,7 +388,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
                                  height
                                  );
     
-    IonicARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    CordovaARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     if(!ctrl) return;
     
@@ -412,7 +419,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
     
     NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
-    IonicARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    CordovaARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     if(!ctrl) return;
 
@@ -456,7 +463,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
                                  height
                                  );
     
-    IonicARViewController * ctrl = self.arViewControllers[[NSNumber numberWithUnsignedInteger:ctrlID]] = [[IonicARViewController alloc] initWithPlugin:self];
+    CordovaARViewController * ctrl = self.arViewControllers[[NSNumber numberWithUnsignedInteger:ctrlID]] = [[CordovaARViewController alloc] initWithPlugin:self];
     
     [ctrl view]; //Load the view
     
