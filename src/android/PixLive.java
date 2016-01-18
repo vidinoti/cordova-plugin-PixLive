@@ -20,8 +20,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.vidinoti.android.vdarsdk.DeviceCameraImageSender;
+import com.vidinoti.android.vdarsdk.IBeaconSensor;
 import com.vidinoti.android.vdarsdk.NotificationCompat;
 import com.vidinoti.android.vdarsdk.NotificationFactory;
+import com.vidinoti.android.vdarsdk.Sensor;
 import com.vidinoti.android.vdarsdk.VDARAnnotationView;
 import com.vidinoti.android.vdarsdk.VDARCode;
 import com.vidinoti.android.vdarsdk.VDARCodeType;
@@ -30,7 +32,9 @@ import com.vidinoti.android.vdarsdk.VDARPrior;
 import com.vidinoti.android.vdarsdk.VDARRemoteController;
 import com.vidinoti.android.vdarsdk.VDARSDKController;
 import com.vidinoti.android.vdarsdk.VDARSDKControllerEventReceiver;
+import com.vidinoti.android.vdarsdk.VDARSDKSensorEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARTagPrior;
+import com.vidinoti.android.vdarsdk.VidiBeaconSensor;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -52,9 +56,11 @@ import java.util.Observer;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver {
+public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver, VDARSDKSensorEventReceiver {
 
     private static final String TAG ="PixLiveCordova";
+
+    private boolean locEnabled = false;
 
     class TouchInterceptorView extends FrameLayout {
         public boolean touchEnabled = true;
@@ -168,6 +174,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
         VDARSDKController.getInstance().setActivity(cordova.getActivity());
         VDARSDKController.getInstance().registerEventReceiver(this);
+        VDARSDKController.getInstance().registerSensorEventReceiver(this);
 
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
             @Override
@@ -381,7 +388,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }else if (action.equals("ignoreContext") && args.length()>=1) {
             this.ignoreContext(args.getString(0),callbackContext);
             return true;
-        } else if (action.equals("pageLoaded")) {
+        }else if (action.equals("setLocalizationEnabled")) {
+            locEnabled = true;
+            VDARSDKController.getInstance().getLocalizationManager().startLocalization();
+            return true;
+        }else if (action.equals("pageLoaded")) {
             if(activityActive) {
                 for(Runnable r : foregroundCallbacks) {
                     r.run();
@@ -483,7 +494,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             }
         }
 
-        VDARSDKController.getInstance().getLocalizationManager().startLocalization();
+        if(locEnabled)
+            VDARSDKController.getInstance().getLocalizationManager().startLocalization();
 
         if(pageLoaded) {
             for(Runnable r : foregroundCallbacks) {
@@ -568,7 +580,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private void getContexts(final CallbackContext callbackContext) {
         final ArrayList<String> contextIds = VDARSDKController.getInstance().getAllContextIDs();
         JSONArray ret = new JSONArray();
-        
+
         SimpleDateFormat format = new SimpleDateFormat("Z");
 
         for(String ctxId : contextIds) {
@@ -588,7 +600,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 } catch (JSONException e) {
 
                 }
-                
+
                 ret.put(obj);
             }
         }
@@ -741,7 +753,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    public void onCodesRecognized(java.util.ArrayList<com.vidinoti.android.vdarsdk.VDARCode> arrayList) {
+    @Override
+    public void onCodesRecognized(ArrayList<com.vidinoti.android.vdarsdk.VDARCode> arrayList) {
         if(this.eventHandler != null) {
             for(VDARCode code : arrayList) {
                 if(!code.isSpecialCode()) {
@@ -763,10 +776,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    public void onFatalError(java.lang.String s) {
+    @Override
+    public void onFatalError(String s) {
 
     }
 
+    @Override
     public void onPresentAnnotations() {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
@@ -783,6 +798,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
+    @Override
     public void onAnnotationsHidden() {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
@@ -799,10 +815,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
+    @Override
     public void onTrackingStarted(int w, int h) {
 
     }
 
+    @Override
     public void onEnterContext(com.vidinoti.android.vdarsdk.VDARContext vdarContext) {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
@@ -820,6 +838,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
+    @Override
     public void onExitContext(com.vidinoti.android.vdarsdk.VDARContext vdarContext) {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
@@ -837,6 +856,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
+    @Override
     public void onRequireSynchronization(final ArrayList<com.vidinoti.android.vdarsdk.VDARPrior> priors) {
         Runnable r = new Runnable() {
             @Override
@@ -873,6 +893,53 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             foregroundCallbacks.add(r);
         }
 
+    }
+
+    @Override
+    public void onSensorTriggered(Sensor sensor) {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
+
+            try {
+                o.put("type", sensor.isTriggered() ? "sensorTriggered" : "sensorUntriggered");
+                o.put("sensorId", sensor.getSensorId());
+                o.put("sensorType", sensor.getType());
+            } catch (JSONException e) {
+
+            }
+
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            PixLive.this.eventHandler.sendPluginResult(p);
+        }
+    }
+
+    @Override
+    public void onSensorUpdated(Sensor sensor) {
+        if(this.eventHandler != null) {
+
+            JSONObject o = new JSONObject();
+
+            try {
+                o.put("type", "sensorUpdate");
+                o.put("sensorId", sensor.getSensorId());
+                o.put("sensorType", sensor.getType());
+
+                if(sensor instanceof VidiBeaconSensor) {
+                    o.put("rssi",((VidiBeaconSensor)sensor).getRssi());
+                } else if(sensor instanceof IBeaconSensor) {
+                    o.put("rssi",((IBeaconSensor)sensor).getRssi());
+                    o.put("distance",((IBeaconSensor)sensor).getDistance());
+                }
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            PixLive.this.eventHandler.sendPluginResult(p);
+        }
     }
 }
 
