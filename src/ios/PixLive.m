@@ -532,6 +532,19 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (NSDictionary*)dictionaryForContext:(VDARContext*)c {
+    return @{
+               @"contextId": c.remoteID,
+               @"name": c.name ? c.name : [NSNull null],
+               @"lastUpdate": c.lastmodif ? [c.lastmodif descriptionWithLocale:nil] : [NSNull null],
+               @"description": c.contextDescription ? c.contextDescription : [NSNull null],
+               @"notificationTitle": c.notificationTitle ? c.notificationTitle : [NSNull null],
+               @"notificationMessage":  c.notificationMessage ? c.notificationMessage : [NSNull null],
+               @"imageThumbnailURL": c.imageThumbnailURL.absoluteString,
+               @"imageHiResURL": c.imageHiResURL.absoluteString,
+            };
+}
+
 - (void) getContexts:(CDVInvokedUrlCommand *)command
 {
     NSArray *contextIds = [[VDARSDKController sharedInstance] contextIDs];
@@ -540,19 +553,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     for(NSString* ctxId in contextIds) {
         VDARContext * c  = [[VDARSDKController sharedInstance] getContext:ctxId];
         if(c) {
-
-            NSDictionary *dict = @{
-                                   @"contextId": ctxId,
-                                   @"name": c.name ? c.name : [NSNull null],
-                                   @"lastUpdate": c.lastmodif ? [c.lastmodif descriptionWithLocale:nil] : [NSNull null],
-                                   @"description": c.contextDescription ? c.contextDescription : [NSNull null],
-                                   @"notificationTitle": c.notificationTitle ? c.notificationTitle : [NSNull null],
-                                   @"notificationMessage":  c.notificationMessage ? c.notificationMessage : [NSNull null],
-                                   @"imageThumbnailURL": c.imageThumbnailURL.absoluteString,
-                                   @"imageHiResURL": c.imageHiResURL.absoluteString,
-                                   };
-
-            [output addObject:dict];
+            [output addObject:[self dictionaryForContext:c]];
         }
     }
 
@@ -759,9 +760,25 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 #pragma mark - PixLive SDK Sensor Delegate
 
 
--(void)didTriggerSensor:(VDARSensor*)sensor {
+-(void)didTriggerSensor:(VDARSensor*)sensor forContext:(VDARContext*)context {
     if(eventCallbackId) {
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type": sensor.triggered ? @"sensorTriggered" : @"sensorUntriggered",@"sensorId": sensor.sensorId,@"sensorType": sensor.type}];
+        NSMutableDictionary* dict = [NSMutableDictionary new];
+        dict[@"type"]=sensor.triggered ? @"sensorTriggered" : @"sensorUntriggered";
+        dict[@"sensorId"]=sensor.sensorId;
+        dict[@"sensorType"]=sensor.type;
+
+        if(sensor.triggered) {
+            if([sensor isKindOfClass:[VDARVidiBeaconSensor class]]) {
+                dict[@"rssi"]=[NSNumber numberWithFloat:((VDARVidiBeaconSensor*)sensor).rssi];
+            } else if([sensor isKindOfClass:[VDARIBeaconSensor class]]) {
+                dict[@"rssi"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).rssi];
+                dict[@"distance"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).distance];
+            }
+        }
+
+        dict[@"context"]=[self dictionaryForContext:context];
+
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         
         pluginResult.keepCallback = @YES;
         
@@ -769,7 +786,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
 }
 
--(void)didUpdateSensorValues:(VDARSensor*)sensor {
+-(void)didUpdateSensorValues:(VDARSensor*)sensor forContext:(VDARContext*)context {
     if(eventCallbackId) {
 
         NSMutableDictionary* dict = [NSMutableDictionary new];
@@ -783,6 +800,8 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
             dict[@"rssi"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).rssi];
             dict[@"distance"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).distance];
         }
+
+        dict[@"context"]=[self dictionaryForContext:context];
 
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         

@@ -577,31 +577,37 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
+    private JSONObject createJSONForContext(VDARContext c) {
+        JSONObject obj = new JSONObject();
+
+        SimpleDateFormat format = new SimpleDateFormat("Z");
+
+        try {
+            obj.put("contextId",c.getRemoteID());
+            obj.put("name",c.getName());
+            obj.put("lastUpdate",format.format(c.getLastModifiedDate()));
+            obj.put("description",c.getDescription());
+            obj.put("notificationTitle",c.getNotificationTitle());
+            obj.put("notificationMessage",c.getNotificationMessage());
+            obj.put("imageThumbnailURL",c.getImageThumbnailURL());
+            obj.put("imageHiResURL",c.getImageHiResURL());
+        } catch (JSONException e) {
+
+        }
+
+        return obj;
+    }
+
     private void getContexts(final CallbackContext callbackContext) {
         final ArrayList<String> contextIds = VDARSDKController.getInstance().getAllContextIDs();
         JSONArray ret = new JSONArray();
 
-        SimpleDateFormat format = new SimpleDateFormat("Z");
-
         for(String ctxId : contextIds) {
             VDARContext c = VDARSDKController.getInstance().getContext(ctxId);
             if(c != null) {
-                JSONObject obj = new JSONObject();
+                
 
-                try {
-                    obj.put("contextId",ctxId);
-                    obj.put("name",c.getName());
-                    obj.put("lastUpdate",format.format(c.getLastModifiedDate()));
-                    obj.put("description",c.getDescription());
-                    obj.put("notificationTitle",c.getNotificationTitle());
-                    obj.put("notificationMessage",c.getNotificationMessage());
-                    obj.put("imageThumbnailURL",c.getImageThumbnailURL());
-                    obj.put("imageHiResURL",c.getImageHiResURL());
-                } catch (JSONException e) {
-
-                }
-
-                ret.put(obj);
+                ret.put(createJSONForContext(c));
             }
         }
         if(!isWebViewDestroyed()) {
@@ -896,7 +902,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     @Override
-    public void onSensorTriggered(Sensor sensor) {
+    public void onSensorTriggered(Sensor sensor, VDARContext context) {
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
 
@@ -904,6 +910,17 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 o.put("type", sensor.isTriggered() ? "sensorTriggered" : "sensorUntriggered");
                 o.put("sensorId", sensor.getSensorId());
                 o.put("sensorType", sensor.getType());
+                o.put("context", createJSONForContext(context));
+
+                if(sensor.isTriggered()) {
+                    if(sensor instanceof VidiBeaconSensor) {
+                        o.put("rssi",((VidiBeaconSensor)sensor).getRssi());
+                    } else if(sensor instanceof IBeaconSensor) {
+                        o.put("rssi",((IBeaconSensor)sensor).getRssi());
+                        o.put("distance",((IBeaconSensor)sensor).getDistance());
+                    }
+                }
+
             } catch (JSONException e) {
 
             }
@@ -916,7 +933,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     @Override
-    public void onSensorUpdated(Sensor sensor) {
+    public void onSensorUpdated(Sensor sensor, VDARContext context) {
         if(this.eventHandler != null) {
 
             JSONObject o = new JSONObject();
@@ -925,6 +942,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 o.put("type", "sensorUpdate");
                 o.put("sensorId", sensor.getSensorId());
                 o.put("sensorType", sensor.getType());
+                o.put("context", createJSONForContext(context));
 
                 if(sensor instanceof VidiBeaconSensor) {
                     o.put("rssi",((VidiBeaconSensor)sensor).getRssi());
