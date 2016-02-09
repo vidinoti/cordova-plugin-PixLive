@@ -159,9 +159,9 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     return [NSData dataWithBytesNoCopy:bytes length:[hex length]/2 freeWhenDone:YES];
 }
 
--(CDVPlugin*) initWithWebView:(UIWebView*)theWebView
+-(void) pluginInitialize
 {
-    self = [super initWithWebView:theWebView];
+    [super pluginInitialize];
     
     _arViewControllers = [NSMutableDictionary dictionary];
     _arViewSettings = [NSMutableDictionary dictionary];
