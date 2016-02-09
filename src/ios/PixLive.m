@@ -238,8 +238,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }];
 
     [VDARRemoteController sharedInstance].delegate=self;
-    
-    return self;
 }
 
 -(void)pageLoaded:(CDVInvokedUrlCommand *)command {
@@ -489,7 +487,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         touchForwarder = [[HolesView alloc] initWithFrame:self.webView.frame andPlugin:self];
         touchForwarder.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
-        UIWebView *webView = self.webView;
+        UIView *webView = self.webView;
         UIView *superview = webView.superview;
         
         [webView removeFromSuperview];
