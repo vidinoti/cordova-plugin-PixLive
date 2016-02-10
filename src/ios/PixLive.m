@@ -32,7 +32,7 @@ static NSString* const VDARApplicationRegisterUserNotificationSettings = @"UIApp
  * to get the user’s attention.
  */
 - (void) application:(UIApplication*)application
-    didRegisterUserNotificationSettings:(UIUserNotificationSettings*)settings
+didRegisterUserNotificationSettings:(UIUserNotificationSettings*)settings
 {
     NSNotificationCenter* center = [NSNotificationCenter
                                     defaultCenter];
@@ -113,10 +113,10 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [self.arViewControllers removeAllObjects];
     [self.arViewSettings removeAllObjects];
-
+    
     [[VDARSDKController sharedInstance].detectionDelegates removeObject:self];
     [VDARRemoteController sharedInstance].delegate=nil;
-
+    
     [touchForwarder removeFromSuperview];
     touchForwarder=nil;
     
@@ -165,23 +165,23 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     _arViewControllers = [NSMutableDictionary dictionary];
     _arViewSettings = [NSMutableDictionary dictionary];
-
+    
     foregroundOperationQueue = [[NSOperationQueue alloc] init];
     [foregroundOperationQueue setMaxConcurrentOperationCount:1];
-
+    
     [foregroundOperationQueue setSuspended:YES];
     
     self.webView.backgroundColor = [UIColor clearColor];
     self.webView.opaque = NO;
-
+    
     NSDictionary* infoDict = [[NSBundle mainBundle] infoDictionary];
-
+    
     NSString* apiKey = [infoDict objectForKey:@"PixLiveLicense"];
-
+    
     if(!apiKey || apiKey.length==0) {
         [NSException raise:@"No API Key in Info.plist for PixLive SDK" format:@"No API Key in Info.plist for PixLive SDK"];
     }
-
+    
     NSString *modelDir=[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"pixliveSDK"];
     
     [VDARSDKController startSDK:modelDir withLicenseKey:apiKey];
@@ -197,18 +197,18 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         self.webView.backgroundColor = [UIColor clearColor];
         self.webView.opaque = NO;
     }];
-
-
+    
+    
     [[NSNotificationCenter defaultCenter] addObserverForName:CDVRemoteNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         NSData *d = [self dataWithHexString:note.object];
         
         [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:d];
     }];
-
+    
     [[NSNotificationCenter defaultCenter] addObserverForName:CDVRemoteNotificationError object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didFailToRegisterForRemoteNotificationsWithError:note.object];
     }];
-
+    
     [[NSNotificationCenter defaultCenter] addObserverForName:VDARApplicationRegisterUserNotificationSettings object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     }];
@@ -226,17 +226,17 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [[NSNotificationCenter defaultCenter] addObserverForName:VDARApplicationRegisterUserNotificationSettings object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         [[UIApplication sharedApplication] registerForRemoteNotifications];
     }];
-
+    
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         if(pageLoaded) {
             [foregroundOperationQueue setSuspended:NO];
         }
     }];
-
+    
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         [foregroundOperationQueue setSuspended:YES];
     }];
-
+    
     [VDARRemoteController sharedInstance].delegate=self;
 }
 
@@ -423,11 +423,11 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     CordovaARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     if(!ctrl) return;
-
+    
     [ctrl viewWillDisappear:NO];
     [ctrl.view removeFromSuperview];
     [ctrl viewDidDisappear:NO];
-
+    
     [self.arViewControllers removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
     
     [self.arViewSettings removeObjectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
@@ -532,31 +532,31 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 - (NSDictionary*)dictionaryForContext:(VDARContext*)c {
     return @{
-               @"contextId": c.remoteID,
-               @"name": c.name ? c.name : [NSNull null],
-               @"lastUpdate": c.lastmodif ? [c.lastmodif descriptionWithLocale:nil] : [NSNull null],
-               @"description": c.contextDescription ? c.contextDescription : [NSNull null],
-               @"notificationTitle": c.notificationTitle ? c.notificationTitle : [NSNull null],
-               @"notificationMessage":  c.notificationMessage ? c.notificationMessage : [NSNull null],
-               @"imageThumbnailURL": c.imageThumbnailURL.absoluteString,
-               @"imageHiResURL": c.imageHiResURL.absoluteString,
-            };
+             @"contextId": c.remoteID,
+             @"name": c.name ? c.name : [NSNull null],
+             @"lastUpdate": c.lastmodif ? [c.lastmodif descriptionWithLocale:nil] : [NSNull null],
+             @"description": c.contextDescription ? c.contextDescription : [NSNull null],
+             @"notificationTitle": c.notificationTitle ? c.notificationTitle : [NSNull null],
+             @"notificationMessage":  c.notificationMessage ? c.notificationMessage : [NSNull null],
+             @"imageThumbnailURL": c.imageThumbnailURL.absoluteString,
+             @"imageHiResURL": c.imageHiResURL.absoluteString,
+             };
 }
 
 - (void) getContexts:(CDVInvokedUrlCommand *)command
 {
     NSArray *contextIds = [[VDARSDKController sharedInstance] contextIDs];
     NSMutableArray *output = [NSMutableArray array];
-
+    
     for(NSString* ctxId in contextIds) {
         VDARContext * c  = [[VDARSDKController sharedInstance] getContext:ctxId];
         if(c) {
             [output addObject:[self dictionaryForContext:c]];
         }
     }
-
+    
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:output];
-
+    
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
@@ -607,6 +607,19 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 #pragma mark - Remote controller
 
+-(void) addPriors:(NSArray*)arr inTagArray:(NSMutableArray*)dest {
+    for(NSString * t in arr) {
+        if([t isKindOfClass:[NSString class]]) {
+            [dest addObject:[VDARTagPrior tagWithName:t]];
+        }else if([t isKindOfClass:[NSArray class]]) {
+            NSMutableArray * ret = [NSMutableArray array];
+            [self addPriors:(NSArray*)t inTagArray: ret];
+            [dest addObject:[[VDARIntersectionPrior alloc] initWithPriors:ret]];
+        }
+        
+    }
+}
+
 - (void) synchronize:(CDVInvokedUrlCommand *)command
 {
     
@@ -617,9 +630,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSMutableArray *arrTags = [NSMutableArray arrayWithCapacity:argc];
     
     if(argc>0) {
-        for(NSString * t in arguments[0]) {
-            [arrTags addObject:[VDARTagPrior tagWithName:t]];
-        }
+        [self addPriors: arguments[0] inTagArray: arrTags];
     }
     
     [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
@@ -689,7 +700,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 -(void)didEnterContext:(VDARContext *)context {
     if(eventCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"enterContext", @"context": context.remoteID ? context.remoteID : @""}];
-
+        
         pluginResult.keepCallback = @YES;
         
         [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
@@ -714,16 +725,16 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [foregroundOperationQueue addOperationWithBlock: ^() {
         dispatch_async(dispatch_get_main_queue(), ^() {
             if(eventCallbackId) {
-
+                
                 NSMutableArray *tags = [NSMutableArray array];
-
+                
                 for(VDARPrior *p in priors) {
                     if([p isKindOfClass:[VDARTagPrior class]]) {
                         VDARTagPrior * tag = (VDARTagPrior*)p;
                         [tags addObject:tag.tagName];
                     }
                 }
-
+                
                 CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"requireSync", @"tags": tags}];
                 
                 pluginResult.keepCallback = @YES;
@@ -764,7 +775,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         dict[@"type"]=sensor.triggered ? @"sensorTriggered" : @"sensorUntriggered";
         dict[@"sensorId"]=sensor.sensorId;
         dict[@"sensorType"]=sensor.type;
-
+        
         if(sensor.triggered) {
             if([sensor isKindOfClass:[VDARVidiBeaconSensor class]]) {
                 dict[@"rssi"]=[NSNumber numberWithFloat:((VDARVidiBeaconSensor*)sensor).rssi];
@@ -773,9 +784,9 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
                 dict[@"distance"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).distance];
             }
         }
-
+        
         dict[@"context"]=[self dictionaryForContext:context];
-
+        
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         
         pluginResult.keepCallback = @YES;
@@ -786,21 +797,21 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 -(void)didUpdateSensorValues:(VDARSensor*)sensor forContext:(VDARContext*)context {
     if(eventCallbackId) {
-
+        
         NSMutableDictionary* dict = [NSMutableDictionary new];
         dict[@"type"]=@"sensorUpdate";
         dict[@"sensorId"]=sensor.sensorId;
         dict[@"sensorType"]=sensor.type;
-
+        
         if([sensor isKindOfClass:[VDARVidiBeaconSensor class]]) {
             dict[@"rssi"]=[NSNumber numberWithFloat:((VDARVidiBeaconSensor*)sensor).rssi];
         } else if([sensor isKindOfClass:[VDARIBeaconSensor class]]) {
             dict[@"rssi"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).rssi];
             dict[@"distance"]=[NSNumber numberWithFloat:((VDARIBeaconSensor*)sensor).distance];
         }
-
+        
         dict[@"context"]=[self dictionaryForContext:context];
-
+        
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
         
         pluginResult.keepCallback = @YES;

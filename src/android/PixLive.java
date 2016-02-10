@@ -28,6 +28,7 @@ import com.vidinoti.android.vdarsdk.VDARAnnotationView;
 import com.vidinoti.android.vdarsdk.VDARCode;
 import com.vidinoti.android.vdarsdk.VDARCodeType;
 import com.vidinoti.android.vdarsdk.VDARContext;
+import com.vidinoti.android.vdarsdk.VDARIntersectionPrior;
 import com.vidinoti.android.vdarsdk.VDARPrior;
 import com.vidinoti.android.vdarsdk.VDARRemoteController;
 import com.vidinoti.android.vdarsdk.VDARSDKController;
@@ -350,16 +351,14 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             this.resize(x, y, width, height,ctrlID, callbackContext);
             return true;
         }else if (action.equals("synchronize")) {
-            ArrayList<String> list = new ArrayList<String>();
+            JSONArray a = null;
 
             if(args.length()>0) {
-                JSONArray a = args.getJSONArray(0);
-                for (int i=0; i<a.length(); i++) {
-                    list.add( a.getString(i) );
-                }
+                a = args.getJSONArray(0);
+
             }
 
-            this.synchronize(list,callbackContext);
+            this.synchronize(a,callbackContext);
             return true;
         } else if (action.equals("enableTouch")) {
             this.enableTouch();
@@ -530,12 +529,34 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    private void synchronize(ArrayList<String> tags, final CallbackContext callbackContext) {
-        final ArrayList<VDARPrior> priors = new ArrayList<VDARPrior>();
+    private ArrayList<VDARPrior> getPriorsFromJSON(JSONArray a) {
+        ArrayList<VDARPrior> ret = new ArrayList<VDARPrior>();
+        
+        if(a != null) {
+            for(int i = 0; i < a.length(); i++) {
+                Object s = null;
+                try {
+                    s = a.get(i);
+                } catch (JSONException e) {
+                    continue;
+                }
 
-        for(String s : tags) {
-            priors.add(new VDARTagPrior(s));
+                if(s instanceof String) {
+                    ret.add(new VDARTagPrior((String)s));
+                } else if(s instanceof JSONArray) {
+                    ArrayList<VDARPrior> ret2 = getPriorsFromJSON((JSONArray)s);
+
+                    ret.add(new VDARIntersectionPrior(ret2));
+                }
+            }
         }
+        
+        return ret;
+    }
+
+    private void synchronize(JSONArray tags, final CallbackContext callbackContext) {
+        
+        final ArrayList<VDARPrior> priors = getPriorsFromJSON(tags);
 
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
             @Override
