@@ -1,6 +1,7 @@
 
 package com.vidinoti.pixlive;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -45,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -217,6 +219,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 }
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                          int[] grantResults) throws JSONException {
+        VDARSDKController.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     static void startSDK(final Context c) {
@@ -733,6 +741,18 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
 
                     VDARSDKController.getInstance().setImageSender(imageSender);
+
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        //FIXME: This is a hack, we enfore the cordova impl to have our own plugin as requestPermission callback
+                        
+                        try {
+                            Field fs = cordova.getClass().getDeclaredField("permissionResultCallback");
+                            fs.setAccessible(true);
+                            fs.set(cordova, PixLive.this);
+                        } catch(Exception e) {
+
+                        }
+                    }
                 }
 
                 VDARAnnotationView annotationView = new VDARAnnotationView(cordova.getActivity());
