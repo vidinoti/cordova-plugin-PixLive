@@ -1,6 +1,7 @@
 
 package com.vidinoti.pixlive;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -217,6 +218,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 }
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                          int[] grantResults) throws JSONException {
+        VDARSDKController.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     static void startSDK(final Context c) {
@@ -733,6 +740,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
 
                     VDARSDKController.getInstance().setImageSender(imageSender);
+
+                    // Request camera permission
+                    if (Build.VERSION.SDK_INT >= 23) {
+                       cordova.requestPermission(PixLive.this, VDARSDKController.CAMERA_REQUEST_ID, Manifest.permission.CAMERA);
+                    }
                 }
 
                 VDARAnnotationView annotationView = new VDARAnnotationView(cordova.getActivity());
