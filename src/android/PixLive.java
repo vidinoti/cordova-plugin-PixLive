@@ -33,6 +33,7 @@ import com.vidinoti.android.vdarsdk.VDARIntersectionPrior;
 import com.vidinoti.android.vdarsdk.VDARPrior;
 import com.vidinoti.android.vdarsdk.VDARRemoteController;
 import com.vidinoti.android.vdarsdk.VDARSDKController;
+import com.vidinoti.android.vdarsdk.VDARRemoteControllerListener;
 import com.vidinoti.android.vdarsdk.VDARSDKControllerEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARSDKSensorEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARTagPrior;
@@ -59,7 +60,7 @@ import java.util.Observer;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver, VDARSDKSensorEventReceiver {
+public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener {
 
     private static final String TAG ="PixLiveCordova";
 
@@ -182,6 +183,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
             @Override
             public void run() {
+                
+                VDARRemoteController.getInstance().addProgressListener(PixLive.this);
 
                 Intent intent = cordova.getActivity().getIntent();
 
@@ -480,6 +483,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
 
         arViews.clear();
+
+        VDARSDKController.getInstance().unregisterEventReceiver(this);
+        VDARSDKController.getInstance().unregisterSensorEventReceiver(this);
+        VDARRemoteController.getInstance().removeProgressListener(this);
 
         this.eventHandler = null;
     }
@@ -996,6 +1003,26 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             }
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            PixLive.this.eventHandler.sendPluginResult(p);
+        }
+    }
+
+    @Override
+    public void onSyncProgress(VDARRemoteController controller, float progress,
+                               boolean isReady, String folder) {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
+
+            try {
+                o.put("type", "syncProgress");
+                o.put("progress", progress / 100.0f);
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            
             p.setKeepCallback(true);
             PixLive.this.eventHandler.sendPluginResult(p);
         }
