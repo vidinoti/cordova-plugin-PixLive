@@ -22,7 +22,7 @@ import android.widget.FrameLayout;
 
 import com.vidinoti.android.vdarsdk.DeviceCameraImageSender;
 import com.vidinoti.android.vdarsdk.IBeaconSensor;
-import com.vidinoti.android.vdarsdk.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import com.vidinoti.android.vdarsdk.NotificationFactory;
 import com.vidinoti.android.vdarsdk.Sensor;
 import com.vidinoti.android.vdarsdk.VDARAnnotationView;
