@@ -410,6 +410,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                 foregroundCallbacks.clear();
             }
+            pageLoaded=true;
             return true;
         }
         return false;
