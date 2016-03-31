@@ -55,6 +55,18 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [[VDARSDKController sharedInstance] application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo completionHandler:completionHandler];
 }
 
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVRemoteNotification object:deviceToken];
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVRemoteNotificationError object:error];
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVLocalNotification object:notification];
+}
+
 @end
 
 
@@ -200,9 +212,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     
     [[NSNotificationCenter defaultCenter] addObserverForName:CDVRemoteNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
-        NSData *d = [self dataWithHexString:note.object];
-        
-        [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:d];
+       [[VDARSDKController sharedInstance] application:[UIApplication sharedApplication] didRegisterForRemoteNotificationsWithDeviceToken:note.object];
     }];
     
     [[NSNotificationCenter defaultCenter] addObserverForName:CDVRemoteNotificationError object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
@@ -222,16 +232,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserverForName:VDARApplicationRegisterUserNotificationSettings object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    }];
-    
-    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
-        if(pageLoaded) {
-            [foregroundOperationQueue setSuspended:NO];
-        }
-    }];
     
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
         [foregroundOperationQueue setSuspended:YES];
