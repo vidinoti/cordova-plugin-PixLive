@@ -17,7 +17,7 @@ cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicens
 ## Create an augmented reality app in two minutes!
 This demo app show you the basis to use PixLive SDK in your cordova project.
 
-* Create a new Cordova project using cordova-template-PixLive. Don't forget to register your app on PixLive Maker.
+* Create a new Cordova project using cordova-template-PixLive. **Don't forget to register your app on PixLive Maker.**
 
 ```bash
 cordova create myArApp com.mycompany.myArApp myArApp --template https://github.com/vidinoti/cordova-template-PixLive.git
