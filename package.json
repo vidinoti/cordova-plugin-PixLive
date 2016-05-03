@@ -49,5 +49,10 @@
   "bugs": {
     "url": "https://github.com/vidinoti/cordova-plugin-PixLive/issues"
   },
-  "homepage": "https://github.com/vidinoti/cordova-plugin-PixLive#readme"
+  "homepage": "https://github.com/vidinoti/cordova-plugin-PixLive#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-jsdoc": "^2.0.0"
+  }
 }

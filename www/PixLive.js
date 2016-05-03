@@ -1,7 +1,10 @@
 var exec = require('cordova/exec');
 
 
-
+/**
+ * PixLive
+ * @constructor
+ */
 var PixLive = function(handle) {
 	this.options = {};
 	this.handle = handle;
