@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.vidinoti.android.vdarsdk.bookmark.BookmarkManager;
 import com.vidinoti.android.vdarsdk.DeviceCameraImageSender;
 import com.vidinoti.android.vdarsdk.IBeaconSensor;
 import android.support.v4.app.NotificationCompat;
@@ -56,6 +57,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -392,17 +394,17 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("getContexts")) {
             this.getContexts(callbackContext);
             return true;
-        }else if (action.equals("activateContext") && args.length()>=1) {
+        } else if (action.equals("activateContext") && args.length()>=1) {
             this.activateContext(args.getString(0),callbackContext);
             return true;
-        }else if (action.equals("ignoreContext") && args.length()>=1) {
+        } else if (action.equals("ignoreContext") && args.length()>=1) {
             this.ignoreContext(args.getString(0),callbackContext);
             return true;
-        }else if (action.equals("setLocalizationEnabled")) {
+        } else if (action.equals("setLocalizationEnabled")) {
             locEnabled = true;
             VDARSDKController.getInstance().getLocalizationManager().startLocalization();
             return true;
-        }else if (action.equals("pageLoaded")) {
+        } else if (action.equals("pageLoaded")) {
             if(activityActive) {
                 for(Runnable r : foregroundCallbacks) {
                     r.run();
@@ -412,14 +414,51 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             }
             pageLoaded=true;
             return true;
+        } else if (action.equals("setBookmarkSupport") && args.length()>=1) {
+            this.setBookmarkSupport(args.getBoolean(0));
+            return true;
+        } else if (action.equals("getBookmarks")) {
+            this.getBookmarks(callbackContext);
+            return true;
+        } else if (action.equals("addBookmark") && args.length()>=1) {
+            this.addBookmark(args.getString(0));
+            return true;
+        } else if (action.equals("removeBookmark") && args.length()>=1) {
+            this.removeBookmark(args.getString(0));
+            return true;
         }
         return false;
+    }
+
+    private void setBookmarkSupport(boolean enabled) {
+        VDARSDKController.getInstance().setBookmarkSupport(enabled);
+    }
+    
+    private void getBookmarks(CallbackContext callback) {
+        final Set<String> contextIds = BookmarkManager.getBookmarks();
+        JSONArray ret = new JSONArray();
+        for(String ctxId : contextIds) {
+            VDARContext c = VDARSDKController.getInstance().getContext(ctxId);
+            if(c != null) {
+                ret.put(createJSONForContext(c));
+            }
+        }
+        if(!isWebViewDestroyed()) {
+            callback.success(ret);
+        }
+    }
+    
+    private void addBookmark(String contextId) {
+        BookmarkManager.addBookmark(contextId);
+    }
+    
+    private void removeBookmark(String contextId) {
+        BookmarkManager.removeBookmark(contextId);
     }
 
     private void installEventHandler(CallbackContext callback) {
         this.eventHandler = callback;
     }
-
 
     private void setNotificationsSupport(String googleProjectKey) {
         VDARSDKController.getInstance().setNotificationsSupport(googleProjectKey!=null, googleProjectKey);

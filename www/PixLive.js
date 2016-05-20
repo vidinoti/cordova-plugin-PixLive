@@ -103,6 +103,37 @@ PixLive.getContexts = function(success, error) {
 	}, error, "PixLive", "getContexts",  []);
 };
 
+// Activates the bookmark feature. A bookmark icon will be shown when a context is
+// displayed and the user has the possibility to "save" the context.
+PixLive.setBookmarkSupport = function (enabled) {
+	exec(null, null, "PixLive", "setBookmarkSupport", [enabled]);
+};
+
+// Returns the list of contexts that have been bookmarked.
+PixLive.getBookmarks = function(success, error) {
+	exec(function(list) {
+		if(success !== null) {
+			var ret = [];
+			for (var i = 0; i < list.length; i++) {
+				var prop = list[i];
+				var object = new PixLive.Context(prop);
+				ret.push(object);
+			}
+			success(ret);
+		}
+	}, error, "PixLive", "getBookmarks",  []);
+};
+
+// Adds the contextId to the list of bookmarked content.
+PixLive.addBookmark = function(contextId) {
+	exec(null, null, "PixLive", "addBookmark", [contextId]);
+};
+
+// Removes the contextId from the list of bookmarked content.
+PixLive.removeBookmark = function(contextId) {
+	exec(null, null, "PixLive", "removeBookmark", [contextId]);
+};
+
 // Used to signal the plugin that the page is fully loaded
 document.addEventListener("deviceready", function() {
 	exec(null, null, "PixLive", "pageLoaded",  []);
