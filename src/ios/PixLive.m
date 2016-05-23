@@ -653,6 +653,74 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
 }
 
+#pragma mark - Bookmarks
+
+-(void)setBookmarkSupport:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1) {
+        return;
+    }
+    
+    [VDARSDKController sharedInstance].enableBookmarks=[[arguments objectAtIndex:0] boolValue];
+}
+
+- (void) getBookmarks:(CDVInvokedUrlCommand *)command
+{
+    NSArray *bookmarks = [VDARSDKController sharedInstance].bookmarks;
+    
+    NSMutableArray *output = [NSMutableArray array];
+    
+    for(NSString* ctxId in bookmarks) {
+        VDARContext * c  = [[VDARSDKController sharedInstance] getContext:ctxId];
+        if(c) {
+            [output addObject:[self dictionaryForContext:c]];
+        }
+    }
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:output];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) addBookmark:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1 ) {
+        return;
+    }
+
+    if (![arguments[0] isKindOfClass:[NSString class]]) {
+        return;
+    }
+    
+    [[VDARSDKController sharedInstance] addBookmark: (NSString*)arguments[0]];
+}
+
+- (void) removeBookmark:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1 ) {
+        return;
+    }
+
+    if (![arguments[0] isKindOfClass:[NSString class]]) {
+        return;
+    }
+    
+    [[VDARSDKController sharedInstance] removeBookmark: (NSString*)arguments[0]];
+}
+
+#pragma mark - PixLive SDK Delegate
+
 -(void)remoteController:(VDARRemoteController*)controller didProgress:(float)prc isReady:(bool)isReady folder:(NSString*)folder {
     if(eventCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"syncProgress", @"progress": [NSNumber numberWithFloat:prc]}];
@@ -662,8 +730,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
     }
 }
-
-#pragma mark - PixLive SDK Delegate
 
 -(NSString*)codeTypeAsString:(VDARCodeType)t {
     switch(t) {
