@@ -54,10 +54,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -435,7 +435,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
     
     private void getBookmarks(CallbackContext callback) {
-        final Set<String> contextIds = BookmarkManager.getBookmarks();
+        final List<String> contextIds = BookmarkManager.getBookmarks();
         JSONArray ret = new JSONArray();
         for(String ctxId : contextIds) {
             VDARContext c = VDARSDKController.getInstance().getContext(ctxId);
