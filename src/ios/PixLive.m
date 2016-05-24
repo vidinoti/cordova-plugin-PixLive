@@ -200,8 +200,16 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [VDARSDKController sharedInstance].enableCodesRecognition=YES;
     
-    [VDARSDKController sharedInstance].imageSender = [[VDARCameraImageSource alloc] init];
-    
+    VDARCameraImageSource *camera = [[VDARCameraImageSource alloc] init];
+
+    [VDARSDKController sharedInstance].imageSender = camera;
+
+    // Display a black screen in simulator when using fastlane for doing screenshot
+    // See for https://github.com/fastlane/fastlane/tree/master/snapshot more info
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"FASTLANE_SNAPSHOT"]) {
+        camera.cameraImageSource = nil;
+    }
+        
     [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
     [[VDARSDKController sharedInstance].sensorDelegates addObject:self];
     
