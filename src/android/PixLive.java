@@ -864,7 +864,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                     PluginResult p = new PluginResult(PluginResult.Status.OK, o);
                     p.setKeepCallback(true);
-                    this.eventHandler.sendPluginResult(p);
+
+                    try {
+                        PixLive.this.eventHandler.sendPluginResult(p);
+                    } catch (Exception e) {
+                        //To avoid webview crashes
+                    }
                 }
             }
         }
@@ -888,7 +893,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            this.eventHandler.sendPluginResult(p);
+
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
         }
     }
 
@@ -905,7 +915,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            this.eventHandler.sendPluginResult(p);
+
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
         }
     }
 
@@ -928,7 +943,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            this.eventHandler.sendPluginResult(p);
+            
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
         }
     }
 
@@ -946,7 +966,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            this.eventHandler.sendPluginResult(p);
+            
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
         }
     }
 
@@ -975,7 +1000,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                     PluginResult p = new PluginResult(PluginResult.Status.OK, o);
                     p.setKeepCallback(true);
-                    PixLive.this.eventHandler.sendPluginResult(p);
+                    
+                    try {
+                        PixLive.this.eventHandler.sendPluginResult(p);
+                    } catch (Exception e) {
+                        //To avoid webview crashes
+                    }
                 }
             }
         };
@@ -1016,7 +1046,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            PixLive.this.eventHandler.sendPluginResult(p);
+            
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
         }
     }
 
@@ -1044,7 +1079,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            PixLive.this.eventHandler.sendPluginResult(p);
+            
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
         }
     }
 
@@ -1064,7 +1104,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             
             p.setKeepCallback(true);
-            PixLive.this.eventHandler.sendPluginResult(p);
+
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
         }
     }
 }
