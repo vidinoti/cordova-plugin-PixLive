@@ -130,6 +130,11 @@ PixLive.removeBookmark = function(contextId) {
 	exec(null, null, "PixLive", "removeBookmark", [contextId]);
 };
 
+/** The callback success is called with true or false depending if the context ID is bookmarked or not. */
+PixLive.isBookmarked = function(contextId, success, error) {
+	exec(success, error, "PixLive", "isBookmarked", [contextId]);
+};
+
 // Used to signal the plugin that the page is fully loaded
 document.addEventListener("deviceready", function() {
 	exec(null, null, "PixLive", "pageLoaded",  []);
