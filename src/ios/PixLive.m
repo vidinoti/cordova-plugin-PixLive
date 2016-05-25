@@ -200,8 +200,16 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [VDARSDKController sharedInstance].enableCodesRecognition=YES;
     
-    [VDARSDKController sharedInstance].imageSender = [[VDARCameraImageSource alloc] init];
-    
+    VDARCameraImageSource *camera = [[VDARCameraImageSource alloc] init];
+
+    [VDARSDKController sharedInstance].imageSender = camera;
+
+    // Display a black screen in simulator when using fastlane for doing screenshot
+    // See for https://github.com/fastlane/fastlane/tree/master/snapshot more info
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"FASTLANE_SNAPSHOT"]) {
+        camera.cameraImageSource = nil;
+    }
+        
     [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
     [[VDARSDKController sharedInstance].sensorDelegates addObject:self];
     
@@ -653,6 +661,93 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
 }
 
+#pragma mark - Bookmarks
+
+-(void)setBookmarkSupport:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1) {
+        return;
+    }
+    
+    [VDARSDKController sharedInstance].enableBookmarks=[[arguments objectAtIndex:0] boolValue];
+}
+
+- (void) getBookmarks:(CDVInvokedUrlCommand *)command
+{
+    NSArray *bookmarks = [VDARSDKController sharedInstance].bookmarks;
+    
+    NSMutableArray *output = [NSMutableArray array];
+    
+    for(NSString* ctxId in bookmarks) {
+        VDARContext * c  = [[VDARSDKController sharedInstance] getContext:ctxId];
+        if(c) {
+            [output addObject:[self dictionaryForContext:c]];
+        }
+    }
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:output];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) addBookmark:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1 ) {
+        return;
+    }
+
+    if (![arguments[0] isKindOfClass:[NSString class]]) {
+        return;
+    }
+    
+    [[VDARSDKController sharedInstance] addBookmark: (NSString*)arguments[0]];
+}
+
+- (void) removeBookmark:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1 ) {
+        return;
+    }
+
+    if (![arguments[0] isKindOfClass:[NSString class]]) {
+        return;
+    }
+    
+    [[VDARSDKController sharedInstance] removeBookmark: (NSString*)arguments[0]];
+}
+
+- (void) isBookmarked:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1 || ![arguments[0] isKindOfClass:[NSString class]]) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:NSLocalizedString(@"Invalid context ID",@"")];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        return;
+    }
+
+    BOOL bookmarked = [[VDARSDKController sharedInstance] isBookmarked: (NSString*)arguments[0]];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool: bookmarked];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+#pragma mark - PixLive SDK Delegate
+
 -(void)remoteController:(VDARRemoteController*)controller didProgress:(float)prc isReady:(bool)isReady folder:(NSString*)folder {
     if(eventCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"syncProgress", @"progress": [NSNumber numberWithFloat:prc]}];
@@ -662,8 +757,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
     }
 }
-
-#pragma mark - PixLive SDK Delegate
 
 -(NSString*)codeTypeAsString:(VDARCodeType)t {
     switch(t) {

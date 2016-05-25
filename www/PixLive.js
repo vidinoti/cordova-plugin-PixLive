@@ -70,10 +70,6 @@ PixLive.setNotificationsSupport = function( enabled, apiKey ) {
 	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? (apiKey ? apiKey : true) : null]);
 };
 
-PixLive.setNotificationsSupport = function( enabled, apiKey ) {
-	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? (apiKey ? apiKey : true) : null]);
-};
-
 PixLive.synchronize = function( tags, success, error ) {
 	exec(success, error, "PixLive", "synchronize",  [tags]);
 };
@@ -132,6 +128,11 @@ PixLive.addBookmark = function(contextId) {
 // Removes the contextId from the list of bookmarked content.
 PixLive.removeBookmark = function(contextId) {
 	exec(null, null, "PixLive", "removeBookmark", [contextId]);
+};
+
+/** The callback success is called with true or false depending if the context ID is bookmarked or not. */
+PixLive.isBookmarked = function(contextId, success, error) {
+	exec(success, error, "PixLive", "isBookmarked", [contextId]);
 };
 
 // Used to signal the plugin that the page is fully loaded
