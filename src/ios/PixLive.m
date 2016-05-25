@@ -200,8 +200,16 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     [VDARSDKController sharedInstance].enableCodesRecognition=YES;
     
-    [VDARSDKController sharedInstance].imageSender = [[VDARCameraImageSource alloc] init];
-    
+    VDARCameraImageSource *camera = [[VDARCameraImageSource alloc] init];
+
+    [VDARSDKController sharedInstance].imageSender = camera;
+
+    // Display a black screen in simulator when using fastlane for doing screenshot
+    // See for https://github.com/fastlane/fastlane/tree/master/snapshot more info
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"FASTLANE_SNAPSHOT"]) {
+        camera.cameraImageSource = nil;
+    }
+        
     [[VDARSDKController sharedInstance].detectionDelegates addObject:self];
     [[VDARSDKController sharedInstance].sensorDelegates addObject:self];
     
@@ -717,6 +725,25 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
     
     [[VDARSDKController sharedInstance] removeBookmark: (NSString*)arguments[0]];
+}
+
+- (void) isBookmarked:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1 || ![arguments[0] isKindOfClass:[NSString class]]) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:NSLocalizedString(@"Invalid context ID",@"")];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        return;
+    }
+
+    BOOL bookmarked = [[VDARSDKController sharedInstance] isBookmarked: (NSString*)arguments[0]];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool: bookmarked];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 #pragma mark - PixLive SDK Delegate
