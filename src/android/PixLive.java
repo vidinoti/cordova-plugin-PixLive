@@ -36,6 +36,7 @@ import com.vidinoti.android.vdarsdk.VDARRemoteController;
 import com.vidinoti.android.vdarsdk.VDARSDKController;
 import com.vidinoti.android.vdarsdk.VDARRemoteControllerListener;
 import com.vidinoti.android.vdarsdk.VDARSDKControllerEventReceiver;
+import com.vidinoti.android.vdarsdk.VDARContentEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARSDKSensorEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARTagPrior;
 import com.vidinoti.android.vdarsdk.VidiBeaconSensor;
@@ -62,7 +63,7 @@ import java.util.Observer;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener {
+public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver,VDARContentEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener {
 
     private static final String TAG ="PixLiveCordova";
 
@@ -177,9 +178,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         startSDK(cordova.getActivity());
 
         VDARSDKController.getInstance().setEnableCodesRecognition(true);
-
+        VDARSDKController.getInstance().registerContentEventReceiver(this);
         VDARSDKController.getInstance().setActivity(cordova.getActivity());
         VDARSDKController.getInstance().registerEventReceiver(this);
+
         VDARSDKController.getInstance().registerSensorEventReceiver(this);
 
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
@@ -533,6 +535,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         arViews.clear();
 
         VDARSDKController.getInstance().unregisterEventReceiver(this);
+        VDARSDKController.getInstance().unregisterContentEventReceiver(this);
         VDARSDKController.getInstance().unregisterSensorEventReceiver(this);
         VDARRemoteController.getInstance().removeProgressListener(this);
 
@@ -972,6 +975,30 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             try {
                 o.put("type", "exitContext");
                 o.put("context", vdarContext.getRemoteID());
+            } catch (JSONException e) {
+
+            }
+
+            PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+            p.setKeepCallback(true);
+            
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
+        }
+    }
+
+    @Override
+    public void onReceiveContentEvent(final String eventName, final String eventParams) {
+        if(this.eventHandler != null) {
+            JSONObject o = new JSONObject();
+
+            try {
+                o.put("type", "eventFromContent");
+                o.put("eventName", eventName);
+                o.put("eventParams", eventParams);
             } catch (JSONException e) {
 
             }

@@ -810,6 +810,16 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
 }
 
+-(void)didDispatchEventInApp:(NSString*)eventName withParams:(NSString*)eventParams {
+    if(eventCallbackId) {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"eventFromContent", @"eventName":eventName, @"eventParams":eventParams}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+}
+
 -(void)errorOccuredOnModelManager:(NSError*)err {
     NSLog(@"Error within PixLive SDK: %@",err);
 }
