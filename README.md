@@ -6,7 +6,7 @@ Check [https://www.vidinoti.com/](https://www.vidinoti.com/) for more informatio
 
 ## 1. Installation
 * Create a PixLive Maker account [http://pixlivemaker.com](http://pixlivemaker.com).
-* Register you app, download SDKs and  Obtain a licence by following the steps described at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview).
+* Register you app, download SDKs and obtain a licence by following the steps described at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview).
 * Install the plugin by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:
 
 ```bash
@@ -31,7 +31,7 @@ cordova platform add android
 cordova platform add ios
 ```
 
-* If not done already, create a Pixlive Maker account, register you app, download SDKs and  Obtain a licence by follwing the steps at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview). Add the Cordova plugin for PixLive SDK to your project by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:
+* If not done already, create a Pixlive Maker account, register you app, download SDKs and obtain a licence by follwing the steps at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview). Add the Cordova plugin for PixLive SDK to your project by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:
 
 ```bash
 cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/vdarsdk-release.aar\"
