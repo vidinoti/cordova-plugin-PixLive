@@ -5,10 +5,11 @@ This allows a seamless bridge for using Augmented Reality PixLive SDK into your 
 Check [https://www.vidinoti.com/](https://www.vidinoti.com/) for more information and [https://vidinoti.github.io/](https://vidinoti.github.io/) for the complete documentation.
 
 ## Installation
-Create a PixLive Maker account, obtain a licence, download SDKs and register you app at [http://pixlivemaker.com](http://pixlivemaker.com)
+* Create a PixLive Maker account [http://pixlivemaker.com](http://pixlivemaker.com).
+* Register you app, download SDKs and  Obtain a licence by following the steps described at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview).
 
 
-Install the plugin by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license to the plugin installation command line:
+Install the plugin by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:
 
 ```bash
 cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/vdarsdk-release.aar\"
@@ -18,7 +19,7 @@ cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicens
 ## Create an augmented reality app in two minutes!
 The best way to start developing your app is with a simple example. This demo app show you the basis for using PixLive SDK in your cordova project.
 
-* Create a new Cordova project using cordova-template-PixLive. **Don't forget to register your app on http://pixlivemaker.com.**
+* Create a new Cordova project using cordova-template-PixLive.
 
 ```bash
 cordova create myArApp com.mycompany.myArApp myArApp --template https://github.com/vidinoti/cordova-template-PixLive.git
@@ -32,7 +33,7 @@ cordova platform add android
 cordova platform add ios
 ```
 
-* Add the Cordova plugin for PixLive SDK to your project
+* If not done already, create a Pixlive Maker account, Register you app, download SDKs and  Obtain a licence by follwing the steps at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview). Add the Cordova plugin for PixLive SDK to your project after 
 
 ```bash
 cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/vdarsdk-release.aar\"
