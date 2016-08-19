@@ -62,8 +62,7 @@ if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) 
 }
 ```
 
-* Create an ARview
-The first time you open an ARview you need to create it.
+* Create an ARview - The first time you open an ARview you need to create it.
 ```javascript
 /**
  * Example of arView size
