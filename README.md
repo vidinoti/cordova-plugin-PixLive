@@ -5,10 +5,10 @@ This allows a seamless bridge for using Augmented Reality PixLive SDK into your 
 Check [https://www.vidinoti.com/](https://www.vidinoti.com/) for more information and [https://vidinoti.github.io/](https://vidinoti.github.io/) for the complete documentation.
 
 ## Installation
-Create a PixLive Maker account, obtain a licence, download SDKs and register you app at http://pixlivemaker.com
+Create a PixLive Maker account, obtain a licence, download SDKs and register you app at [http://pixlivemaker.com](http://pixlivemaker.com)
 
 
-Install the plugin by passing the PixLive SDK VDARSDK.framework and vdarsdk-release.aar file paths and the license to the plugin installation command line:
+Install the plugin by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license to the plugin installation command line:
 
 ```bash
 cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/vdarsdk-release.aar\"
@@ -16,7 +16,7 @@ cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicens
 
 
 ## Create an augmented reality app in two minutes!
-Thes best way to start developing your app is with a simple example. This demo app show you the basis to use PixLive SDK in your cordova project.
+The best way to start developing your app is with a simple example. This demo app show you the basis for using PixLive SDK in your cordova project.
 
 * Create a new Cordova project using cordova-template-PixLive. **Don't forget to register your app on http://pixlivemaker.com.**
 
@@ -24,7 +24,7 @@ Thes best way to start developing your app is with a simple example. This demo a
 cordova create myArApp com.mycompany.myArApp myArApp --template https://github.com/vidinoti/cordova-template-PixLive.git
 ```
 
-* Add android and iOS platforms
+* Add Android and iOS platforms
 
 ```bash
 cd myArApp
@@ -40,7 +40,7 @@ cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicens
 
 * Build your project
 ```bash
-cordova buil android
+cordova build android
 cordova build ios
 ```
 
@@ -50,7 +50,7 @@ cordova run android
 ```
 
 
-## The basis to build an AR app with PixLive SDK
+## The basis of building an AR app with PixLive SDK
 
 * Content synchronization
 To be able to trigger AR content you need to synchronize your app with your PixLive Maker account first.
