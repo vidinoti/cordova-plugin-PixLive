@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Cordova plugin for PixLive SDK</h1><p>This allows a seamless bridge for using Augmented Reality PixLive SDK into your own Cordova application.</p>
+<p>Check <a href="http://www.pixlive.info">http://www.pixlive.info</a> for more information and the Ionic plugin at <a href="http://vidinoti.github.io/angular-pixlive/">http://vidinoti.github.io/angular-pixlive/</a></p>
+<h2>Installation</h2><p>Create a PixLive Maker account, obtain a licence, download SDKs and register you app at http://pixlivemaker.com</p>
+<p>Install the plugin by passing the PixLive SDK VDARSDK.framework and vdarsdk-release.aar file paths and the license to the plugin installation command line:</p>
+<pre class="prettyprint source lang-bash"><code>cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\&quot;path/to/VDARSDK.framework\&quot; --variable PIXLIVE_SDK_ANDROID_LOCATION=\&quot;path/to/android/vdarsdk-release.aar\&quot;</code></pre><h2>Create an augmented reality app in two minutes!</h2><p>Thes best way to start developing your app is with a simple example. This demo app show you the basis to use PixLive SDK in your cordova project.</p>
+<ul>
+<li>Create a new Cordova project using cordova-template-PixLive. <strong>Don't forget to register your app on http://pixlivemaker.com.</strong></li>
+</ul>
+<pre class="prettyprint source lang-bash"><code>cordova create myArApp com.mycompany.myArApp myArApp --template https://github.com/vidinoti/cordova-template-PixLive.git</code></pre><ul>
+<li>Add android and iOS platforms</li>
+</ul>
+<pre class="prettyprint source lang-bash"><code>cd myArApp
+cordova platform add android
+cordova platform add ios</code></pre><ul>
+<li>Add the Cordova plugin for PixLive SDK to your project</li>
+</ul>
+<pre class="prettyprint source lang-bash"><code>cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\&quot;path/to/VDARSDK.framework\&quot; --variable PIXLIVE_SDK_ANDROID_LOCATION=\&quot;path/to/android/vdarsdk-release.aar\&quot;</code></pre><ul>
+<li><p>Build your project</p>
+<pre class="prettyprint source lang-bash"><code>cordova buil android
+cordova build ios</code></pre></li>
+<li><p>Your demo app is ready, you can already test it!</p>
+<pre class="prettyprint source lang-bash"><code>cordova run android</code></pre></li>
+</ul>
+<h2>The basis to build an AR app with PixLive SDK</h2><ul>
+<li><p>Content synchronization
+To be able to trigger AR content you need to synchronize your app with your PixLive Maker account first.</p>
+<pre class="prettyprint source lang-javascript"><code>//Synchronize the app with PixLive Maker http://pixlivemaker.com
+if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) {
+  // You can pass an array of tags to synchronize with specific tags: synchronize(['test1','test2'])
+  cordova.plugins.PixLive.synchronize([], synchSuccessListener, synchErrorListener);
+}</code></pre></li>
+<li><p>Create an ARview
+The first time you open an ARview you need to create it.</p>
+<pre class="prettyprint source lang-javascript"><code>/**
+* Example of arView size
+* @return {number[]} [screenWidth,screenHeight]
+*/
+getArViewSize = function() {
+  if(window.orientation == 90 || window.orientation == -90) {
+      if(window.screen.height > window.screen.width) {
+          return [window.screen.height, window.screen.width];
+      }
+  }
+  return [window.screen.width, window.screen.height];
+};
+if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) {
+  var arViewSize = getArViewSize();
+  var arView = cordova.plugins.PixLive.createARView(0, 0, arViewSize[0], arViewSize[1]);
+}</code></pre></li>
+<li><p>Handle the orientation changes</p>
+<pre class="prettyprint source lang-javascript"><code>/**
+* onOrientationchange Event listener
+*/
+onOrientationchange = function() {
+  if(arView) {
+   var screenSize = getSize();
+   arView.resize(0, 0, screenSize[0], screenSize[1]);
+  }
+};
+window.addEventListener(&quot;orientationchange&quot;, onOrientationchange, false);</code></pre></li>
+<li><p>Close the arView</p>
+<pre class="prettyprint source lang-javascript"><code>if(arView) {
+ arView.beforeLeave();
+ arView.afterLeave();
+}</code></pre></li>
+<li><p>Reopen the arView</p>
+<pre class="prettyprint source lang-javascript"><code>if(arView) {
+  arView.beforeEnter();
+  onOrientationchange();
+  arView.afterEnter();
+}</code></pre></li>
+<li><p>Handle PixLive events</p>
+<pre class="prettyprint source lang-javascript"><code>//event listeners for pixlive events
+var pxlEventListeners={};
+//Event handler for pixlive events
+var pxlEventHandler = function(event) {
+  if(event.type && pxlEventListeners[event.type]) {
+      for(var i = pxlEventListeners[event.type].length-1; i>=0; i--) {
+          pxlEventListeners[event.type][i](event);
+      }
+  }
+};
+/**
+* Add a new listener for the provided event type. 
+* @param {string} event The event to register for. 
+* @param {function} callback The function to be called when the provided event is generated.
+*/
+addListener = function(event, callback) {
+  if(!pxlEventListeners[event]) {
+      pxlEventListeners[event]=[];
+  }
+  pxlEventListeners[event].push(callback);
+}
+//register pxlEventHandler
+if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive && !window.cordova.plugins.PixLive.onEventReceived) {
+ cordova.plugins.PixLive.onEventReceived = pxlEventHandler;
+}</code></pre><p>PixLive events are: </p>
+<ul>
+<li>pxlContextEnter - When enter a context (recognize image, enter beacon area)</li>
+<li>pxlContextExit - When exist a context</li>
+<li>pxlCodeRecognize - When a QR code is recognized</li>
+<li>pxlAnnotationsPresent - When content is shown</li>
+<li>pxlAnnotationsHide - When content is hidden</li>
+<li>pxlSynchronizationRequired - When a context ask to synchronize with given tags</li>
+<li>pxlSensorTriggered - When a sensor is detected</li>
+<li>pxlSensorUpdate - When a sensor value is updated</li>
+<li>pxlSensorUntriggered - When a sensor is not detected anymore</li>
+<li>pxlEventFromContent - When an event is generate from the content (PixLiveJS)</li>
+</ul>
+</li>
+</ul>
+<p>For example:</p>
+<pre class="prettyprint source lang-javascript"><code>//enable PixLive SDK to catch the touch event when a content is displayed
+addListener(&quot;presentAnnotations&quot;,function(event){
+    arView.enableTouch();
+});
+//disable PixLive SDK to catch the touch event when a content is hidden
+addListener(&quot;hideAnnotations&quot;,function(event){
+    arView.disableTouch();
+});
+//take action when a QR code is recognized by the SDK
+addListener(&quot;codeRecognize&quot;,function(event){
+    alert(&quot;QR code recognized: &quot; + event.code);
+});</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PixLive.html">PixLive</a></li><li><a href="PixLive.Context.html">Context</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Aug 19 2016 08:58:52 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
