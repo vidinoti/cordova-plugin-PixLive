@@ -143,6 +143,7 @@ if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive &
 }
 ```
 PixLive events are: 
+
 	* pxlContextEnter - When enter a context (recognize image, enter beacon area)
 	* pxlContextExit - When exist a context
 	* pxlCodeRecognize - When a QR code is recognized
