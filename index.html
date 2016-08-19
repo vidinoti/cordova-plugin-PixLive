@@ -45,14 +45,14 @@
     <section>
         <article><h1>Cordova plugin for PixLive SDK  <a href="https://github.com/vidinoti/cordova-plugin-PixLive">https://github.com/vidinoti/cordova-plugin-PixLive</a></h1><p>This allows a seamless bridge for using Augmented Reality PixLive SDK into your own Cordova application.</p>
 <p>Check <a href="https://www.vidinoti.com/">https://www.vidinoti.com/</a> for more information and <a href="https://vidinoti.github.io/">https://vidinoti.github.io/</a> for the complete documentation.</p>
-<h2>Installation</h2><p>Create a PixLive Maker account, obtain a licence, download SDKs and register you app at http://pixlivemaker.com</p>
-<p>Install the plugin by passing the PixLive SDK VDARSDK.framework and vdarsdk-release.aar file paths and the license to the plugin installation command line:</p>
-<pre class="prettyprint source lang-bash"><code>cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\&quot;path/to/VDARSDK.framework\&quot; --variable PIXLIVE_SDK_ANDROID_LOCATION=\&quot;path/to/android/vdarsdk-release.aar\&quot;</code></pre><h2>Create an augmented reality app in two minutes!</h2><p>Thes best way to start developing your app is with a simple example. This demo app show you the basis to use PixLive SDK in your cordova project.</p>
+<h2>Installation</h2><p>Create a PixLive Maker account, obtain a licence, download SDKs and register you app at <a href="http://pixlivemaker.com">http://pixlivemaker.com</a></p>
+<p>Install the plugin by passing the PixLive SDK <code>VDARSDK.framework</code>, <code>vdarsdk-release.aar</code> file paths and the license to the plugin installation command line:</p>
+<pre class="prettyprint source lang-bash"><code>cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\&quot;path/to/VDARSDK.framework\&quot; --variable PIXLIVE_SDK_ANDROID_LOCATION=\&quot;path/to/android/vdarsdk-release.aar\&quot;</code></pre><h2>Create an augmented reality app in two minutes!</h2><p>The best way to start developing your app is with a simple example. This demo app show you the basis for using PixLive SDK in your cordova project.</p>
 <ul>
 <li>Create a new Cordova project using cordova-template-PixLive. <strong>Don't forget to register your app on http://pixlivemaker.com.</strong></li>
 </ul>
 <pre class="prettyprint source lang-bash"><code>cordova create myArApp com.mycompany.myArApp myArApp --template https://github.com/vidinoti/cordova-template-PixLive.git</code></pre><ul>
-<li>Add android and iOS platforms</li>
+<li>Add Android and iOS platforms</li>
 </ul>
 <pre class="prettyprint source lang-bash"><code>cd myArApp
 cordova platform add android
@@ -61,12 +61,12 @@ cordova platform add ios</code></pre><ul>
 </ul>
 <pre class="prettyprint source lang-bash"><code>cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\&quot;path/to/VDARSDK.framework\&quot; --variable PIXLIVE_SDK_ANDROID_LOCATION=\&quot;path/to/android/vdarsdk-release.aar\&quot;</code></pre><ul>
 <li><p>Build your project</p>
-<pre class="prettyprint source lang-bash"><code>cordova buil android
+<pre class="prettyprint source lang-bash"><code>cordova build android
 cordova build ios</code></pre></li>
 <li><p>Your demo app is ready, you can already test it!</p>
 <pre class="prettyprint source lang-bash"><code>cordova run android</code></pre></li>
 </ul>
-<h2>The basis to build an AR app with PixLive SDK</h2><ul>
+<h2>The basis of building an AR app with PixLive SDK</h2><ul>
 <li><p>Content synchronization
 To be able to trigger AR content you need to synchronize your app with your PixLive Maker account first.</p>
 <pre class="prettyprint source lang-javascript"><code>//Synchronize the app with PixLive Maker http://pixlivemaker.com
@@ -150,23 +150,22 @@ if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive &
 <li>pxlSensorTriggered - When a sensor is detected</li>
 <li>pxlSensorUpdate - When a sensor value is updated</li>
 <li>pxlSensorUntriggered - When a sensor is not detected anymore</li>
-<li>pxlEventFromContent - When an event is generate from the content (PixLiveJS)</li>
-</ul>
-</li>
-</ul>
-<p>For example:</p>
-<pre class="prettyprint source lang-javascript"><code>//enable PixLive SDK to catch the touch event when a content is displayed
+<li>pxlEventFromContent - When an event is generate from the content (PixLiveJS)
+For example:<pre class="prettyprint source lang-javascript"><code>//enable PixLive SDK to catch the touch event when a content is displayed
 addListener(&quot;presentAnnotations&quot;,function(event){
-    arView.enableTouch();
+arView.enableTouch();
 });
 //disable PixLive SDK to catch the touch event when a content is hidden
 addListener(&quot;hideAnnotations&quot;,function(event){
-    arView.disableTouch();
+arView.disableTouch();
 });
 //take action when a QR code is recognized by the SDK
 addListener(&quot;codeRecognize&quot;,function(event){
-    alert(&quot;QR code recognized: &quot; + event.code);
-});</code></pre></article>
+alert(&quot;QR code recognized: &quot; + event.code);
+});</code></pre></li>
+</ul>
+</li>
+</ul></article>
     </section>
 
 
@@ -183,7 +182,7 @@ addListener(&quot;codeRecognize&quot;,function(event){
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Aug 19 2016 09:58:58 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Aug 19 2016 10:39:07 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
