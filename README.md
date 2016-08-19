@@ -1,8 +1,8 @@
-# Cordova plugin for PixLive SDK
+# Cordova plugin for PixLive SDK  [https://github.com/vidinoti/cordova-plugin-PixLive](https://github.com/vidinoti/cordova-plugin-PixLive)
 
 This allows a seamless bridge for using Augmented Reality PixLive SDK into your own Cordova application.
 
-Check [http://www.pixlive.info](http://www.pixlive.info) for more information and the Ionic plugin at [http://vidinoti.github.io/angular-pixlive/](http://vidinoti.github.io/angular-pixlive/)
+Check [https://www.vidinoti.com/](https://www.vidinoti.com/) for more information and [https://vidinoti.github.io/](https://vidinoti.github.io/) for the complete documentation.
 
 ## Installation
 Create a PixLive Maker account, obtain a licence, download SDKs and register you app at http://pixlivemaker.com
@@ -52,7 +52,7 @@ cordova run android
 
 ## The basis to build an AR app with PixLive SDK
 
-* #### Content synchronization
+* Content synchronization
 To be able to trigger AR content you need to synchronize your app with your PixLive Maker account first.
 ```javascript
 //Synchronize the app with PixLive Maker http://pixlivemaker.com
@@ -62,7 +62,7 @@ if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) 
 }
 ```
 
-* #### Create an ARview
+* Create an ARview
 The first time you open an ARview you need to create it.
 ```javascript
 /**
@@ -83,7 +83,7 @@ if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) 
 }
 ```
 
-* #### Handle the orientation changes
+* Handle the orientation changes
 ```javascript
 /**
  * onOrientationchange Event listener
@@ -97,7 +97,7 @@ onOrientationchange = function() {
 window.addEventListener("orientationchange", onOrientationchange, false);
 ```
 
-* #### Close the arView
+* Close the arView
 ```javascript
 if(arView) {
    arView.beforeLeave();
@@ -105,7 +105,7 @@ if(arView) {
 }
 ```
 
-* #### Reopen the arView
+* Reopen the arView
 ```javascript
 if(arView) {
     arView.beforeEnter();
@@ -114,7 +114,7 @@ if(arView) {
 }
 ```
 
-* #### Handle PixLive events
+* Handle PixLive events
 ```javascript
 //event listeners for pixlive events
 var pxlEventListeners={};
