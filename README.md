@@ -153,7 +153,6 @@ PixLive events are:
 	* pxlSensorUpdate - When a sensor value is updated
 	* pxlSensorUntriggered - When a sensor is not detected anymore
 	* pxlEventFromContent - When an event is generate from the content (PixLiveJS)
-
 For example:
 ```javascript
 //enable PixLive SDK to catch the touch event when a content is displayed
