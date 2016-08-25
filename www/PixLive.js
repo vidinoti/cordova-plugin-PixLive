@@ -161,7 +161,7 @@ PixLive.presentNotificationsList = function(success, error) {
 * @param {string} url - The url
 */
 PixLive.openURLInInternalBrowser = function(url) {
-	exec(success, error, "PixLive", "openURLInInternalBrowser",  [url]);
+	exec(null, null, "PixLive", "openURLInInternalBrowser",  [url]);
 };
 
 /**
