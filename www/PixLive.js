@@ -187,6 +187,21 @@ PixLive.getContexts = function(success, error) {
 };
 
 /**
+* Get the context (need to have been synchronized) with the corresponding contextId. A context can be an image or a beacon
+* @param {string} contextId - id of the context
+* @param {callback} success(list) - success callback with the list of contexts as parameter
+* @param {callback} error - error callback
+*/
+PixLive.getContext = function(contextId, success, error) {
+	exec(function(context) {
+		if(success !== null) {
+			var object = new PixLive.Context(context);
+			success(object);
+		}
+	}, error, "PixLive", "getContext",  [contextId]);
+};
+
+/**
 * Activates the bookmark feature. A bookmark icon will be shown when a context is
 * displayed and the user has the possibility to "save" the context.
 * @param {boolean} enabled - true to enable, false to disable

@@ -396,6 +396,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("getContexts")) {
             this.getContexts(callbackContext);
             return true;
+        } else if (action.equals("getContext") && args.length()>=1) {
+            this.getContext(args.getString(0),callbackContext);
+            return true;
         } else if (action.equals("activateContext") && args.length()>=1) {
             this.activateContext(args.getString(0),callbackContext);
             return true;
@@ -703,6 +706,20 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
         if(!isWebViewDestroyed()) {
             callbackContext.success(ret);
+        }
+    }
+
+    private void getContext(final String ctxId, final CallbackContext callbackContext) {
+        VDARContext c = VDARSDKController.getInstance().getContext(ctxId);
+        if(c != null) {
+            JSONObject o = createJSONForContext(c);
+            if(!isWebViewDestroyed()) {
+                callbackContext.success(o);
+            }
+        } else {
+            if(!isWebViewDestroyed()) {
+                callbackContext.error("Invalid contextId");
+            }
         }
     }
 

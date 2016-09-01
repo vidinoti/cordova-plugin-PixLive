@@ -568,6 +568,30 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) getContext:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    
+    if (argc < 1 ) {
+        return;
+    }
+
+    if (![arguments[0] isKindOfClass:[NSString class]]) {
+        return;
+    }
+
+    VDARContext * c  = [[VDARSDKController sharedInstance] getContext:(NSString*)arguments[0]];
+
+    CDVPluginResult* pluginResult = nil;
+    if(c) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryForContext:c]];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:NSLocalizedString(@"Invalid contextId",@"")];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
 
 - (void) activateContext:(CDVInvokedUrlCommand *)command
 {
