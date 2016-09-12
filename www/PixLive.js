@@ -131,7 +131,7 @@ PixLive.setNotificationsSupport = function( enabled, apiKey ) {
 * @param {string[]} tags - An array of tags to synchronize with (can be left empty) example:
 * <ul>
 * <li> [] if you do not want to use tags, all the contexts from the linked PixLive Maker account will be synchronized
-* <li> ['tag1','tag2'] to synchronize with the contexts that are tagged with tag1 and tag2
+* <li> ['tag1','tag2'] to synchronize with the contexts that are tagged with tag1 or tag2
 * <li> [['tag1','tag2'], 'tag3'] to synchronize with the contexts that are tagged with (tag1 and tag2) or tag3
 * </ul>
 * Specific languages can be attributated to PixLive Maker content, to synchronize your app with a specific language
