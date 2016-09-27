@@ -20,7 +20,7 @@ The best way to start developing your app is with a simple example. This demo ap
 * Create a new Cordova project using cordova-template-PixLive.
 
 ```bash
-cordova create myArApp com.mycompany.myArApp myArApp --template https://github.com/vidinoti/cordova-template-PixLive.git
+cordova create myArApp com.mycompany.myArApp myArApp --template git://github.com/vidinoti/cordova-template-PixLive.git
 ```
 
 * Add Android and iOS platforms

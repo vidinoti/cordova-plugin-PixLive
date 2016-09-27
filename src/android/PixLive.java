@@ -40,6 +40,8 @@ import com.vidinoti.android.vdarsdk.VDARContentEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARSDKSensorEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARTagPrior;
 import com.vidinoti.android.vdarsdk.VidiBeaconSensor;
+import com.vidinoti.android.vdarsdk.geopoint.VDARGPSPoint;
+import com.vidinoti.android.vdarsdk.geopoint.GeoPointManager;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -381,6 +383,15 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("disableTouch")) {
             this.disableTouch();
             return true;
+        }else if (action.equals("computeDistanceBetweenGPSPoints") && args.length()==4) {
+            this.computeDistanceBetweenGPSPoints((float)(args.getDouble(0)), (float)(args.getDouble(1)), (float)(args.getDouble(2)), (float)(args.getDouble(3)), callbackContext);
+            return true;
+        } else if (action.equals("getNearbyGPSPoints") && args.length()==2) {
+            this.getNearbyGPSPoints((float)(args.getDouble(0)), (float)(args.getDouble(1)),callbackContext);
+            return true;
+        } else if (action.equals("getGPSPointsInBoundingBox") && args.length()==4) {
+            this.getGPSPointsInBoundingBox((float)(args.getDouble(0)), (float)(args.getDouble(1)), (float)(args.getDouble(2)), (float)(args.getDouble(3)), callbackContext);
+            return true;
         } else if (action.equals("setNotificationsSupport") && args.length()>=1) {
             this.setNotificationsSupport(args.getString(0));
             return true;
@@ -436,6 +447,49 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             return true;
         }
         return false;
+    }
+
+    private JSONObject createJSONForGPSPoint(VDARGPSPoint gpsPoint) {
+        JSONObject obj = new JSONObject();
+
+        SimpleDateFormat format = new SimpleDateFormat("Z");
+
+        try {
+            obj.put("contextId",gpsPoint.getContextID());
+            obj.put("lat",gpsPoint.getLat());
+            obj.put("lon",gpsPoint.getLon());
+            obj.put("detectionRadius",gpsPoint.getDetectionRadius());
+        } catch (JSONException e) {
+        }
+
+        return obj;
+    }
+
+    private void computeDistanceBetweenGPSPoints(float lat1, float lon1, float lat2, float lon2, final CallbackContext callback) {
+        float distance = GeoPointManager.computeDistanceBetweenGPSPoints(lat1, lon1, lat2, lon2);
+        callback.sendPluginResult(new PluginResult(PluginResult.Status.OK, distance));
+    }
+
+    private void getNearbyGPSPoints(float myLat, float myLon, CallbackContext callback) {
+        final List<VDARGPSPoint> gpsPoints = GeoPointManager.getNearbyGPSPoints(myLat, myLon);
+        JSONArray ret = new JSONArray();
+        for(VDARGPSPoint gpsPoint : gpsPoints) {
+            ret.put(createJSONForGPSPoint(gpsPoint));
+        }
+        if(!isWebViewDestroyed()) {
+            callback.success(ret);
+        }
+    }
+
+    private void getGPSPointsInBoundingBox(float minLat, float minLon, float maxLat, float maxLon, CallbackContext callback) {
+        final List<VDARGPSPoint> gpsPoints = GeoPointManager.getGPSPointsInBoundingBox(minLat, minLon, maxLat, maxLon);
+        JSONArray ret = new JSONArray();
+        for(VDARGPSPoint gpsPoint : gpsPoints) {
+            ret.put(createJSONForGPSPoint(gpsPoint));
+        }
+        if(!isWebViewDestroyed()) {
+            callback.success(ret);
+        }
     }
 
     private void setBookmarkSupport(boolean enabled) {

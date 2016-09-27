@@ -685,6 +685,93 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
 }
 
+#pragma mark - GeoPoint
+
+- (NSDictionary*)dictionaryForGPSPoint:(VDARGPSPoint*) gpsPoint {
+    return @{
+             @"contextId": gpsPoint.contextId,
+             @"lat": @(gpsPoint.lat),
+             @"lon": @(gpsPoint.lon),
+             @"detectionRadius": @(gpsPoint.detectionRadius)
+             };
+}
+
+- (void) computeDistanceBetweenGPSPoints:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    NSUInteger argc = [arguments count];
+    
+    if (argc != 4) {
+        return;
+    }
+    
+    float lat1, lon1, lat2, lon2;
+    
+    lat1 = [[arguments objectAtIndex:0] floatValue];
+    lon1 = [[arguments objectAtIndex:1] floatValue];
+    lat2 = [[arguments objectAtIndex:2] floatValue];
+    lon2 = [[arguments objectAtIndex:3] floatValue];
+    
+    float distance = [[VDARSDKController sharedInstance] computeDistanceBetweenGPSPointsOfLat1:lat1 lon1:lon1 lat2:lat2 lon2:lon2];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:distance];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) getNearbyGPSPoints:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    NSUInteger argc = [arguments count];
+    
+    if (argc != 2) {
+        return;
+    }
+    
+    float myLat, myLon;
+    
+    myLat = [[arguments objectAtIndex:0] floatValue];
+    myLon = [[arguments objectAtIndex:1] floatValue];
+    
+    NSArray<VDARGPSPoint*>* gpsPoints = [[VDARSDKController sharedInstance] getNearbyGPSPointsfromLat:myLat lon:myLon];
+
+    NSMutableArray *output = [NSMutableArray array];
+
+    for(VDARGPSPoint* gpsPoint in gpsPoints) {
+        [output addObject:[self dictionaryForGPSPoint:gpsPoint]];
+    }
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:output];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) getGPSPointsInBoundingBox:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    NSUInteger argc = [arguments count];
+    
+    if (argc != 4) {
+        return;
+    }
+    
+    float minLat, minLon, maxLat, maxLon;
+    
+    minLat = [[arguments objectAtIndex:0] floatValue];
+    minLon = [[arguments objectAtIndex:1] floatValue];
+    maxLat = [[arguments objectAtIndex:2] floatValue];
+    maxLon = [[arguments objectAtIndex:3] floatValue];
+
+    NSArray<VDARGPSPoint*>* gpsPoints = [[VDARSDKController sharedInstance] getGPSPointsInBoundingBoxOfMinLat:minLat minLon:minLon maxLat:maxLat maxLon:maxLon];
+    
+    NSMutableArray *output = [NSMutableArray array];
+
+    for(VDARGPSPoint* gpsPoint in gpsPoints) {
+        [output addObject:[self dictionaryForGPSPoint:gpsPoint]];
+    }
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:output];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 #pragma mark - Bookmarks
 
 -(void)setBookmarkSupport:(CDVInvokedUrlCommand *)command {

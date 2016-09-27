@@ -49,6 +49,48 @@ PixLive.Context.prototype = {
 	}
 };
 
+/**
+* GPSPoint
+* @class
+*/
+PixLive.GPSPoint = function(prop) {
+	// Apply properties to the context object
+	var keys = Object.keys(prop);
+	for (var j = keys.length - 1; j >= 0; j--) {
+		this[keys[j]] = prop[keys[j]];
+	}
+};
+
+PixLive.Context.prototype = {
+	/**
+	* activate a context (trigger the content)
+	*/
+	getLat: function() {
+		return this.lat;
+	},
+
+	/**
+	* ignore a context (the context will not be activated in the future)
+	*/
+	getLon: function() {
+		return this.lon;
+	},
+
+	/**
+	* ignore a context (the context will not be activated in the future)
+	*/
+	getDectectionRadius: function() {
+		return this.detectionRadius;
+	},
+
+	/**
+	* ignore a context (the context will not be activated in the future)
+	*/
+	getContextId: function() {
+		return this.contextId;
+	}
+};
+
 PixLive.prototype = {
 	/**
 	* Need to be called before enter an arView.
@@ -199,6 +241,63 @@ PixLive.getContext = function(contextId, success, error) {
 			success(object);
 		}
 	}, error, "PixLive", "getContext",  [contextId]);
+};
+
+/**
+* The callback success is called with the distance
+* @param {Number} lat1 latitude of point 1
+* @param {Number} lon1 longitude of point 1
+* @param {Number} lat2 latitude of point 2
+* @param {Number} lon2 longitude of point 2
+* @param {callback} success(list) - success callback with distance
+* @param {callback} error - error callback
+*/
+PixLive.computeDistanceBetweenGPSPoints = function(lat1, lon1, lat2, lon2, success, error) {
+	exec(success, error, "PixLive", "computeDistanceBetweenGPSPoints", [lat1,lon1,lat2,lon2]);
+};
+
+/**
+* Returns the list of nearby GPS points
+* @param {Number} myLat current latitude
+* @param {Number} myLon current longitude
+* @param {callback} success(list) - success callback with the list of GPSPoint
+* @param {callback} error - error callback
+*/
+PixLive.getNearbyGPSPoints = function(myLat, myLon, success, error) {
+	exec(function(list) {
+		if(success !== null) {
+			var ret = [];
+			for (var i = 0; i < list.length; i++) {
+				var prop = list[i];
+				var object = new PixLive.GPSPoint(prop);
+				ret.push(object);
+			}
+			success(ret);
+		}
+	}, error, "PixLive", "getNearbyGPSPoints", [myLat,myLon]);
+};
+
+/**
+* Returns the list of GPS points in the bounding box specified by its lower left and uper right corner
+* @param {Number} latitude of the lower left corner
+* @param {Number} longitude of the lower left corner
+* @param {Number} latitude of the uper right corner
+* @param {Number} longitude of the uper right corner
+* @param {callback} success(list) - success callback with the list of GPSPoint
+* @param {callback} error - error callback
+*/
+PixLive.getGPSPointsInBoundingBox = function(minLat, minLon, maxLat, maxLon, success, error) {
+	exec(function(list) {
+		if(success !== null) {
+			var ret = [];
+			for (var i = 0; i < list.length; i++) {
+				var prop = list[i];
+				var object = new PixLive.GPSPoint(prop);
+				ret.push(object);
+			}
+			success(ret);
+		}
+	}, error, "PixLive", "getGPSPointsInBoundingBox", [minLat,minLon,maxLat,maxLon]);
 };
 
 /**
