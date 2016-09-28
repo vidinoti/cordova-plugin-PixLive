@@ -456,6 +456,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
         try {
             obj.put("contextId",gpsPoint.getContextID());
+            obj.put("label",gpsPoint.getLabel());
             obj.put("lat",gpsPoint.getLat());
             obj.put("lon",gpsPoint.getLon());
             obj.put("detectionRadius",gpsPoint.getDetectionRadius());

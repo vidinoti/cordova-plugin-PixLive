@@ -690,6 +690,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 - (NSDictionary*)dictionaryForGPSPoint:(VDARGPSPoint*) gpsPoint {
     return @{
              @"contextId": gpsPoint.contextId,
+             @"label": gpsPoint.label,
              @"lat": @(gpsPoint.lat),
              @"lon": @(gpsPoint.lon),
              @"detectionRadius": @(gpsPoint.detectionRadius)
