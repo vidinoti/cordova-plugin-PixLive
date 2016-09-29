@@ -61,30 +61,31 @@ PixLive.GPSPoint = function(prop) {
 	}
 };
 
-PixLive.Context.prototype = {
+PixLive.GPSPoint.prototype = {
+
 	/**
-	* activate a context (trigger the content)
+	* Returns the latitude of the GPS point
 	*/
 	getLat: function() {
 		return this.lat;
 	},
 
 	/**
-	* ignore a context (the context will not be activated in the future)
+	* Returns the longitude of the GPS point
 	*/
 	getLon: function() {
 		return this.lon;
 	},
 
 	/**
-	* ignore a context (the context will not be activated in the future)
+	* Returns the detection radius of the GPS point (a null value means unlimited)
 	*/
-	getDectectionRadius: function() {
+	getDetectionRadius: function() {
 		return this.detectionRadius;
 	},
 
 	/**
-	* ignore a context (the context will not be activated in the future)
+	* Returns the context ID of the context corresponding to the GPS point
 	*/
 	getContextId: function() {
 		return this.contextId;
