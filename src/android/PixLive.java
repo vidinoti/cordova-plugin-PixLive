@@ -455,11 +455,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         SimpleDateFormat format = new SimpleDateFormat("Z");
 
         try {
-            obj.put("contextId",gpsPoint.getContextID());
-            obj.put("label",gpsPoint.getLabel());
-            obj.put("lat",gpsPoint.getLat());
-            obj.put("lon",gpsPoint.getLon());
-            obj.put("detectionRadius",gpsPoint.getDetectionRadius());
+            obj.put("contextId", gpsPoint.getContextID());
+            obj.put("label", gpsPoint.getLabel());
+            obj.put("category", gpsPoint.getCategory());
+            obj.put("lat", gpsPoint.getLat());
+            obj.put("lon", gpsPoint.getLon());
+            obj.put("detectionRadius", gpsPoint.getDetectionRadius());
         } catch (JSONException e) {
         }
 
