@@ -369,12 +369,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             return true;
         }else if (action.equals("synchronize")) {
             JSONArray a = null;
-
             if(args.length()>0) {
                 a = args.getJSONArray(0);
-
             }
-
             this.synchronize(a,callbackContext);
             return true;
         } else if (action.equals("enableTouch")) {
@@ -400,6 +397,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             return true;
         } else if (action.equals("presentNotificationsList")) {
             this.presentNotificationsList(callbackContext);
+            return true;
+        } else if (action.equals("presentNearbyList") && args.length() >= 2) {
+            this.presentNearbyList((float) args.getDouble(0), (float) args.getDouble(1), callbackContext);
             return true;
         } else if (action.equals("openURLInInternalBrowser") && args.length()>=1) {
             this.openURLInInternalBrowser(args.getString(0), callbackContext);
@@ -631,7 +631,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     private void presentNotificationsList(final CallbackContext callbackContext) {
-
         if(0 == VDARSDKController.getInstance().getPendingNotifications().size()){
             if(!isWebViewDestroyed()) {
                 callbackContext.error("empty");
@@ -642,6 +641,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             }
             VDARSDKController.getInstance().presentNotificationsList();
         }
+    }
+
+    private void presentNearbyList(final float latitude, final float longitude, final CallbackContext callbackContext) {
+        if (!isWebViewDestroyed()) {
+            callbackContext.success();
+        }
+        VDARSDKController.getInstance().presentNearbyList(latitude, longitude);
     }
 
     private void openURLInInternalBrowser(String url, final CallbackContext callbackContext) {

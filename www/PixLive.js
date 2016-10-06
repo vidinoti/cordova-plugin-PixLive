@@ -200,6 +200,18 @@ PixLive.presentNotificationsList = function(success, error) {
 };
 
 /**
+ * Will show the list of "nearby" contents. It can be either geolocalized points (GPS points)
+ * or beacons.
+ * @param {float} latitude - the current latitude
+ * @param {float} longitude - the current longitude
+ * @param {callback} success - success callback
+ * @param {callback} error - error callback
+ */
+PixLive.presentNearbyList = function (latitude, longitude, success, error) {
+	exec(success, error, "PixLive", "presentNearbyList", [latitude, longitude]);
+}
+
+/**
 * Will open an url with the PixLive SDK internal browser
 * @param {string} url - The url
 */
