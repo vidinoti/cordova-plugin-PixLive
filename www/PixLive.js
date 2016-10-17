@@ -211,7 +211,12 @@ PixLive.presentNotificationsList = function(success, error) {
  * @param {callback} error - error callback
  */
 PixLive.presentNearbyList = function (latitude, longitude, success, error) {
-	exec(success, error, "PixLive", "presentNearbyList", [latitude, longitude]);
+
+	if( (!latitude && latitude != 0) || (!longitude && longitude != 0) ) {
+		exec(success, error, "PixLive", "presentNearbyList", []);
+	} else {
+		exec(success, error, "PixLive", "presentNearbyList", [latitude, longitude]);
+	}
 }
 
 /**
