@@ -201,7 +201,10 @@ PixLive.presentNotificationsList = function(success, error) {
 
 /**
  * Will show the list of "nearby" contents. It can be either geolocalized points (GPS points)
- * or beacons.
+ * or beacons. If called with the coordinates (0, 0), a loading wheel (progress bar) will
+ * be displayed for indicating that the position is being acquired. The list can then be
+ * reloaded by calling the function PixLive.refreshNearbyList.
+ * 
  * @param {float} latitude - the current latitude
  * @param {float} longitude - the current longitude
  * @param {callback} success - success callback
@@ -209,6 +212,20 @@ PixLive.presentNotificationsList = function(success, error) {
  */
 PixLive.presentNearbyList = function (latitude, longitude, success, error) {
 	exec(success, error, "PixLive", "presentNearbyList", [latitude, longitude]);
+}
+
+/**
+ * If the list displaying the nearby GPS point is displayed, calling this function
+ * will reload the nearby elements according to the new given coordinate.
+ * The beacon list will be refreshed as well.
+ * 
+ * @param {float} latitude - the current latitude
+ * @param {float} longitude - the current longitude
+ * @param {callback} success - success callback
+ * @param {callback} error - error callback
+ */
+PixLive.refreshNearbyList = function (latitude, longitude, success, error) {
+	exec(success, error, "PixLive", "refreshNearbyList", [latitude, longitude]);
 }
 
 /**
