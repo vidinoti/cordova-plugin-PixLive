@@ -401,6 +401,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("presentNearbyList") && args.length() >= 2) {
             this.presentNearbyList((float) args.getDouble(0), (float) args.getDouble(1), callbackContext);
             return true;
+        } else if (action.equals("refreshNearbyList") && args.length() >= 2) {
+            this.refreshNearbyList((float) args.getDouble(0), (float) args.getDouble(1), callbackContext);
         } else if (action.equals("openURLInInternalBrowser") && args.length()>=1) {
             this.openURLInInternalBrowser(args.getString(0), callbackContext);
             return true;
@@ -649,6 +651,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             callbackContext.success();
         }
         VDARSDKController.getInstance().presentNearbyList(latitude, longitude);
+    }
+
+    private void refreshNearbyList(final float latitude, final float longitude, final CallbackContext callbackContext) {
+        if (!isWebViewDestroyed()) {
+            callbackContext.success();
+        }
+        VDARSDKController.getInstance().refreshNearbyList(latitude, longitude);
     }
 
     private void openURLInInternalBrowser(String url, final CallbackContext callbackContext) {
