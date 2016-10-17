@@ -652,6 +652,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         VDARSDKController.getInstance().presentNearbyList(latitude, longitude);
     }
 
+    private void refreshNearbyList(final float latitude, final float longitude, final CallbackContext callbackContext) {
+        if (!isWebViewDestroyed()) {
+            callbackContext.success();
+        }
+        VDARSDKController.getInstance().refreshNearbyList(latitude, longitude);
+    }
+
     private void openURLInInternalBrowser(String url, final CallbackContext callbackContext) {
         try {
             URL urlObj = new URL(url);
