@@ -84,26 +84,29 @@ module.exports = function(context) {
 			"NSCameraUsageDescription":"$APP_NAME uses your camera to recognize articles & images.",
 			"NSLocationAlwaysUsageDescription":"$APP_NAME tailors content based on your location.",
 			"NSLocationUsageDescription":"$APP_NAME tailors content based on your location.",
-			"NSLocationWhenInUseUsageDescription":"$APP_NAME tailors content based on your location."
+			"NSLocationWhenInUseUsageDescription":"$APP_NAME tailors content based on your location.",
+			"NSBluetoothPeripheralUsageDescription":"$APP_NAME tailors content based on your location."
 		},
 		'fr': {
 			"NSCameraUsageDescription": "$APP_NAME utilise votre caméra pour reconnaître les articles & images.",
 			"NSLocationAlwaysUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
 			"NSLocationUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
-			"NSLocationWhenInUseUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position."
+			"NSLocationWhenInUseUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
+			"NSBluetoothPeripheralUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position."
 		},
 		'de': {
 			"NSCameraUsageDescription": "$APP_NAME verwendet Ihre Kamera, um Artikel und Bilder zu erkennen.",
 			"NSLocationAlwaysUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
 			"NSLocationUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
-			"NSLocationWhenInUseUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort."
+			"NSLocationWhenInUseUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
+			"NSBluetoothPeripheralUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort."
 		},
 		'nl': {
 			"NSCameraUsageDescription": "$APP_NAME gebruikt uw camera om artikels en beelden te herkennen.",
 			"NSLocationAlwaysUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
 			"NSLocationUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
-			"NSLocationWhenInUseUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden."
-
+			"NSLocationWhenInUseUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
+			"NSBluetoothPeripheralUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden."
 		}
 	};
 
@@ -152,6 +155,8 @@ module.exports = function(context) {
 
 	for(var i = 0; i<languages.length; i++) {
 		var f = path.join(xcodeProjectPath,languages[i]+'.lproj','InfoPlist.strings');
+		console.log('path infoPlist.strings ' + f);
+
 		var fLoc = path.join(xcodeProjectPath,languages[i]+'.lproj','Localizable.strings');
 		try {
 			fs.mkdirSync(path.join(xcodeProjectPath,languages[i]+'.lproj'));
@@ -207,7 +212,7 @@ module.exports = function(context) {
 				isa: 'PBXVariantGroup',
 				children: [],
 				name: 'InfoPlist.strings',
-				path: '../..',
+				path: 'Base.lproj/InfoPlist.strings',
 				sourceTree: '"<group>"'
 			};
 
@@ -215,7 +220,7 @@ module.exports = function(context) {
 				isa: 'PBXVariantGroup',
 				children: [],
 				name: 'Localizable.strings',
-				path: '../..',
+				path: 'Base.lproj/Localizable.strings',
 				sourceTree: '"<group>"'
 			};
 
