@@ -212,7 +212,7 @@ module.exports = function(context) {
 				isa: 'PBXVariantGroup',
 				children: [],
 				name: 'InfoPlist.strings',
-				path: 'Base.lproj/InfoPlist.strings',
+				path: '../..',
 				sourceTree: '"<group>"'
 			};
 
@@ -220,7 +220,7 @@ module.exports = function(context) {
 				isa: 'PBXVariantGroup',
 				children: [],
 				name: 'Localizable.strings',
-				path: 'Base.lproj/Localizable.strings',
+				path: '../..',
 				sourceTree: '"<group>"'
 			};
 

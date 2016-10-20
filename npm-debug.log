@@ -1,0 +1,119 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node/5.5.0/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@3.7.1
+3 info using node@v5.5.0
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Volumes/Data/work/Readers/ionic/cordova-plugin-PixLive',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/loic/.npm/cordova-plugin-pixlive/1.2.14/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/loic/.npm correctMkdir not in flight; initializing
+10 info lifecycle cordova-plugin-pixlive@1.2.14~prepublish: cordova-plugin-pixlive@1.2.14
+11 silly lifecycle cordova-plugin-pixlive@1.2.14~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/Users/loic/.npm/cordova-plugin-pixlive/1.2.14/package.tgz',
+12 verbose tar pack   '/Volumes/Data/work/Readers/ionic/cordova-plugin-PixLive' ]
+13 verbose tarball /Users/loic/.npm/cordova-plugin-pixlive/1.2.14/package.tgz
+14 verbose folder /Volumes/Data/work/Readers/ionic/cordova-plugin-PixLive
+15 verbose addLocalTarball adding from inside cache /Users/loic/.npm/cordova-plugin-pixlive/1.2.14/package.tgz
+16 verbose correctMkdir /Users/loic/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd cordova-plugin-pixlive@1.2.14
+18 verbose afterAdd /Users/loic/.npm/cordova-plugin-pixlive/1.2.14/package/package.json not in flight; writing
+19 verbose correctMkdir /Users/loic/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /Users/loic/.npm/cordova-plugin-pixlive/1.2.14/package/package.json written
+21 silly publish { version: '1.2.14',
+21 silly publish   name: 'cordova-plugin-pixlive',
+21 silly publish   cordova_name: 'PixLive',
+21 silly publish   description: 'PixLive SDK plugin for Cordova based hybrid apps',
+21 silly publish   license: 'MIT',
+21 silly publish   repo: 'https://github.com/vidinoti/cordova-plugin-PixLive.git',
+21 silly publish   keywords:
+21 silly publish    [ 'augmented reality',
+21 silly publish      'iBeacon',
+21 silly publish      'ecosystem:cordova',
+21 silly publish      'cordova-android',
+21 silly publish      'cordova-ios' ],
+21 silly publish   platforms: [ 'ios', 'android' ],
+21 silly publish   engines:
+21 silly publish    [ { name: 'cordova', version: '>=6.0.0' },
+21 silly publish      { name: 'cordova-android', version: '>=5.1.0' },
+21 silly publish      { name: 'cordova-ios', version: '>=4.0.0' },
+21 silly publish      { name: 'cordova-plugman', version: '>=4.2.0' } ],
+21 silly publish   cordova:
+21 silly publish    { id: 'cordova-plugin-pixlive',
+21 silly publish      platforms: [ 'ios', 'android' ] },
+21 silly publish   repository:
+21 silly publish    { type: 'git',
+21 silly publish      url: 'git+https://github.com/vidinoti/cordova-plugin-PixLive.git' },
+21 silly publish   author: { name: 'Vidinoti' },
+21 silly publish   bugs: { url: 'https://github.com/vidinoti/cordova-plugin-PixLive/issues' },
+21 silly publish   homepage: 'https://github.com/vidinoti/cordova-plugin-PixLive#readme',
+21 silly publish   devDependencies:
+21 silly publish    { grunt: '^1.0.1',
+21 silly publish      'grunt-contrib-clean': '^1.0.0',
+21 silly publish      'grunt-jsdoc': '^2.0.0' },
+21 silly publish   readme: '# Cordova plugin for PixLive SDK  [https://github.com/vidinoti/cordova-plugin-PixLive](https://github.com/vidinoti/cordova-plugin-PixLive)\n\nThis allows a seamless bridge for using Augmented Reality PixLive SDK into your own Cordova application.\n\nCheck [https://www.vidinoti.com/](https://www.vidinoti.com/) for more information and [https://vidinoti.github.io/](https://vidinoti.github.io/) for the complete documentation.\n\n## 1. Installation\n* Create a PixLive Maker account [http://pixlivemaker.com](http://pixlivemaker.com).\n* Register you app, download SDKs and obtain a licence by following the steps described at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview).\n* Install the plugin by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:\n\n```bash\ncordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\\"path/to/VDARSDK.framework\\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\\"path/to/android/vdarsdk-release.aar\\"\n```\n\n\n## 2. Create an augmented reality app in two minutes!\nThe best way to start developing your app is with a simple example. This demo app shows you the basis for using PixLive SDK in your cordova project.\n\n* Create a new Cordova project using cordova-template-PixLive.\n\n```bash\ncordova create myArApp com.mycompany.myArApp myArApp --template git://github.com/vidinoti/cordova-template-PixLive.git\n```\n\n* Add Android and iOS platforms\n\n```bash\ncd myArApp\ncordova platform add android\ncordova platform add ios\n```\n\n* If not done already, create a Pixlive Maker account, register you app, download SDKs and obtain a licence by follwing the steps at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview). Add the Cordova plugin for PixLive SDK to your project by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:\n\n```bash\ncordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\\"path/to/VDARSDK.framework\\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\\"path/to/android/vdarsdk-release.aar\\"\n```\n\n* Build your project\n```bash\ncordova build android\ncordova build ios\n```\n\n* Your demo app is ready, you can already test it!\n```bash\ncordova run android\n```\n\n\n## 3. The basis of building an AR app with PixLive SDK\n\n* Content synchronization\nTo be able to trigger AR content you need to synchronize your app with your PixLive Maker account first.\n```javascript\n//Synchronize the app with PixLive Maker http://pixlivemaker.com\nif (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) {\n    // You can pass an array of tags to synchronize with specific tags: synchronize([\'test1\',\'test2\'])\n    cordova.plugins.PixLive.synchronize([], synchSuccessListener, synchErrorListener);\n}\n```\n\n* Create an ARview - The first time you open an ARview you need to create it.\n```javascript\n/**\n * Example of arView size\n * @return {number[]} [screenWidth,screenHeight]\n */\ngetArViewSize = function() {\n    if(window.orientation == 90 || window.orientation == -90) {\n        if(window.screen.height > window.screen.width) {\n            return [window.screen.height, window.screen.width];\n        }\n    }\n    return [window.screen.width, window.screen.height];\n};\nif (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) {\n\tvar arViewSize = getArViewSize();\n\tvar arView = cordova.plugins.PixLive.createARView(0, 0, arViewSize[0], arViewSize[1]);\n}\n```\n\n* Handle the orientation changes\n```javascript\n/**\n * onOrientationchange Event listener\n */\nonOrientationchange = function() {\n\tif(arView) {\n\t var screenSize = getSize();\n\t arView.resize(0, 0, screenSize[0], screenSize[1]);\n\t}\n};\nwindow.addEventListener("orientationchange", onOrientationchange, false);\n```\n\n* Close the arView\n```javascript\nif(arView) {\n   arView.beforeLeave();\n   arView.afterLeave();\n}\n```\n\n* Reopen the arView\n```javascript\nif(arView) {\n    arView.beforeEnter();\n    onOrientationchange();\n    arView.afterEnter();\n}\n```\n\n* Handle PixLive events\n```javascript\n//event listeners for pixlive events\nvar pxlEventListeners={};\n//Event handler for pixlive events\nvar pxlEventHandler = function(event) {\n    if(event.type && pxlEventListeners[event.type]) {\n        for(var i = pxlEventListeners[event.type].length-1; i>=0; i--) {\n            pxlEventListeners[event.type][i](event);\n        }\n    }\n};\n/**\n * Add a new listener for the provided event type. \n * @param {string} event The event to register for. \n * @param {function} callback The function to be called when the provided event is generated.\n */\naddListener = function(event, callback) {\n\tif(!pxlEventListeners[event]) {\n\t    pxlEventListeners[event]=[];\n\t}\n\tpxlEventListeners[event].push(callback);\n}\n//register pxlEventHandler\nif (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive && !window.cordova.plugins.PixLive.onEventReceived) {\n   cordova.plugins.PixLive.onEventReceived = pxlEventHandler;\n}\n```\nPixLive events are: \n\n\t* pxlContextEnter - When enter a context (recognize image, enter beacon area)\n\t* pxlContextExit - When exist a context\n\t* pxlCodeRecognize - When a QR code is recognized\n\t* pxlAnnotationsPresent - When content is shown\n\t* pxlAnnotationsHide - When content is hidden\n\t* pxlSynchronizationRequired - When a context ask to synchronize with given tags\n\t* pxlSensorTriggered - When a sensor is detected\n\t* pxlSensorUpdate - When a sensor value is updated\n\t* pxlSensorUntriggered - When a sensor is not detected anymore\n\t* pxlEventFromContent - When an event is generate from the content (PixLiveJS)\nFor example:\n```javascript\n//enable PixLive SDK to catch the touch event when a content is displayed\naddListener("presentAnnotations",function(event){\n    arView.enableTouch();\n});\n//disable PixLive SDK to catch the touch event when a content is hidden\naddListener("hideAnnotations",function(event){\n    arView.disableTouch();\n});\n//take action when a QR code is recognized by the SDK\naddListener("codeRecognize",function(event){\n    alert("QR code recognized: " + event.code);\n});\n```\n',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: '2c1fbfad3ba006fb2fcba714970f107edfb8250c',
+21 silly publish   _id: 'cordova-plugin-pixlive@1.2.14',
+21 silly publish   scripts: {},
+21 silly publish   _shasum: '1cbe6cfc0cc88ed3264555e2f81e41417b2dd72e',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name cordova-plugin-pixlive
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry uri https://registry.npmjs.org/cordova-plugin-pixlive
+27 verbose publish registryBase https://registry.npmjs.org/
+28 silly publish uploading /Users/loic/.npm/cordova-plugin-pixlive/1.2.14/package.tgz
+29 verbose request uri https://registry.npmjs.org/cordova-plugin-pixlive
+30 verbose request sending authorization for write operation
+31 info attempt registry request try #1 at 5:24:17 PM
+32 verbose request using bearer token for auth
+33 verbose request id 355b6ca2849f671b
+34 http request PUT https://registry.npmjs.org/cordova-plugin-pixlive
+35 http 403 https://registry.npmjs.org/cordova-plugin-pixlive
+36 verbose headers { 'content-type': 'application/json',
+36 verbose headers   'cache-control': 'max-age=300',
+36 verbose headers   'content-length': '96',
+36 verbose headers   'accept-ranges': 'bytes',
+36 verbose headers   date: 'Wed, 19 Oct 2016 15:24:18 GMT',
+36 verbose headers   via: '1.1 varnish',
+36 verbose headers   connection: 'keep-alive',
+36 verbose headers   'x-served-by': 'cache-fra1247-FRA',
+36 verbose headers   'x-cache': 'MISS',
+36 verbose headers   'x-cache-hits': '0',
+36 verbose headers   'x-timer': 'S1476890657.552869,VS0,VE1371',
+36 verbose headers   vary: 'Accept-Encoding' }
+37 verbose request invalidating /Users/loic/.npm/registry.npmjs.org/cordova-plugin-pixlive on PUT
+38 error publish Failed PUT 403
+39 verbose stack Error: "You cannot publish over the previously published version 1.2.14." : cordova-plugin-pixlive
+39 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+39 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+39 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+39 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:199:22)
+39 verbose stack     at emitTwo (events.js:100:13)
+39 verbose stack     at Request.emit (events.js:185:7)
+39 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1036:10)
+39 verbose stack     at emitOne (events.js:95:20)
+39 verbose stack     at Request.emit (events.js:182:7)
+39 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:963:12)
+40 verbose statusCode 403
+41 verbose pkgid cordova-plugin-pixlive
+42 verbose cwd /Volumes/Data/work/Readers/ionic/cordova-plugin-PixLive
+43 error Darwin 15.6.0
+44 error argv "/usr/local/Cellar/node/5.5.0/bin/node" "/usr/local/bin/npm" "publish"
+45 error node v5.5.0
+46 error npm  v3.7.1
+47 error code E403
+48 error "You cannot publish over the previously published version 1.2.14." : cordova-plugin-pixlive
+49 error If you need help, you may report this error at:
+49 error     <https://github.com/npm/npm/issues>
+50 verbose exit [ 1, true ]
