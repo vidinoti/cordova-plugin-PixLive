@@ -297,6 +297,26 @@ PixLive.computeDistanceBetweenGPSPoints = function(lat1, lon1, lat2, lon2, succe
 	exec(success, error, "PixLive", "computeDistanceBetweenGPSPoints", [lat1,lon1,lat2,lon2]);
 };
 
+
+/**
+* Returns the list of contexts linked to nearby beacons
+* @param {callback} success(list) - success callback with the list of contexts
+* @param {callback} error - error callback
+*/
+PixLive.getNearbyBeacons = function(success, error) {
+	exec(function(list) {
+		if(success !== null) {
+			var ret = [];
+			for (var i = 0; i < list.length; i++) {
+				var prop = list[i];
+				var object = new PixLive.Context(prop);
+				ret.push(object);
+			}
+			success(ret);
+		}
+	}, error, "PixLive", "getNearbyBeacons", []);
+};
+
 /**
 * Returns the list of nearby GPS points
 * @param {Number} myLat current latitude
