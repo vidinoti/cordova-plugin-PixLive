@@ -380,8 +380,14 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("disableTouch")) {
             this.disableTouch();
             return true;
-        }else if (action.equals("computeDistanceBetweenGPSPoints") && args.length()==4) {
+        } else if (action.equals("isContainingGPSPoints")) {
+            this.isContainingGPSPoints(callbackContext);
+            return true;
+        } else if (action.equals("computeDistanceBetweenGPSPoints") && args.length()==4) {
             this.computeDistanceBetweenGPSPoints((float)(args.getDouble(0)), (float)(args.getDouble(1)), (float)(args.getDouble(2)), (float)(args.getDouble(3)), callbackContext);
+            return true;
+        } else if (action.equals("getNearbyBeacons")) {
+            this.getNearbyBeacons(callbackContext);
             return true;
         } else if (action.equals("getNearbyGPSPoints") && args.length()==2) {
             this.getNearbyGPSPoints((float)(args.getDouble(0)), (float)(args.getDouble(1)),callbackContext);
@@ -400,16 +406,16 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             return true;
         } else if (action.equals("presentNearbyList")) {
             if (args.length() == 2) {
-                this.presentNearbyList((float) args.getDouble(0), (float) args.getDouble(1), callbackContext);
+                this.presentNearbyList((float) args.getDouble(0), (float) args.getDouble(1));
                 return true;
             } else if(args.length() == 0) {
-                this.presentNearbyList(callbackContext);
+                this.presentNearbyList();
                 return true;
             } else {
                 return false;
             }
         } else if (action.equals("refreshNearbyList") && args.length() >= 2) {
-            this.refreshNearbyList((float) args.getDouble(0), (float) args.getDouble(1), callbackContext);
+            this.refreshNearbyList((float) args.getDouble(0), (float) args.getDouble(1));
         } else if (action.equals("openURLInInternalBrowser") && args.length()>=1) {
             this.openURLInInternalBrowser(args.getString(0), callbackContext);
             return true;
@@ -477,12 +483,32 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         return obj;
     }
 
+    private void isContainingGPSPoints(final CallbackContext callback) {
+        boolean containGPSPoints = GeoPointManager.isContainingGPSPoints();
+        callback.sendPluginResult(new PluginResult(PluginResult.Status.OK, containGPSPoints));
+    }
+
     private void computeDistanceBetweenGPSPoints(float lat1, float lon1, float lat2, float lon2, final CallbackContext callback) {
         float distance = GeoPointManager.computeDistanceBetweenGPSPoints(lat1, lon1, lat2, lon2);
         callback.sendPluginResult(new PluginResult(PluginResult.Status.OK, distance));
     }
 
-    private void getNearbyGPSPoints(float myLat, float myLon, CallbackContext callback) {
+    private void getNearbyBeacons(final CallbackContext callbackContext) {
+        final ArrayList<String> contextIds = VDARSDKController.getInstance().getNearbyBeacons();
+        JSONArray ret = new JSONArray();
+
+        for(String ctxId : contextIds) {
+            VDARContext c = VDARSDKController.getInstance().getContext(ctxId);
+            if(c != null) {
+                ret.put(createJSONForContext(c));
+            }
+        }
+        if(!isWebViewDestroyed()) {
+            callbackContext.success(ret);
+        }
+    }
+
+    private void getNearbyGPSPoints(float myLat, float myLon, final CallbackContext callback) {
         final List<VDARGPSPoint> gpsPoints = GeoPointManager.getNearbyGPSPoints(myLat, myLon);
         JSONArray ret = new JSONArray();
         for(VDARGPSPoint gpsPoint : gpsPoints) {
@@ -493,7 +519,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    private void getGPSPointsInBoundingBox(float minLat, float minLon, float maxLat, float maxLon, CallbackContext callback) {
+    private void getGPSPointsInBoundingBox(float minLat, float minLon, float maxLat, float maxLon, final CallbackContext callback) {
         final List<VDARGPSPoint> gpsPoints = GeoPointManager.getGPSPointsInBoundingBox(minLat, minLon, maxLat, maxLon);
         JSONArray ret = new JSONArray();
         for(VDARGPSPoint gpsPoint : gpsPoints) {
@@ -508,7 +534,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         VDARSDKController.getInstance().setBookmarkSupport(enabled);
     }
     
-    private void getBookmarks(CallbackContext callback) {
+    private void getBookmarks(final CallbackContext callback) {
         final List<String> contextIds = BookmarkManager.getBookmarks();
         JSONArray ret = new JSONArray();
         for(String ctxId : contextIds) {
@@ -653,24 +679,15 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
     }
 
-    private void presentNearbyList(final CallbackContext callbackContext) {
-        if (!isWebViewDestroyed()) {
-            callbackContext.success();
-        }
+    private void presentNearbyList() {
         VDARSDKController.getInstance().presentNearbyList();
     }
 
-    private void presentNearbyList(final float latitude, final float longitude, final CallbackContext callbackContext) {
-        if (!isWebViewDestroyed()) {
-            callbackContext.success();
-        }
+    private void presentNearbyList(final float latitude, final float longitude) {
         VDARSDKController.getInstance().presentNearbyList(latitude, longitude);
     }
 
-    private void refreshNearbyList(final float latitude, final float longitude, final CallbackContext callbackContext) {
-        if (!isWebViewDestroyed()) {
-            callbackContext.success();
-        }
+    private void refreshNearbyList(final float latitude, final float longitude) {
         VDARSDKController.getInstance().refreshNearbyList(latitude, longitude);
     }
 

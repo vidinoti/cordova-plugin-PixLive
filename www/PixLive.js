@@ -207,15 +207,13 @@ PixLive.presentNotificationsList = function(success, error) {
  * 
  * @param {float} latitude - the current latitude
  * @param {float} longitude - the current longitude
- * @param {callback} success - success callback
- * @param {callback} error - error callback
  */
-PixLive.presentNearbyList = function (latitude, longitude, success, error) {
+PixLive.presentNearbyList = function (latitude, longitude) {
 
 	if( (!latitude && latitude != 0) || (!longitude && longitude != 0) ) {
-		exec(success, error, "PixLive", "presentNearbyList", []);
+		exec(null, null, "PixLive", "presentNearbyList", []);
 	} else {
-		exec(success, error, "PixLive", "presentNearbyList", [latitude, longitude]);
+		exec(null, null, "PixLive", "presentNearbyList", [latitude, longitude]);
 	}
 }
 
@@ -226,11 +224,9 @@ PixLive.presentNearbyList = function (latitude, longitude, success, error) {
  * 
  * @param {float} latitude - the current latitude
  * @param {float} longitude - the current longitude
- * @param {callback} success - success callback
- * @param {callback} error - error callback
  */
-PixLive.refreshNearbyList = function (latitude, longitude, success, error) {
-	exec(success, error, "PixLive", "refreshNearbyList", [latitude, longitude]);
+PixLive.refreshNearbyList = function (latitude, longitude) {
+	exec(null, null, "PixLive", "refreshNearbyList", [latitude, longitude]);
 }
 
 /**
@@ -276,6 +272,16 @@ PixLive.getContext = function(contextId, success, error) {
 			success(object);
 		}
 	}, error, "PixLive", "getContext",  [contextId]);
+};
+
+
+/**
+* The callback success is called with true or false depending if the app is containing GPS points or not
+* @param {callback} success(list) - success callback with distance
+* @param {callback} error - error callback
+*/
+PixLive.isContainingGPSPoints = function(success, error) {
+	exec(success, error, "PixLive", "isContainingGPSPoints", []);
 };
 
 /**

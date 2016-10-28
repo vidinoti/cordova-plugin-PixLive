@@ -543,7 +543,6 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSArray* arguments = [command arguments];
     
     NSUInteger argc = [arguments count];
-    CDVPluginResult* pluginResult = nil;
 
     if (argc == 2 ) {
         float latitude, longitude;
@@ -551,15 +550,11 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         longitude = [[arguments objectAtIndex:1] floatValue];
 
         [[VDARSDKController sharedInstance] presentNearbyListForLat:latitude lon:longitude];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else if ( argc == 0 ) {
         [[VDARSDKController sharedInstance] presentNearbyList];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else {
         return;
     }
-
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void) refreshNearbyList:(CDVInvokedUrlCommand *)command
@@ -567,19 +562,15 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSArray* arguments = [command arguments];
     
     NSUInteger argc = [arguments count];
-    CDVPluginResult* pluginResult = nil;
 
     if (argc == 2 ) {
         float latitude, longitude;
         latitude = [[arguments objectAtIndex:0] floatValue];
         longitude = [[arguments objectAtIndex:1] floatValue];
         [[VDARSDKController sharedInstance] refreshNearbyListForLat:latitude lon:longitude];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else {
         return;
     }
-
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (NSDictionary*)dictionaryForContext:(VDARContext*)c {
@@ -742,6 +733,15 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
              };
 }
 
+- (void) isContainingGPSPoints:(CDVInvokedUrlCommand *)command {
+    
+    BOOL containGPSPoint = [[VDARSDKController sharedInstance] isContainingGPSPoints];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:containGPSPoint];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void) computeDistanceBetweenGPSPoints:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     NSUInteger argc = [arguments count];
@@ -760,6 +760,22 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     float distance = [[VDARSDKController sharedInstance] computeDistanceBetweenGPSPointsOfLat1:lat1 lon1:lon1 lat2:lat2 lon2:lon2];
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:distance];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) getNearbyBeacons:(CDVInvokedUrlCommand *)command {
+    NSArray *contextIds = [[VDARSDKController sharedInstance] getNearbyBeacons];
+    NSMutableArray *output = [NSMutableArray array];
+
+    for(NSString* ctxId in contextIds) {
+        VDARContext * c  = [[VDARSDKController sharedInstance] getContext:ctxId];
+        if(c) {
+            [output addObject:[self dictionaryForContext:c]];
+        }
+    }
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:output];
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
