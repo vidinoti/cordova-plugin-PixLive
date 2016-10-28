@@ -494,7 +494,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     }
 
     private void getNearbyBeacons(final CallbackContext callbackContext) {
-        final ArrayList<String> contextIds = VDARSDKController.getInstance().getNearbyBeacons();
+        final List<String> contextIds = VDARSDKController.getInstance().getNearbyBeacons();
         JSONArray ret = new JSONArray();
 
         for(String ctxId : contextIds) {
