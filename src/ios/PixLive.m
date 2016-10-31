@@ -729,7 +729,8 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
              @"category": gpsPoint.category,
              @"lat": @(gpsPoint.lat),
              @"lon": @(gpsPoint.lon),
-             @"detectionRadius": @(gpsPoint.detectionRadius)
+             @"detectionRadius": @(gpsPoint.detectionRadius),
+             @"distanceFromCurrentPos": @(gpsPoint.distanceFromCurrentPos)
              };
 }
 
