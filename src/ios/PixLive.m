@@ -999,27 +999,28 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 }
 
 -(void)contextDidRequireSynchronization:(NSArray*)priors {
-    [foregroundOperationQueue addOperationWithBlock: ^() {
-        dispatch_async(dispatch_get_main_queue(), ^() {
-            if(eventCallbackId) {
-                
-                NSMutableArray *tags = [NSMutableArray array];
-                
-                for(VDARPrior *p in priors) {
-                    if([p isKindOfClass:[VDARTagPrior class]]) {
-                        VDARTagPrior * tag = (VDARTagPrior*)p;
-                        [tags addObject:tag.tagName];
-                    }
-                }
-                
-                CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"requireSync", @"tags": tags}];
-                
-                pluginResult.keepCallback = @YES;
-                
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    
+    if(eventCallbackId) {     
+        NSMutableArray *tags = [NSMutableArray array];
+        
+        for(VDARPrior *p in priors) {
+            if([p isKindOfClass:[VDARTagPrior class]]) {
+                VDARTagPrior * tag = (VDARTagPrior*)p;
+                [tags addObject:tag.tagName];
             }
+        }
+        
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"requireSync", @"tags": tags}];
+        
+        pluginResult.keepCallback = @YES;
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:eventCallbackId];
+    }
+    /*[foregroundOperationQueue addOperationWithBlock: ^() {
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            //was here before
         });
-    }];
+    }];*/
 }
 
 -(void)annotationViewDidBecomeEmpty {
