@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.vidinoti.android.vdarsdk.bookmark.BookmarkManager;
-import com.vidinoti.android.vdarsdk.DeviceCameraImageSender;
+import com.vidinoti.android.vdarsdk.camera.DeviceCameraImageSender;
 import com.vidinoti.android.vdarsdk.IBeaconSensor;
 import android.support.v4.app.NotificationCompat;
 import com.vidinoti.android.vdarsdk.NotificationFactory;
