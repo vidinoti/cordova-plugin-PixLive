@@ -77,6 +77,49 @@ PixLive.Context.prototype = {
 	}
 };
 
+/**
+* GPSPoint
+* @class
+*/
+PixLive.GPSPoint = function(prop) {
+	// Apply properties to the context object
+	var keys = Object.keys(prop);
+	for (var j = keys.length - 1; j >= 0; j--) {
+		this[keys[j]] = prop[keys[j]];
+	}
+};
+
+PixLive.GPSPoint.prototype = {
+
+	/**
+	* Returns the latitude of the GPS point
+	*/
+	getLat: function() {
+		return this.lat;
+	},
+
+	/**
+	* Returns the longitude of the GPS point
+	*/
+	getLon: function() {
+		return this.lon;
+	},
+
+	/**
+	* Returns the detection radius of the GPS point (a null value means unlimited)
+	*/
+	getDetectionRadius: function() {
+		return this.detectionRadius;
+	},
+
+	/**
+	* Returns the context ID of the context corresponding to the GPS point
+	*/
+	getContextId: function() {
+		return this.contextId;
+	}
+};
+
 PixLive.prototype = {
 	/**
 	* Need to be called before enter an arView.
@@ -159,7 +202,7 @@ PixLive.setNotificationsSupport = function( enabled, apiKey ) {
 * @param {string[]} tags - An array of tags to synchronize with (can be left empty) example:
 * &lt;ul>
 * &lt;li> [] if you do not want to use tags, all the contexts from the linked PixLive Maker account will be synchronized
-* &lt;li> ['tag1','tag2'] to synchronize with the contexts that are tagged with tag1 and tag2
+* &lt;li> ['tag1','tag2'] to synchronize with the contexts that are tagged with tag1 or tag2
 * &lt;li> [['tag1','tag2'], 'tag3'] to synchronize with the contexts that are tagged with (tag1 and tag2) or tag3
 * &lt;/ul>
 * Specific languages can be attributated to PixLive Maker content, to synchronize your app with a specific language
@@ -185,11 +228,41 @@ PixLive.presentNotificationsList = function(success, error) {
 };
 
 /**
+ * Will show the list of "nearby" contents. It can be either geolocalized points (GPS points)
+ * or beacons. If called with the coordinates (0, 0), a loading wheel (progress bar) will
+ * be displayed for indicating that the position is being acquired. The list can then be
+ * reloaded by calling the function PixLive.refreshNearbyList.
+ * 
+ * @param {float} latitude - the current latitude
+ * @param {float} longitude - the current longitude
+ */
+PixLive.presentNearbyList = function (latitude, longitude) {
+
+	if( (!latitude &amp;&amp; latitude != 0) || (!longitude &amp;&amp; longitude != 0) ) {
+		exec(null, null, "PixLive", "presentNearbyList", []);
+	} else {
+		exec(null, null, "PixLive", "presentNearbyList", [latitude, longitude]);
+	}
+}
+
+/**
+ * If the list displaying the nearby GPS point is displayed, calling this function
+ * will reload the nearby elements according to the new given coordinate.
+ * The beacon list will be refreshed as well.
+ * 
+ * @param {float} latitude - the current latitude
+ * @param {float} longitude - the current longitude
+ */
+PixLive.refreshNearbyList = function (latitude, longitude) {
+	exec(null, null, "PixLive", "refreshNearbyList", [latitude, longitude]);
+}
+
+/**
 * Will open an url with the PixLive SDK internal browser
 * @param {string} url - The url
 */
 PixLive.openURLInInternalBrowser = function(url) {
-	exec(success, error, "PixLive", "openURLInInternalBrowser",  [url]);
+	exec(null, null, "PixLive", "openURLInInternalBrowser",  [url]);
 };
 
 /**
@@ -212,6 +285,108 @@ PixLive.getContexts = function(success, error) {
 			success(ret);
 		}
 	}, error, "PixLive", "getContexts",  []);
+};
+
+/**
+* Get the context (need to have been synchronized) with the corresponding contextId. A context can be an image or a beacon
+* @param {string} contextId - id of the context
+* @param {callback} success(list) - success callback with the list of contexts as parameter
+* @param {callback} error - error callback
+*/
+PixLive.getContext = function(contextId, success, error) {
+	exec(function(context) {
+		if(success !== null) {
+			var object = new PixLive.Context(context);
+			success(object);
+		}
+	}, error, "PixLive", "getContext",  [contextId]);
+};
+
+
+/**
+* The callback success is called with true or false depending if the app is containing GPS points or not
+* @param {callback} success(list) - success callback with distance
+* @param {callback} error - error callback
+*/
+PixLive.isContainingGPSPoints = function(success, error) {
+	exec(success, error, "PixLive", "isContainingGPSPoints", []);
+};
+
+/**
+* The callback success is called with the distance
+* @param {Number} lat1 latitude of point 1
+* @param {Number} lon1 longitude of point 1
+* @param {Number} lat2 latitude of point 2
+* @param {Number} lon2 longitude of point 2
+* @param {callback} success(list) - success callback with distance
+* @param {callback} error - error callback
+*/
+PixLive.computeDistanceBetweenGPSPoints = function(lat1, lon1, lat2, lon2, success, error) {
+	exec(success, error, "PixLive", "computeDistanceBetweenGPSPoints", [lat1,lon1,lat2,lon2]);
+};
+
+
+/**
+* Returns the list of contexts linked to nearby beacons
+* @param {callback} success(list) - success callback with the list of contexts
+* @param {callback} error - error callback
+*/
+PixLive.getNearbyBeacons = function(success, error) {
+	exec(function(list) {
+		if(success !== null) {
+			var ret = [];
+			for (var i = 0; i &lt; list.length; i++) {
+				var prop = list[i];
+				var object = new PixLive.Context(prop);
+				ret.push(object);
+			}
+			success(ret);
+		}
+	}, error, "PixLive", "getNearbyBeacons", []);
+};
+
+/**
+* Returns the list of nearby GPS points
+* @param {Number} myLat current latitude
+* @param {Number} myLon current longitude
+* @param {callback} success(list) - success callback with the list of GPSPoint
+* @param {callback} error - error callback
+*/
+PixLive.getNearbyGPSPoints = function(myLat, myLon, success, error) {
+	exec(function(list) {
+		if(success !== null) {
+			var ret = [];
+			for (var i = 0; i &lt; list.length; i++) {
+				var prop = list[i];
+				var object = new PixLive.GPSPoint(prop);
+				ret.push(object);
+			}
+			success(ret);
+		}
+	}, error, "PixLive", "getNearbyGPSPoints", [myLat,myLon]);
+};
+
+/**
+* Returns the list of GPS points in the bounding box specified by its lower left and uper right corner
+* @param {Number} latitude of the lower left corner
+* @param {Number} longitude of the lower left corner
+* @param {Number} latitude of the uper right corner
+* @param {Number} longitude of the uper right corner
+* @param {callback} success(list) - success callback with the list of GPSPoint
+* @param {callback} error - error callback
+*/
+PixLive.getGPSPointsInBoundingBox = function(minLat, minLon, maxLat, maxLon, success, error) {
+	exec(function(list) {
+		if(success !== null) {
+			var ret = [];
+			for (var i = 0; i &lt; list.length; i++) {
+				var prop = list[i];
+				var object = new PixLive.GPSPoint(prop);
+				ret.push(object);
+			}
+			success(ret);
+		}
+	}, error, "PixLive", "getGPSPointsInBoundingBox", [minLat,minLon,maxLat,maxLon]);
 };
 
 /**
@@ -284,13 +459,13 @@ module.exports = PixLive;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PixLive.html">PixLive</a></li><li><a href="PixLive.Context.html">Context</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PixLive.html">PixLive</a></li><li><a href="PixLive.Context.html">Context</a></li><li><a href="PixLive.GPSPoint.html">GPSPoint</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Aug 19 2016 11:20:58 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Tue Dec 20 2016 17:22:34 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

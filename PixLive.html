@@ -140,6 +140,9 @@ and use a valid account license (PixLive SDK->My license) when you install the p
         <dl>
             <dt><a href="PixLive.Context.html">Context</a></dt>
             <dd></dd>
+        
+            <dt><a href="PixLive.GPSPoint.html">GPSPoint</a></dt>
+            <dd></dd>
         </dl>
     
 
@@ -257,7 +260,253 @@ and use a valid account license (PixLive SDK->My license) when you install the p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line221">line 221</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line396">line 396</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".computeDistanceBetweenGPSPoints"><span class="type-signature">(static) </span>computeDistanceBetweenGPSPoints<span class="signature">(lat1, lon1, lat2, lon2, success(list), error)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    The callback success is called with the distance
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>lat1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">latitude of point 1</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lon1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">longitude of point 1</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lat2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">latitude of point 2</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lon2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">longitude of point 2</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>success(list)</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">success callback with distance</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">error callback</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line296">line 296</a>
     </li></ul></dd>
     
 
@@ -457,7 +706,7 @@ and use a valid account license (PixLive SDK->My license) when you install the p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line111">line 111</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line154">line 154</a>
     </li></ul></dd>
     
 
@@ -633,7 +882,184 @@ and use a valid account license (PixLive SDK->My license) when you install the p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line203">line 203</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line378">line 378</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getContext"><span class="type-signature">(static) </span>getContext<span class="signature">(contextId, success(list), error)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get the context (need to have been synchronized) with the corresponding contextId. A context can be an image or a beacon
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>contextId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id of the context</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>success(list)</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">success callback with the list of contexts as parameter</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">error callback</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line268">line 268</a>
     </li></ul></dd>
     
 
@@ -787,7 +1213,607 @@ and use a valid account license (PixLive SDK->My license) when you install the p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line172">line 172</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line245">line 245</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getGPSPointsInBoundingBox"><span class="type-signature">(static) </span>getGPSPointsInBoundingBox<span class="signature">(latitude, longitude, latitude, longitude, success(list), error)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns the list of GPS points in the bounding box specified by its lower left and uper right corner
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>latitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">of the lower left corner</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>longitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">of the lower left corner</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>latitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">of the uper right corner</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>longitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">of the uper right corner</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>success(list)</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">success callback with the list of GPSPoint</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">error callback</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line350">line 350</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getNearbyBeacons"><span class="type-signature">(static) </span>getNearbyBeacons<span class="signature">(success(list), error)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns the list of contexts linked to nearby beacons
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>success(list)</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">success callback with the list of contexts</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">error callback</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line306">line 306</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getNearbyGPSPoints"><span class="type-signature">(static) </span>getNearbyGPSPoints<span class="signature">(myLat, myLon, success(list), error)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Returns the list of nearby GPS points
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>myLat</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">current latitude</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>myLon</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">current longitude</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>success(list)</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">success callback with the list of GPSPoint</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">error callback</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line327">line 327</a>
     </li></ul></dd>
     
 
@@ -964,7 +1990,161 @@ and use a valid account license (PixLive SDK->My license) when you install the p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line239">line 239</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line414">line 414</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".isContainingGPSPoints"><span class="type-signature">(static) </span>isContainingGPSPoints<span class="signature">(success(list), error)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    The callback success is called with true or false depending if the app is containing GPS points or not
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>success(list)</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">success callback with distance</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">error callback</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line283">line 283</a>
     </li></ul></dd>
     
 
@@ -1095,7 +2275,164 @@ and use a valid account license (PixLive SDK->My license) when you install the p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line163">line 163</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line236">line 236</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".presentNearbyList"><span class="type-signature">(static) </span>presentNearbyList<span class="signature">(latitude, longitude)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Will show the list of "nearby" contents. It can be either geolocalized points (GPS points)
+or beacons. If called with the coordinates (0, 0), a loading wheel (progress bar) will
+be displayed for indicating that the position is being acquired. The list can then be
+reloaded by calling the function PixLive.refreshNearbyList.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>latitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the current latitude</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>longitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the current longitude</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line211">line 211</a>
     </li></ul></dd>
     
 
@@ -1249,7 +2586,163 @@ and use a valid account license (PixLive SDK->My license) when you install the p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line155">line 155</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line198">line 198</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".refreshNearbyList"><span class="type-signature">(static) </span>refreshNearbyList<span class="signature">(latitude, longitude)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    If the list displaying the nearby GPS point is displayed, calling this function
+will reload the nearby elements according to the new given coordinate.
+The beacon list will be refreshed as well.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>latitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the current latitude</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>longitude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the current longitude</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line228">line 228</a>
     </li></ul></dd>
     
 
@@ -1380,7 +2873,7 @@ and use a valid account license (PixLive SDK->My license) when you install the p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line229">line 229</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line404">line 404</a>
     </li></ul></dd>
     
 
@@ -1512,7 +3005,7 @@ displayed and the user has the possibility to "save" the context.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line194">line 194</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line369">line 369</a>
     </li></ul></dd>
     
 
@@ -1666,7 +3159,7 @@ displayed and the user has the possibility to "save" the context.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line125">line 125</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line168">line 168</a>
     </li></ul></dd>
     
 
@@ -1759,7 +3252,7 @@ displayed and the user has the possibility to "save" the context.
             <td class="description last">An array of tags to synchronize with (can be left empty) example:
 <ul>
 <li> [] if you do not want to use tags, all the contexts from the linked PixLive Maker account will be synchronized
-<li> ['tag1','tag2'] to synchronize with the contexts that are tagged with tag1 and tag2
+<li> ['tag1','tag2'] to synchronize with the contexts that are tagged with tag1 or tag2
 <li> [['tag1','tag2'], 'tag3'] to synchronize with the contexts that are tagged with (tag1 and tag2) or tag3
 </ul>
 Specific languages can be attributated to PixLive Maker content, to synchronize your app with a specific language
@@ -1854,7 +3347,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line146">line 146</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line189">line 189</a>
     </li></ul></dd>
     
 
@@ -1936,7 +3429,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line62">line 62</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line105">line 105</a>
     </li></ul></dd>
     
 
@@ -2018,7 +3511,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line74">line 74</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line117">line 117</a>
     </li></ul></dd>
     
 
@@ -2100,7 +3593,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line56">line 56</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line99">line 99</a>
     </li></ul></dd>
     
 
@@ -2182,7 +3675,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line68">line 68</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line111">line 111</a>
     </li></ul></dd>
     
 
@@ -2264,7 +3757,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line80">line 80</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line123">line 123</a>
     </li></ul></dd>
     
 
@@ -2346,7 +3839,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line92">line 92</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line135">line 135</a>
     </li></ul></dd>
     
 
@@ -2428,7 +3921,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line98">line 98</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line141">line 141</a>
     </li></ul></dd>
     
 
@@ -2510,7 +4003,7 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line86">line 86</a>
+        <a href="PixLive.js.html">PixLive.js</a>, <a href="PixLive.js.html#line129">line 129</a>
     </li></ul></dd>
     
 
@@ -2552,13 +4045,13 @@ use the tag: 'lang_{{iso_code_of_the_language}}' for example:
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PixLive.html">PixLive</a></li><li><a href="PixLive.Context.html">Context</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PixLive.html">PixLive</a></li><li><a href="PixLive.Context.html">Context</a></li><li><a href="PixLive.GPSPoint.html">GPSPoint</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Aug 19 2016 11:20:58 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.1</a> on Tue Dec 20 2016 17:22:34 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>
