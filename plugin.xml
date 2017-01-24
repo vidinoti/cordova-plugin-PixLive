@@ -57,7 +57,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
-            <string>$APP_NAME uses your camera to recognize articles & images.</string>
+            <string>$APP_NAME uses your camera to recognize articles and images.</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSAppTransportSecurity">
