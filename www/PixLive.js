@@ -140,6 +140,18 @@ PixLive.prototype = {
 	*/
 	enableTouch: function() {
 		exec(null, null, "PixLive", "enableTouch", []);
+	},
+	/**
+	* Define a touch region where the touch event must not be intercepted. For example,
+	* this is used for displaying a button for toggling the bookmark flag of a AR content.
+	* The parameters define the bounding box of the "touch hole".
+	* @param {integer} top - bounding box top (e.g. 0)
+	* @param {integer} bottom - bounding box bottom (e.g. 100)
+	* @param {integer} left - bounding box left (e.g. 0)
+	* @param {integer} right - bounding box right (e.g. 100)
+	*/
+	setTouchHole: function(top, bottom, left, right) {
+		exec(null, null, "PixLive", "setTouchHole", [top, bottom, left, right]);
 	}
 };
 

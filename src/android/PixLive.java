@@ -75,9 +75,25 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         public boolean touchEnabled = true;
 
         private View.OnTouchListener privateListener = null;
+        private final float mDensity;
+
+        private float mHoleTop = 0;
+        private float mHoleBottom = 0;
+        private float mHoleLeft = 0;
+        private float mHoleRight = 0;
+
 
         public TouchInterceptorView(android.content.Context context) {
             super(context);
+            mDensity = context.getResources().getDisplayMetrics().density;
+        }
+
+        public void setTouchHole(int top, int bottom, int left, int right) {
+            // Convert the pixels into screen coordinates using the screen density
+            this.mHoleTop = top * mDensity;
+            this.mHoleBottom = bottom * mDensity;
+            this.mHoleLeft = left * mDensity;
+            this.mHoleRight = right * mDensity;
         }
 
         public void setTouchEnabled(boolean val) {
@@ -91,26 +107,24 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 return myView.getLeft() + getRelativeLeft((View) myView.getParent());
         }
 
-        private int getRelativeTop(View myView) {
-            if (myView.getParent() == myView.getRootView())
-                return myView.getTop();
-            else
-                return myView.getTop() + getRelativeTop((View) myView.getParent());
-        }
-
         @Override
         public boolean onInterceptTouchEvent (MotionEvent ev) {
-            //Log.v(TAG,"touch: action:" + ev.getAction() + " touchEnabled: " + touchEnabled +" intercepting " + intercepting);
 
             if((!touchEnabled || arViews.size()==0)) {
                 return super.onInterceptTouchEvent(ev);
             }
 
             int thisViewLeft = getRelativeLeft(this);
-            int thisViewTop = getRelativeTop(this);
+            int thisViewTop = getTop();
+            float x = ev.getX() - thisViewLeft;
+            float y = ev.getY() - thisViewTop;
+
+            // If the position corresponds to the "hole", we do not intercept the event.
+            if (x >= this.mHoleLeft && x < this.mHoleRight && y >= this.mHoleTop && y < this.mHoleBottom) {
+                return super.onInterceptTouchEvent(ev);
+            }
 
             //Check if we fall into one AR view
-
             for(Map.Entry<Integer,VDARAnnotationView> s : arViews.entrySet()) {
                 VDARAnnotationView view = s.getValue();
 
@@ -380,6 +394,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("disableTouch")) {
             this.disableTouch();
             return true;
+        } else if (action.equals("setTouchHole")) {
+            this.setTouchHole(args.getInt(0), args.getInt(1), args.getInt(2), args.getInt(3));
         } else if (action.equals("isContainingGPSPoints")) {
             this.isContainingGPSPoints(callbackContext);
             return true;
@@ -578,6 +594,20 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private void disableTouch() {
         if(touchView!=null) {
             touchView.setTouchEnabled(false);
+        }
+    }
+
+    /**
+     * Defines a region where the touch events are not intercepted by the plugin.
+     * This is required if an element is put on top of the ar view (e.g. a button).
+     * @param top the top of the region in px
+     * @param bottom the bottom of the region in px
+     * @param left the left of the region in px
+     * @param right the right of the region in px
+     */
+    private void setTouchHole(int top, int bottom, int left, int right) {
+        if (touchView != null) {
+            touchView.setTouchHole(top, bottom, left, right);
         }
     }
 

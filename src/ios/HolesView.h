@@ -17,7 +17,18 @@
 
 -(id)initWithFrame:(CGRect)frame andPlugin:(PixLive*)p;
 
+/**
+ * Defines the "touch hole" region (i.e. the region where touch events are not
+ * intercepted by the plugin
+ * @param top the top coordinate of the region
+ * @param bottom the bottom coordinate of the region
+ * @param left the left coordinate of the region
+ * @param right the right coordinate of the region
+ */
+-(void)setTouchHoleWithTop: (int)top bottom: (int)bottom left: (int)left right: (int)right;
+
 @property (nonatomic) BOOL arTouchEnabled;
+@property (nonatomic) CGRect touchHole;
 
 
 @end

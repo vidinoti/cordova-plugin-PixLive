@@ -264,6 +264,27 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     touchForwarder.arTouchEnabled = YES;
 }
 
+/**
+ * Defines a region where the touch events are not intercepted by the plugin.
+ * This is required if we want to place elements on top of the camera view (e.g. button)
+ *
+ * @param command an array of parameters (here: [top, bottom, left, right])
+ */
+-(void)setTouchHole:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    
+    NSUInteger argc = [arguments count];
+    if (argc < 4) {
+        return;
+    }
+    NSUInteger top = [[arguments objectAtIndex:0] unsignedIntegerValue];
+    NSUInteger bottom = [[arguments objectAtIndex:1] unsignedIntegerValue];
+    NSUInteger left = [[arguments objectAtIndex:2] unsignedIntegerValue];
+    NSUInteger right = [[arguments objectAtIndex:3] unsignedIntegerValue];
+    
+    [touchForwarder setTouchHoleWithTop:(int)top bottom:(int)bottom left:(int)left right:(int)right];
+}
+
 -(void)beforeLeave:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     
