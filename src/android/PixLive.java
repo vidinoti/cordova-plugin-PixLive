@@ -405,6 +405,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("getNearbyBeacons")) {
             this.getNearbyBeacons(callbackContext);
             return true;
+        } else if (action.equals("getNearbyStatus")) {
+            this.getNearbyStatus(callbackContext);
+            return true;
+        } else if (action.equals("isContainingBeacons")) {
+            this.isContainingBeacons(callbackContext);
+            return true;
         } else if (action.equals("getNearbyGPSPoints") && args.length()==2) {
             this.getNearbyGPSPoints((float)(args.getDouble(0)), (float)(args.getDouble(1)),callbackContext);
             return true;
@@ -522,6 +528,42 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         if(!isWebViewDestroyed()) {
             callbackContext.success(ret);
         }
+    }
+
+    private void isContainingBeacons(final CallbackContext callback) {
+        boolean containingBeacons = VDARSDKController.getInstance().isContainingBeacons();
+        callback.sendPluginResult(new PluginResult(PluginResult.Status.OK, containingBeacons));
+    }
+
+    private void getNearbyStatus(final CallbackContext callback) {
+        HashMap<String, String> status = VDARSDKController.getInstance().getNearbyStatus();
+
+        JSONObject obj = new JSONObject();
+
+        String authorizationStatus = "enabled";
+        String locationStatus = "enabled";
+        String bluetoothStatus = "enabled";
+
+
+        if(status.get("ACCESS_FINE_LOCATION") != "enabled") {
+            authorizationStatus = "disabled";
+        }
+        if(status.get("GPS_PROVIDER") != "enabled") {
+            locationStatus = "disabled";
+        }
+        if(status.get("bluetoothStatus") != "enabled") {
+            bluetoothStatus = "disabled";
+        }
+
+        try {
+            obj.put("authorizationStatus",authorizationStatus);
+            obj.put("locationStatus",locationStatus);
+            obj.put("bluetoothStatus",bluetoothStatus);
+        } catch (JSONException e) {
+
+        }
+
+        callback.sendPluginResult(new PluginResult(PluginResult.Status.OK, obj));
     }
 
     private void getNearbyGPSPoints(float myLat, float myLon, final CallbackContext callback) {

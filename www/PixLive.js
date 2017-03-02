@@ -330,6 +330,24 @@ PixLive.getNearbyBeacons = function(success, error) {
 };
 
 /**
+* The callback success is called with true or false depending if the app is containing Beacons or not
+* @param {callback} success(isContainingBeacons) - success callback with boolean return value
+* @param {callback} error - error callback
+*/
+PixLive.isContainingBeacons = function(success, error) {
+	exec(success, error, "PixLive", "isContainingBeacons", []);
+};
+
+/**
+* The callback success is called with the status
+* @param {callback} success(status) - success callback with status
+* @param {callback} error - error callback
+*/
+PixLive.getNearbyStatus = function(success, error) {
+	exec(success, error, "PixLive", "getNearbyStatus", []);
+};
+
+/**
 * Returns the list of nearby GPS points
 * @param {Number} myLat current latitude
 * @param {Number} myLon current longitude

@@ -802,6 +802,24 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) getNearbyStatus:(CDVInvokedUrlCommand *)command {
+    
+    NSDictionary *status = [[VDARSDKController sharedInstance] getNearbyStatus];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:status];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) isContainingBeacons:(CDVInvokedUrlCommand *)command {
+    
+    BOOL containBeacon = [[VDARSDKController sharedInstance] isContainingBeacons];
+    
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:containBeacon];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void) getNearbyGPSPoints:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     NSUInteger argc = [arguments count];
