@@ -548,9 +548,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         if(status.get("ACCESS_FINE_LOCATION") != "enabled") {
             authorizationStatus = "disabled";
         }
-        if(status.get("GPS_PROVIDER") != "enabled") {
+
+        if(status.get("GPS_PROVIDER") != "enabled" && status.get("NETWORK_PROVIDER") != "enabled") {
             locationStatus = "disabled";
         }
+        
         if(status.get("bluetoothStatus") != "enabled") {
             bluetoothStatus = "disabled";
         }
