@@ -348,6 +348,14 @@ PixLive.getNearbyStatus = function(success, error) {
 };
 
 /**
+ * Enable or disable nearby requirement dialog
+ * @param {bool} nearbyRequirementDialogEnabled - if enabled or not
+ */
+PixLive.setEnableNearbyRequirementDialog = function(nearbyRequirementDialogEnabled, success, error) {
+	exec(null, null, "PixLive", "setEnableNearbyRequirementDialog", [nearbyRequirementDialogEnabled]);
+};
+
+/**
 * Returns the list of nearby GPS points
 * @param {Number} myLat current latitude
 * @param {Number} myLon current longitude

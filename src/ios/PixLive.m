@@ -802,6 +802,18 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) setEnableNearbyRequirementDialog:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    NSUInteger argc = [arguments count];
+    
+    if (argc != 1) {
+        return;
+    }
+
+    bool enableNearbyRequirementDialog = [[arguments objectAtIndex:0] boolValue];
+    [[VDARSDKController sharedInstance] setEnableNearbyRequirementDialog:enableNearbyRequirementDialog];
+}
+
 - (void) getNearbyStatus:(CDVInvokedUrlCommand *)command {
     
     NSDictionary *status = [[VDARSDKController sharedInstance] getNearbyStatus];

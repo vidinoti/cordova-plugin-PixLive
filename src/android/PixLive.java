@@ -405,6 +405,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("getNearbyBeacons")) {
             this.getNearbyBeacons(callbackContext);
             return true;
+        } else if (action.equals("setEnableNearbyRequirementDialog")) {
+            this.setEnableNearbyRequirementDialog(args.getBoolean(0));
+            return true;
         } else if (action.equals("getNearbyStatus")) {
             this.getNearbyStatus(callbackContext);
             return true;
@@ -533,6 +536,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private void isContainingBeacons(final CallbackContext callback) {
         boolean containingBeacons = VDARSDKController.getInstance().isContainingBeacons();
         callback.sendPluginResult(new PluginResult(PluginResult.Status.OK, containingBeacons));
+    }
+
+    private void setEnableNearbyRequirementDialog(boolean nearbyRequirementDialogEnabled) {
+        VDARSDKController.getInstance().setEnableNearbyRequirementDialog(nearbyRequirementDialogEnabled);
     }
 
     private void getNearbyStatus(final CallbackContext callback) {
