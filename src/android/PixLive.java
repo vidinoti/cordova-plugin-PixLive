@@ -485,6 +485,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("isBookmarked") && args.length()>=1) {
             this.isBookmarked(args.getString(0), callbackContext);
             return true;
+        } else if (action.equals("setCloudRecognitionLanguage") && args.length()>=1) {
+            this.setCloudRecognitionLanguage(args.getString(0));
+            return true;
         }
         return false;
     }
@@ -626,6 +629,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private void isBookmarked(String contextId, final CallbackContext callbackContext) {
         boolean bookmarked = BookmarkManager.isBookmarked(contextId);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, bookmarked));
+    }
+
+    private void setCloudRecognitionLanguage(String languageCode) {
+        VDARSDKController.getInstance().setCloudRecognitionLanguage(languageCode);
     }
 
     private void installEventHandler(CallbackContext callback) {

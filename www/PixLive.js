@@ -453,6 +453,14 @@ PixLive.isBookmarked = function(contextId, success, error) {
 	exec(success, error, "PixLive", "isBookmarked", [contextId]);
 };
 
+/**
+* Sets the language to use for online recognition
+* @param {string} languageCode - the language to use (2-character code like "fr" or "en")
+*/
+PixLive.setCloudRecognitionLanguage = function(languageCode) {
+	exec(null, null, "PixLive", "setCloudRecognitionLanguage",  [languageCode]);
+};
+
 // Used to signal the plugin that the page is fully loaded
 document.addEventListener("deviceready", function() {
 	exec(null, null, "PixLive", "pageLoaded",  []);
