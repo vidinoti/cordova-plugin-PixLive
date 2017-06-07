@@ -81,6 +81,13 @@ if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) 
 }
 ```
 
+When the AR view is created, it is created behind the current application page (see illustration below). This allows the application to display content on top of the AR view.
+However the area of the HTML page overlapping the AR view must be transparent (CSS: `background-color: transparent`) otherwise the AR view is not visible.
+If you don't see the AR view, ensure that the DOM element (and it parents) hiding the AR view are all transparent.
+
+![PixLive cordova AR view](pixlivesdk-cordova-arview.png)
+
+
 * Handle the orientation changes
 ```javascript
 /**
