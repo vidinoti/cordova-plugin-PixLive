@@ -149,16 +149,17 @@ if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive &
 ```
 PixLive events are: 
 
-	* pxlContextEnter - When enter a context (recognize image, enter beacon area)
-	* pxlContextExit - When exist a context
-	* pxlCodeRecognize - When a QR code is recognized
-	* pxlAnnotationsPresent - When content is shown
-	* pxlAnnotationsHide - When content is hidden
-	* pxlSynchronizationRequired - When a context ask to synchronize with given tags
-	* pxlSensorTriggered - When a sensor is detected
-	* pxlSensorUpdate - When a sensor value is updated
-	* pxlSensorUntriggered - When a sensor is not detected anymore
-	* pxlEventFromContent - When an event is generate from the content (PixLiveJS)
+* `enterContext` - triggered when entering a context (image recognition, beacon detection, etc.)
+* `exitContext` - triggered when exiting the context.
+* `codeRecognize` - triggered when a QR code is recognized. It contains the content of the QR code.
+* `presentAnnotations` - triggered when an AR content is displayed.
+* `hideAnnotations` - triggered when the AR content is hidden.
+* `requireSync` - triggered when a context asks for a new synchronization with some tags (See "Synchronization trigger" in PixLive Maker).
+* `sensorTriggered` - triggered when a sensor has been triggered (image detection, beacon detection). The event is triggered even if the context does not contain any content.
+* `sensorUpdate` - triggered when a sensor value is updated (e.g. beacon distance).
+* `sensorUntriggered` - triggered when a sensor is untriggered.
+* `eventFromContent` - triggered when a content sends an event to the application (e.g. if a coupon content is opened, the coupon id is sent via this callback).
+
 For example:
 ```javascript
 //enable PixLive SDK to catch the touch event when a content is displayed
