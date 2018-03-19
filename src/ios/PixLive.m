@@ -285,6 +285,24 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [touchForwarder setTouchHoleWithTop:(int)top bottom:(int)bottom left:(int)left right:(int)right];
 }
 
+/**
+ * Creates a capture of the AR view and saves it in the camera roll.
+ */
+-(void)captureScreenshot:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    NSUInteger ctrlID = [[arguments objectAtIndex:0] unsignedIntegerValue];
+    CordovaARViewController * ctrl = [self.arViewControllers objectForKey:[NSNumber numberWithUnsignedInteger:ctrlID]];
+    BOOL success = [ctrl captureScreenshot];
+
+    CDVPluginResult* pluginResult = nil;
+    if (success) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Screenshot failed"];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 -(void)beforeLeave:(CDVInvokedUrlCommand *)command {
     NSArray* arguments = [command arguments];
     

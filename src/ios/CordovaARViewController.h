@@ -15,4 +15,6 @@
 
 -(id)initWithPlugin:(PixLive*)plugin;
 
+-(BOOL)captureScreenshot;
+
 @end

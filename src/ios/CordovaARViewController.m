@@ -77,5 +77,17 @@
     [plugin annotationViewDidPresentAnnotations];
 }
 
+/**
+ * Creates a capture of the AR view and saves it in the camera roll.
+ * Returns YES if success, NO otherwise.
+ */
+-(BOOL)captureScreenshot {
+    UIImage* screenshot = [self.annotationView captureScreenshot];
+    if (screenshot) {
+        UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil);
+        return YES;
+    }
+    return NO;
+}
 
 @end

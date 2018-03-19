@@ -85,28 +85,32 @@ module.exports = function(context) {
 			"NSLocationAlwaysUsageDescription":"$APP_NAME tailors content based on your location.",
 			"NSLocationUsageDescription":"$APP_NAME tailors content based on your location.",
 			"NSLocationWhenInUseUsageDescription":"$APP_NAME tailors content based on your location.",
-			"NSBluetoothPeripheralUsageDescription":"$APP_NAME tailors content based on your location."
+			"NSBluetoothPeripheralUsageDescription":"$APP_NAME tailors content based on your location.",
+			"NSPhotoLibraryAddUsageDescription":"$APP_NAME saves camera captures to your photo library."
 		},
 		'fr': {
 			"NSCameraUsageDescription": "$APP_NAME utilise votre caméra pour reconnaître les articles & images.",
 			"NSLocationAlwaysUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
 			"NSLocationUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
 			"NSLocationWhenInUseUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
-			"NSBluetoothPeripheralUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position."
+			"NSBluetoothPeripheralUsageDescription": "$APP_NAME vous fournit du contenu personnalisé en utilisant votre position.",
+			"NSPhotoLibraryAddUsageDescription":"$APP_NAME sauve vos captures d'écran dans votre gallerie."
 		},
 		'de': {
 			"NSCameraUsageDescription": "$APP_NAME verwendet Ihre Kamera, um Artikel und Bilder zu erkennen.",
 			"NSLocationAlwaysUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
 			"NSLocationUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
 			"NSLocationWhenInUseUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
-			"NSBluetoothPeripheralUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort."
+			"NSBluetoothPeripheralUsageDescription": "$APP_NAME liefert den passenden Inhalt zu Ihrem Standort.",
+			"NSPhotoLibraryAddUsageDescription":"$APP_NAME saves camera captures to your photo library."
 		},
 		'nl': {
 			"NSCameraUsageDescription": "$APP_NAME gebruikt uw camera om artikels en beelden te herkennen.",
 			"NSLocationAlwaysUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
 			"NSLocationUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
 			"NSLocationWhenInUseUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
-			"NSBluetoothPeripheralUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden."
+			"NSBluetoothPeripheralUsageDescription": "$APP_NAME maakt gebruik van uw locatie om u gepersonaliseerde content aan te bieden.",
+			"NSPhotoLibraryAddUsageDescription":"$APP_NAME saves camera captures to your photo library."
 		}
 	};
 

@@ -152,6 +152,15 @@ PixLive.prototype = {
 	*/
 	setTouchHole: function(top, bottom, left, right) {
 		exec(null, null, "PixLive", "setTouchHole", [top, bottom, left, right]);
+	},
+
+	/**
+	 * Creates a screen capture of the currently displayed AR view.
+	 * On iOS, it saves the image in the camera roll (Photo Album).
+	 * On Android, it sends an Intent for sharing the image.
+	 */
+	captureScreenshot: function(success, error) {
+		exec(success, error, "PixLive", "captureScreenshot", [this.handle]);
 	}
 };
 
