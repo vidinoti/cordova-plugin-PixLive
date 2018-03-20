@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -50,14 +52,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -69,7 +77,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     private static final String TAG ="PixLiveCordova";
 
+    private static final int REQ_CODE_EXTERNAL_STORAGE_PERM = 100;
+
     private boolean locEnabled = false;
+    private CallbackContext mCaptureScreenshotCallbackContext = null;
 
     class TouchInterceptorView extends FrameLayout {
         public boolean touchEnabled = true;
@@ -203,7 +214,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
             @Override
             public void run() {
-                
+
                 VDARRemoteController.getInstance().addProgressListener(PixLive.this);
 
                 Intent intent = cordova.getActivity().getIntent();
@@ -247,7 +258,17 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     @Override
     public void onRequestPermissionResult(int requestCode, String[] permissions,
                                           int[] grantResults) throws JSONException {
-        VDARSDKController.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Handle the result for external storage permission or forward to SDK
+        if (requestCode == REQ_CODE_EXTERNAL_STORAGE_PERM) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                saveTempScreenshot();
+            } else if (mCaptureScreenshotCallbackContext != null) {
+                mCaptureScreenshotCallbackContext.error("Permission not granted");
+            }
+            mCaptureScreenshotCallbackContext = null;
+        } else {
+            VDARSDKController.getInstance().onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     static void startSDK(final Context c) {
@@ -488,6 +509,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("setCloudRecognitionLanguage") && args.length()>=1) {
             this.setCloudRecognitionLanguage(args.getString(0));
             return true;
+        } else if (action.equals("captureScreenshot")) {
+            this.captureScreenshot(args.getInt(0), callbackContext);
+            return true;
         }
         return false;
     }
@@ -562,7 +586,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         if(status.get("GPS_PROVIDER") != "enabled" && status.get("NETWORK_PROVIDER") != "enabled") {
             locationStatus = "disabled";
         }
-        
+
         if(status.get("bluetoothStatus") != "enabled") {
             bluetoothStatus = "disabled";
         }
@@ -603,7 +627,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private void setBookmarkSupport(boolean enabled) {
         VDARSDKController.getInstance().setBookmarkSupport(enabled);
     }
-    
+
     private void getBookmarks(final CallbackContext callback) {
         final List<String> contextIds = BookmarkManager.getBookmarks();
         JSONArray ret = new JSONArray();
@@ -617,11 +641,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             callback.success(ret);
         }
     }
-    
+
     private void addBookmark(String contextId) {
         BookmarkManager.addBookmark(contextId);
     }
-    
+
     private void removeBookmark(String contextId) {
         BookmarkManager.removeBookmark(contextId);
     }
@@ -666,6 +690,123 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
     private void setTouchHole(int top, int bottom, int left, int right) {
         if (touchView != null) {
             touchView.setTouchHole(top, bottom, left, right);
+        }
+    }
+
+    /**
+     * Creates a screen capture and saves it in a public folder accessible for the
+     * image gallery.
+     * @param ctrlID the ID of the current AR view
+     * @param callbackContext the cordova CallbackContext for returning the result of the action
+     */
+    private void captureScreenshot(int ctrlID, final CallbackContext callbackContext) {
+
+        VDARAnnotationView view = arViews.get(ctrlID);
+        if (view == null) {
+            callbackContext.error("No AR view");
+            return;
+        }
+
+        if (cordova.hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            final File file = getExternalScreenshotFile();
+            view.captureScreenshot(file.getAbsolutePath(), new Observer() {
+                @Override
+                public void update(Observable o, Object arg) {
+                    if (arg == null) {
+                        // Force a media scan for adding the image in the gallery
+                        MediaScannerConnection.scanFile(cordova.getActivity(), new String[]{file.toString()}, null, null);
+                        callbackContext.success();
+                    } else {
+                        callbackContext.error("Error capturing screen");
+                    }
+                }
+            });
+        } else {
+            // Store the callbackContext for calling it later in onRequestPermissionResult
+            mCaptureScreenshotCallbackContext = callbackContext;
+            // We first store the capture internally (private to the app)
+            // Once the permission has been granted, we move it to a public folder
+            File file = new File(cordova.getActivity().getCacheDir(), "capture_temp_file.jpg");
+            view.captureScreenshot(file.getAbsolutePath(), new Observer() {
+                @Override
+                public void update(Observable o, Object arg) {
+                    if (arg == null) {
+                        cordova.requestPermission(PixLive.this, REQ_CODE_EXTERNAL_STORAGE_PERM, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    } else {
+                        callbackContext.error("Error capturing screen");
+                        mCaptureScreenshotCallbackContext = null;
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Moves the temporary screen capture from temporary private folder to public folder.
+     */
+    public void saveTempScreenshot() {
+        File srcFile = new File(cordova.getActivity().getCacheDir(), "capture_temp_file.jpg");
+        File destFile = getExternalScreenshotFile();
+        final boolean rename = srcFile.renameTo(destFile);
+        if (!rename) {
+            try {
+                copyFile(srcFile, destFile);
+            } catch (IOException e) {
+                if (mCaptureScreenshotCallbackContext != null) {
+                  mCaptureScreenshotCallbackContext.error("Error copying file");
+                }
+                return;
+            }
+            srcFile.delete();
+        }
+        MediaScannerConnection.scanFile(cordova.getActivity(), new String[]{destFile.toString()}, null, null);
+        if (mCaptureScreenshotCallbackContext != null) {
+          mCaptureScreenshotCallbackContext.success();
+        }
+    }
+
+    /**
+     * Returns a file that is public
+     */
+    private File getExternalScreenshotFile() {
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        String timestamp = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date());
+        path.mkdirs();
+        return new File(path, "ar_" + timestamp + ".jpg");
+    }
+
+    /**
+     * Copy a file from a source to a destination.
+     * @param srcFile the file to copy
+     * @param destFile the destination of the file to copy
+     */
+    private void copyFile(File srcFile, File destFile) throws IOException {
+        FileChannel input = null;
+        FileChannel output = null;
+        try {
+            FileInputStream fis = new FileInputStream(srcFile);
+            input = fis.getChannel();
+            FileOutputStream fos = new FileOutputStream(destFile);
+            output = fos.getChannel();
+            final long size = input.size();
+            long pos = 0;
+            long count = 0;
+            while (pos < size) {
+                final long remain = size - pos;
+                count = remain > 1048576 ? 1048576 : remain;
+                final long bytesCopied = output.transferFrom(input, pos, count);
+                if (bytesCopied == 0) {
+                    break;
+                }
+                pos += bytesCopied;
+            }
+        } finally {
+            if (input != null) {
+                input.close();
+            }
+            if (output != null) {
+                output.close();
+            }
         }
     }
 
@@ -791,7 +932,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     private ArrayList<VDARPrior> getPriorsFromJSON(JSONArray a) {
         ArrayList<VDARPrior> ret = new ArrayList<VDARPrior>();
-        
+
         if(a != null) {
             for(int i = 0; i < a.length(); i++) {
                 Object s = null;
@@ -810,12 +951,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 }
             }
         }
-        
+
         return ret;
     }
 
     private void synchronize(JSONArray tags, final CallbackContext callbackContext) {
-        
+
         final ArrayList<VDARPrior> priors = getPriorsFromJSON(tags);
 
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
@@ -890,7 +1031,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         for(String ctxId : contextIds) {
             VDARContext c = VDARSDKController.getInstance().getContext(ctxId);
             if(c != null) {
-                
+
 
                 ret.put(createJSONForContext(c));
             }
@@ -1014,7 +1155,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                     if (Build.VERSION.SDK_INT >= 23) {
                         //FIXME: This is a hack, we enfore the cordova impl to have our own plugin as requestPermission callback
-                        
+
                         try {
                             Field fs = cordova.getClass().getDeclaredField("permissionResultCallback");
                             fs.setAccessible(true);
@@ -1166,7 +1307,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            
+
             try {
                 PixLive.this.eventHandler.sendPluginResult(p);
             } catch (Exception e) {
@@ -1189,7 +1330,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            
+
             try {
                 PixLive.this.eventHandler.sendPluginResult(p);
             } catch (Exception e) {
@@ -1213,7 +1354,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            
+
             try {
                 PixLive.this.eventHandler.sendPluginResult(p);
             } catch (Exception e) {
@@ -1247,7 +1388,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
                     PluginResult p = new PluginResult(PluginResult.Status.OK, o);
                     p.setKeepCallback(true);
-                    
+
                     try {
                         PixLive.this.eventHandler.sendPluginResult(p);
                     } catch (Exception e) {
@@ -1293,7 +1434,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            
+
             try {
                 PixLive.this.eventHandler.sendPluginResult(p);
             } catch (Exception e) {
@@ -1326,7 +1467,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
             p.setKeepCallback(true);
-            
+
             try {
                 PixLive.this.eventHandler.sendPluginResult(p);
             } catch (Exception e) {
@@ -1349,7 +1490,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             }
 
             PluginResult p = new PluginResult(PluginResult.Status.OK, o);
-            
+
             p.setKeepCallback(true);
 
             try {
