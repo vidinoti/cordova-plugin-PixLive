@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0",
+  "version": "1.5.0",
   "name": "cordova-plugin-pixlive",
   "cordova_name": "PixLive",
   "description": "PixLive SDK plugin for Cordova based hybrid apps",
