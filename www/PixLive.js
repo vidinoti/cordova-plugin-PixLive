@@ -155,9 +155,8 @@ PixLive.prototype = {
 	},
 
 	/**
-	 * Creates a screen capture of the currently displayed AR view.
-	 * On iOS, it saves the image in the camera roll (Photo Album).
-	 * On Android, it sends an Intent for sharing the image.
+	 * Creates a screen capture of the currently displayed AR view and saves it in the
+	 * device image gallery.
 	 */
 	captureScreenshot: function(success, error) {
 		exec(success, error, "PixLive", "captureScreenshot", [this.handle]);
