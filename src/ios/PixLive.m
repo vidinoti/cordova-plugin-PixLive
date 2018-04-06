@@ -713,35 +713,41 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
 #pragma mark - Remote controller
 
--(void) addPriors:(NSArray*)arr inTagArray:(NSMutableArray*)dest {
+-(void) addTagPriors:(NSArray*)arr inPriorArray:(NSMutableArray*)dest {
     for(NSString * t in arr) {
         if([t isKindOfClass:[NSString class]]) {
             [dest addObject:[VDARTagPrior tagWithName:t]];
         }else if([t isKindOfClass:[NSArray class]]) {
             NSMutableArray * ret = [NSMutableArray array];
-            [self addPriors:(NSArray*)t inTagArray: ret];
+            [self addTagPriors:(NSArray*)t inPriorArray: ret];
             [dest addObject:[[VDARIntersectionPrior alloc] initWithPriors:ret]];
         }
         
     }
 }
 
+-(void) addTourPriors:(NSArray*)arr inPriorArray:(NSMutableArray*)dest {
+    for (NSNumber* n in arr) {
+        [dest addObject:[VDARTourPrior tourWithID:[n intValue]]];
+    }
+}
+
 - (void) synchronize:(CDVInvokedUrlCommand *)command
 {
-    
     NSArray* arguments = [command arguments];
-    
     NSUInteger argc = [arguments count];
-    
-    NSMutableArray *arrTags = [NSMutableArray arrayWithCapacity:argc];
+    NSMutableArray *syncPriors = [NSMutableArray arrayWithCapacity:argc]; // argc is not the count of the items
     
     if(argc>0) {
-        [self addPriors: arguments[0] inTagArray: arrTags];
+        [self addTagPriors: arguments[0] inPriorArray: syncPriors];
+    }
+    if(argc>1) {
+        [self addTourPriors: arguments[1] inPriorArray: syncPriors];
     }
     
     [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[VDARRemoteController sharedInstance] syncRemoteModelsAsynchronouslyWithPriors:arrTags withCompletionBlock:^(id result, NSError *err) {
+            [[VDARRemoteController sharedInstance] syncRemoteModelsAsynchronouslyWithPriors:syncPriors withCompletionBlock:^(id result, NSError *err) {
                 
                 CDVPluginResult* pluginResult = nil;
                 

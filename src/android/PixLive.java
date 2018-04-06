@@ -41,6 +41,7 @@ import com.vidinoti.android.vdarsdk.VDARSDKControllerEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARContentEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARSDKSensorEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARTagPrior;
+import com.vidinoti.android.vdarsdk.VDARTourPrior;
 import com.vidinoti.android.vdarsdk.VidiBeaconSensor;
 import com.vidinoti.android.vdarsdk.geopoint.VDARGPSPoint;
 import com.vidinoti.android.vdarsdk.geopoint.GeoPointManager;
@@ -403,11 +404,15 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             this.resize(x, y, width, height,ctrlID, callbackContext);
             return true;
         }else if (action.equals("synchronize")) {
-            JSONArray a = null;
-            if(args.length()>0) {
-                a = args.getJSONArray(0);
+            JSONArray tagArray = null;
+            if (args.length() > 0) {
+                tagArray = args.getJSONArray(0);
             }
-            this.synchronize(a,callbackContext);
+            JSONArray tourArray = null;
+            if (args.length() > 1) {
+                tourArray = args.getJSONArray(1);
+            }
+            this.synchronize(tagArray, tourArray, callbackContext);
             return true;
         } else if (action.equals("enableTouch")) {
             this.enableTouch();
@@ -955,9 +960,20 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         return ret;
     }
 
-    private void synchronize(JSONArray tags, final CallbackContext callbackContext) {
+    private void synchronize(JSONArray tags, JSONArray tours, final CallbackContext callbackContext) {
 
         final ArrayList<VDARPrior> priors = getPriorsFromJSON(tags);
+
+        if (tours != null) {
+            for (int i = 0; i < tours.length(); i++) {
+                try {
+                    long tourId = tours.getLong(i);
+                    priors.add(new VDARTourPrior(tourId));
+                } catch (JSONException e) {
+                    Log.w(TAG, "Unable to parse sync tour ID.");
+                }
+            }
+        }
 
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
             @Override

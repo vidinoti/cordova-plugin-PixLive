@@ -175,3 +175,23 @@ addListener("codeRecognize",function(event){
     alert("QR code recognized: " + event.code);
 });
 ```
+
+## How to contribute and create a new release
+
+* Edit the plugin as needed
+* Update the version number in `plugin.xml` and `package.json`
+* Commit and push the changes to GitHub
+* Create a new release from GitHub interface (releases > Draft a new release)
+
+Publish a new release in npm registry:
+
+* if necessary, `npm login`
+* `npm publish`
+
+## Release note
+
+### Version 1.6.0 - 6 April 2018
+
+requires PixLive SDK >= 6.2.0
+
+* add new function for synchronizing with tours (see `PixLive.synchronizeWithTours`)
