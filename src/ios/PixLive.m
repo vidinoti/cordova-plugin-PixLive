@@ -732,6 +732,12 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
 }
 
+-(void) addContextPriors:(NSArray*)arr inPriorArray:(NSMutableArray*)dest {
+    for (NSString* cid in arr) {
+        [dest addObject:[VDARContextPrior contextWithID:cid]];
+    }
+}
+
 - (void) synchronize:(CDVInvokedUrlCommand *)command
 {
     NSArray* arguments = [command arguments];
@@ -743,6 +749,9 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     }
     if(argc>1) {
         [self addTourPriors: arguments[1] inPriorArray: syncPriors];
+    }
+    if(argc>2) {
+        [self addContextPriors: arguments[2] inPriorArray: syncPriors];        
     }
     
     [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{

@@ -235,6 +235,31 @@ PixLive.synchronizeWithTours = function(tags, tours, success, error) {
 };
 
 /**
+* Synchronize the app with the linked PixLive Maker account http://pixlivemaker.com
+* Use this method if you want to synchronize with tags, tours and contexts. If you need only tags, see the "synchronize" function.
+*
+* @param {string[]} tags - An array of tags to synchronize with (can be left empty) example:
+* <ul>
+* <li> [] if you do not want to use tags, all the contexts from the linked PixLive Maker account will be synchronized
+* <li> ['tag1','tag2'] to synchronize with the contexts that are tagged with tag1 or tag2
+* <li> [['tag1','tag2'], 'tag3'] to synchronize with the contexts that are tagged with (tag1 and tag2) or tag3
+* </ul>
+* Specific languages can be attributated to PixLive Maker content, to synchronize your app with a specific language
+* use the tag: 'lang_{{iso_code_of_the_language}}' for example:
+* <ul>
+* <li> ['lang_fr'] to sychronize with all the french contents
+* <li> [['tag1','lang_en'], ['tag2','lang_en']] to synronize with the english contents tagged with tag1 or tag2
+* </ul>
+* @param {number[]} tours - An array of tour ID to synchronize with.
+* @param {string[]} contexts - An array of context ID to synchronize with.
+* @param {callback} success - success callback
+* @param {callback} error - error callback
+*/
+PixLive.synchronizeWithToursAndContexts = function(tags, tours, contexts, success, error) {
+	exec(success, error, "PixLive", "synchronize", [tags, tours, contexts]);
+};
+
+/**
 * Will show the list of beacons notifications previously received
 * @param {callback} success - success callback
 * @param {callback} error - error callback

@@ -40,6 +40,7 @@ import com.vidinoti.android.vdarsdk.VDARRemoteControllerListener;
 import com.vidinoti.android.vdarsdk.VDARSDKControllerEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARContentEventReceiver;
 import com.vidinoti.android.vdarsdk.VDARSDKSensorEventReceiver;
+import com.vidinoti.android.vdarsdk.VDARContextPrior;
 import com.vidinoti.android.vdarsdk.VDARTagPrior;
 import com.vidinoti.android.vdarsdk.VDARTourPrior;
 import com.vidinoti.android.vdarsdk.VidiBeaconSensor;
@@ -412,7 +413,11 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             if (args.length() > 1) {
                 tourArray = args.getJSONArray(1);
             }
-            this.synchronize(tagArray, tourArray, callbackContext);
+            JSONArray contextArray = null;
+            if (args.length() > 2) {
+                contextArray = args.getJSONArray(2);
+            }
+            this.synchronize(tagArray, tourArray, contextArray, callbackContext);
             return true;
         } else if (action.equals("enableTouch")) {
             this.enableTouch();
@@ -960,7 +965,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         return ret;
     }
 
-    private void synchronize(JSONArray tags, JSONArray tours, final CallbackContext callbackContext) {
+    private void synchronize(JSONArray tags, JSONArray tours, JSONArray contexts, final CallbackContext callbackContext) {
 
         final ArrayList<VDARPrior> priors = getPriorsFromJSON(tags);
 
@@ -971,6 +976,17 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                     priors.add(new VDARTourPrior(tourId));
                 } catch (JSONException e) {
                     Log.w(TAG, "Unable to parse sync tour ID.");
+                }
+            }
+        }
+
+        if (contexts != null) {
+            for (int i = 0; i < contexts.length(); i++) {
+                try {
+                    String contextID = contexts.getString(i);
+                    priors.add(new VDARContextPrior(contextID));
+                } catch (JSONException e) {
+                    Log.w(TAG, "Unable to parse context ID.");
                 }
             }
         }

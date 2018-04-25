@@ -190,6 +190,12 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.7.0 - 25 April 2018
+
+requires PixLive SDK >= 6.3.0
+
+* add new function for synchronizing with contexts (see `PixLive.synchronizeWithToursAndContexts`)
+
 ### Version 1.6.0 - 6 April 2018
 
 requires PixLive SDK >= 6.2.0
