@@ -190,6 +190,13 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.8.0 - 25 June 2018
+
+requires Vidinoti SDK >= 6.4.0
+
+* Adapted for cordova-android 7.0.0
+* Removed related code for Android push notifications, for adding support for Android push, install [cordova-plugin-vidinoti-push](https://github.com/vidinoti/cordova-plugin-vidinoti-push)
+
 ### Version 1.7.0 - 25 April 2018
 
 requires PixLive SDK >= 6.3.0

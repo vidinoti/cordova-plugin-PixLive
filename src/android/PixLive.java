@@ -452,7 +452,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             this.getGPSPointsInBoundingBox((float)(args.getDouble(0)), (float)(args.getDouble(1)), (float)(args.getDouble(2)), (float)(args.getDouble(3)), callbackContext);
             return true;
         } else if (action.equals("setNotificationsSupport") && args.length()>=1) {
-            this.setNotificationsSupport(args.getString(0));
+            // Backward compatibility with previous version, was expecting a String (Sender ID), now we expect a boolean.
+            boolean enableNotif = args.optBoolean(0) || !args.optString(0).equals("false");
+            this.setNotificationsSupport(enableNotif);
             return true;
         } else if (action.equals("installEventHandler")) {
             this.installEventHandler(callbackContext);
@@ -673,8 +675,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         this.eventHandler = callback;
     }
 
-    private void setNotificationsSupport(String googleProjectKey) {
-        VDARSDKController.getInstance().setNotificationsSupport(googleProjectKey!=null, googleProjectKey);
+    private void setNotificationsSupport(boolean enabled) {
+        VDARSDKController.getInstance().setNotificationsSupport(enabled);
     }
 
     private void enableTouch() {

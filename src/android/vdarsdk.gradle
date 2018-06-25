@@ -1,14 +1,32 @@
-
-
-if (cdvBuildMultipleApks == null) {
-    ext.cdvBuildMultipleApks = true
-}
-
 // Apply values after project's build-extras.gradle
 cdvPluginPostBuildExtras.add({
 
+  android {
+    // Fix mips stripping bug (see https://stackoverflow.com/questions/42739916/aarch64-linux-android-strip-file-missing)
+    packagingOptions{
+      doNotStrip '*/mips/*.so'
+      doNotStrip '*/mips64/*.so'
+    }
+
+    // The SDK only supports x86 and armeabi-v7a, create the 2 corresponding flavors
+    flavorDimensions "default"
+    productFlavors {
+      armv7 {
+        versionCode defaultConfig.versionCode*10 + 2
+        ndk {
+          abiFilters = ["armeabi-v7a"]
+        }
+      }
+      x86 {
+        versionCode defaultConfig.versionCode*10 + 4
+        ndk {
+          abiFilters = ["x86"]
+        }
+      }
+    }
+  }
+
   repositories {
-    mavenCentral()
     flatDir {
       dirs 'libs'
     }
@@ -18,9 +36,9 @@ cdvPluginPostBuildExtras.add({
       compile name:'vdarsdk-release', ext:'aar'
       compile 'com.android.support:appcompat-v7:23.+'
       compile 'com.android.support:support-v4:23.+'
-      compile 'com.google.android.gms:play-services-gcm:7+'
       compile 'com.facebook.android:facebook-android-sdk:3+'
       compile 'com.android.support:recyclerview-v7:21+'
       compile 'com.github.barteksc:android-pdf-viewer:2.7.0'
   }
+
 })

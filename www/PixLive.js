@@ -181,12 +181,11 @@ PixLive.createARView = function( originx, originy, width, height ) {
 PixLive.onEventReceived = null;
 
 /**
-* Activate the notifactions support
+* Activate the notifactions support (disabled by default)
 * @param {boolean} enabled - true to enable, false to disable
-* @param {string} apiKey - Google APIs project number for android app
 */
 PixLive.setNotificationsSupport = function( enabled, apiKey ) {
-	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ? (apiKey ? apiKey : true) : null]);
+	exec(null, null, "PixLive", "setNotificationsSupport",  [ enabled ]);
 };
 
 /**
