@@ -190,6 +190,10 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.8.1 - 15 August 2018
+
+* Add opengles-3 iOS Device capability requirement for SDK 6.5.0
+
 ### Version 1.8.0 - 25 June 2018
 
 requires Vidinoti SDK >= 6.4.0
