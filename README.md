@@ -190,6 +190,10 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.8.2 - 15 August 2018
+
+* Add default value fallback if variables PIXLIVE_SDK_ANDROID_LOCATION or PIXLIVE_SDK_IOS_LOCATION are missing when plugin is being installed
+
 ### Version 1.8.1 - 15 August 2018
 
 * Add opengles-3 iOS Device capability requirement for SDK 6.5.0
