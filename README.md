@@ -190,6 +190,12 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.9.0 - 14 January 2019
+
+requires PixLive SDK >= 6.5.5
+
+* Android: add support for 64-bit architectures (arm64-v8a, x86_64)
+
 ### Version 1.8.2 - 15 August 2018
 
 * Add default value fallback if variables PIXLIVE_SDK_ANDROID_LOCATION or PIXLIVE_SDK_IOS_LOCATION are missing when plugin is being installed
