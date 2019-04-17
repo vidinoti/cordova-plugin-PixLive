@@ -190,6 +190,10 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.10.0 - 17 April 2019
+
+* Update iOS push support for cordova-ios 5.0.0
+
 ### Version 1.9.0 - 14 January 2019
 
 requires PixLive SDK >= 6.5.5
