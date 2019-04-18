@@ -35,10 +35,6 @@ module.exports = function(context) {
 		}
 
 		fs.closeSync(fd);
-
-		//Convert to UTF16
-
-		exec('iconv -f UTF-8 -t UTF-16 "'+file+'" > '+file+'"', function(){});
 	}
 
 

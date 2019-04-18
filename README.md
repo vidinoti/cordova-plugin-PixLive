@@ -190,6 +190,10 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.11.0 - 18 April 2019
+
+* iOS: change encoding from UTF-16 to UTF-8 for .strings file (Xcode 10)
+
 ### Version 1.10.0 - 17 April 2019
 
 * Update iOS push support for cordova-ios 5.0.0
