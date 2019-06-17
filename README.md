@@ -190,6 +190,10 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.11.1 - 17 June 2019
+
+* Replace `Q` by native promise for Cordova 9.
+
 ### Version 1.11.0 - 18 April 2019
 
 * iOS: change encoding from UTF-16 to UTF-8 for .strings file (Xcode 10)

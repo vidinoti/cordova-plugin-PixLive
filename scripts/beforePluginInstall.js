@@ -35,12 +35,6 @@ module.exports = function (context) {
 		};
 	})();
 
-	var Q = context.requireCordovaModule('q');
-	var deferral = new Q.defer();
-
-
-
-
 	var cmdLine = '"' + process.argv.join('" "') + '"';
 
 	//We try to get the variable
@@ -135,27 +129,28 @@ module.exports = function (context) {
 
 	console.log('Copying PixLive SDK for iOS...');
 
-	copySync(inFile, outFile, function (error) {
-		if (error) {
-			console.error("Copy error: " + error);
-			throw new Error("Unable to copy VDARSDK.framework. Check the path of the PIXLIVE_SDK_IOS_LOCATION variable. Given: '" + inFile + "'");
-		} else {
-			console.log('Copying PixLive SDK for Android...');
+	return new Promise(function (resolve, reject) {
+		copySync(inFile, outFile, function (error) {
+			if (error) {
+				console.error("Copy error: " + error);
+				throw new Error("Unable to copy VDARSDK.framework. Check the path of the PIXLIVE_SDK_IOS_LOCATION variable. Given: '" + inFile + "'");
+			} else {
+				console.log('Copying PixLive SDK for Android...');
 
-			var inFile = variables['PIXLIVE_SDK_ANDROID_LOCATION'];
+				var inFile = variables['PIXLIVE_SDK_ANDROID_LOCATION'];
 
-			var outFile = context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive';
+				var outFile = context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive';
 
-			copySync(inFile, outFile, function (error) {
-				if (error) {
-					console.error("Copy error: " + error);
-					throw new Error("Unable to copy PixLive SDK Android AAR library. Check the path of the PIXLIVE_SDK_ANDROID_LOCATION variable. Given: '" + inFile + "'");
-				} else {
-					deferral.resolve();
-				}
-			});
-		}
+				copySync(inFile, outFile, function (error) {
+					if (error) {
+						console.error("Copy error: " + error);
+						reject("Unable to copy PixLive SDK Android AAR library. Check the path of the PIXLIVE_SDK_ANDROID_LOCATION variable. Given: '" + inFile + "'");
+					} else {
+						resolve();
+					}
+				});
+			}
+		});
 	});
 
-	return deferral.promise;
 };
