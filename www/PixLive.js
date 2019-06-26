@@ -259,6 +259,30 @@ PixLive.synchronizeWithToursAndContexts = function(tags, tours, contexts, succes
 };
 
 /**
+ * Retrieves the tag information for the current local contexts.
+ * It stores the mapping between the given tags and the local contexts.
+ * This method is used before calling enableContextsWithTags.
+ * @param {string[]} tags - an array of tag names that we want to map with contexts
+ * @param {callback} success - success callback
+ * @param {callback} error - error callback
+ */
+PixLive.updateTagMapping = function (tags, success, error) {
+	exec(success, error, "PixLive", "updateTagMapping", [tags]);
+}
+
+/**
+ * Enables all the contexts that have the given tags. It disables all other contexts.
+ * You must call updateTagMapping before calling this method otherwise the mapping
+ * tag <-> context is unknown.
+ * @param {string[]} tags - an array of tag names. The contexts to enable must have all of the given tags (logical AND)
+ * @param {callback} success - success callback
+ * @param {callback} error - error callback
+ */
+PixLive.enableContextsWithTags = function (tags, success, error) {
+	exec(success, error, "PixLive", "enableContextsWithTags", [tags]);
+}
+
+/**
 * Will show the list of beacons notifications previously received
 * @param {callback} success - success callback
 * @param {callback} error - error callback

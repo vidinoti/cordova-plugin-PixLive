@@ -524,6 +524,12 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("captureScreenshot")) {
             this.captureScreenshot(args.getInt(0), callbackContext);
             return true;
+        } else if (action.equals("updateTagMapping")) {
+            this.updateTagMapping(args.getJSONArray(0), callbackContext);
+            return true;
+        } else if (action.equals("enableContextsWithTags")) {
+            this.enableContextsWithTags(args.getJSONArray(0), callbackContext);
+            return true;
         }
         return false;
     }
@@ -1533,6 +1539,56 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 //To avoid webview crashes
             }
         }
+    }
+
+    private void updateTagMapping(final JSONArray tags, final CallbackContext callback) {
+        final List<String> tagList = new ArrayList<>(tags.length());
+        for (int i = 0; i < tags.length(); i++) {
+            try {
+                tagList.add(tags.getString(i));
+            } catch (JSONException e) {
+                Log.e(TAG, "Unable to parse tag name.", e);
+            }
+        }
+        VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
+            @Override
+            public void run() {
+                VDARRemoteController.getInstance().syncTagContexts(tagList, new VDARRemoteController.Callback<Void>() {
+                    @Override
+                    public void onSuccess(Void value) {
+                        callback.success();
+                    }
+
+                    @Override
+                    public void onError(String message, Throwable cause) {
+                        callback.error(message);
+                    }
+                });
+            }
+        });
+    }
+
+    private void enableContextsWithTags(final JSONArray tags, final CallbackContext callback) {
+        final List<String> tagList = new ArrayList<>(tags.length());
+        for (int i = 0; i < tags.length(); i++) {
+            try {
+                tagList.add(tags.getString(i));
+            } catch (JSONException e) {
+                Log.e(TAG, "Unable to parse tag name.", e);
+            }
+        }
+        VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
+            @Override
+            public void run() {
+                cordova.getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        VDARSDKController.getInstance().disableContexts();
+                        VDARSDKController.getInstance().enableContextsWithTags(tagList);
+                        callback.success();
+                    }
+                });
+            }
+        });
     }
 }
 

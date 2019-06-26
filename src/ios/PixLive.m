@@ -686,6 +686,42 @@
     }
 }
 
+- (void)updateTagMapping:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    NSArray* tags = arguments[0];
+
+    [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[VDARRemoteController sharedInstance] syncTagContexts: tags withCompletionBlock:^(id result, NSError *err) {
+                CDVPluginResult* pluginResult = nil;
+                if (err) {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[err localizedDescription]];
+                } else {
+                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                }
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            }];
+        });
+    }];
+}
+
+- (void)enableContextsWithTags:(CDVInvokedUrlCommand *)command {
+    NSArray* arguments = [command arguments];
+    NSArray* tags = arguments[0];
+
+    [[VDARSDKController sharedInstance].afterLoadingQueue addOperationWithBlock:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // First we disable all contexts
+            [[VDARSDKController sharedInstance] disableContexts];
+            // We enable 
+            [[VDARSDKController sharedInstance] enableContextsWithTags:tags];
+
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        });
+    }];
+}
+
 - (void) synchronize:(CDVInvokedUrlCommand *)command
 {
     NSArray* arguments = [command arguments];
