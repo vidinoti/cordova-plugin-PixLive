@@ -190,6 +190,12 @@ Publish a new release in npm registry:
 
 ## Release note
 
+### Version 1.12.0 - 26 June 2019
+
+requires Vidinoti SDK >= 6.5.12
+
+* Add `updateTagMapping` and `enableContextsWithTags`
+
 ### Version 1.11.1 - 17 June 2019
 
 * Replace `Q` by native promise for Cordova 9.
