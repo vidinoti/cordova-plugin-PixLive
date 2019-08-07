@@ -180,6 +180,7 @@ addListener("codeRecognize",function(event){
 
 * Edit the plugin as needed
 * Update the version number in `plugin.xml` and `package.json`
+* Update the release notes below
 * Commit and push the changes to GitHub
 * Create a new release from GitHub interface (releases > Draft a new release)
 
@@ -188,7 +189,13 @@ Publish a new release in npm registry:
 * if necessary, `npm login`
 * `npm publish`
 
-## Release note
+## Release notes
+
+### Version 1.13.0 - 07 August 2019
+
+requires Vidinoti SDK >= 6.5.14
+
+* Add `setInterfaceLanguage` for changing the SDK language
 
 ### Version 1.12.0 - 26 June 2019
 

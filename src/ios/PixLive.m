@@ -773,6 +773,19 @@
     [[VDARSDKController sharedInstance] setCloudRecognitionLanguage: (NSString*)arguments[0]];
 }
 
+- (void) setInterfaceLanguage:(CDVInvokedUrlCommand *)command
+{
+    // Check that the argument consists of a single string
+    NSArray* arguments = [command arguments];
+    NSUInteger argc = [arguments count];
+    if (argc < 1 ) {
+        return;
+    }
+    if (![arguments[0] isKindOfClass:[NSString class]]) {
+        return;
+    }
+    [[VDARSDKController sharedInstance] forceLanguage: (NSString*)arguments[0]];
+}
 
 #pragma mark - GeoPoint
 

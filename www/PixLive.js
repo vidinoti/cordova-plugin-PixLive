@@ -541,6 +541,14 @@ PixLive.setCloudRecognitionLanguage = function (languageCode) {
     exec(null, null, "PixLive", "setCloudRecognitionLanguage", [languageCode]);
 };
 
+/**
+ * Sets the language of the SDK interface. By default, the SDK will use the phone language.
+ * @param {string} languageCode - the language to use (2-character code like "fr" or "en")
+ */
+PixLive.setInterfaceLanguage = function (languageCode) {
+    exec(null, null, "PixLive", "setInterfaceLanguage", [languageCode]);
+};
+
 // Used to signal the plugin that the page is fully loaded
 document.addEventListener("deviceready", function () {
     exec(null, null, "PixLive", "pageLoaded", []);

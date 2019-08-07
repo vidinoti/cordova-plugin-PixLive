@@ -521,6 +521,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("setCloudRecognitionLanguage") && args.length()>=1) {
             this.setCloudRecognitionLanguage(args.getString(0));
             return true;
+        } else if (action.equals("setInterfaceLanguage") && args.length()>=1) {
+            this.setInterfaceLanguage(args.getString(0));
+            return true;
         } else if (action.equals("captureScreenshot")) {
             this.captureScreenshot(args.getInt(0), callbackContext);
             return true;
@@ -675,6 +678,10 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     private void setCloudRecognitionLanguage(String languageCode) {
         VDARSDKController.getInstance().setCloudRecognitionLanguage(languageCode);
+    }
+
+    private void setInterfaceLanguage(String languageCode) {
+        VDARSDKController.getInstance().forceLanguage(languageCode);
     }
 
     private void installEventHandler(CallbackContext callback) {
