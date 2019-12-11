@@ -182,7 +182,8 @@ addListener("codeRecognize",function(event){
 * Update the version number in `plugin.xml` and `package.json`
 * Update the release notes below
 * Commit and push the changes to GitHub
-* Create a new release from GitHub interface (releases > Draft a new release)
+* Create a new release from GitHub interface (releases > Draft a new release): https://github.com/vidinoti/cordova-plugin-PixLive/releases
+* Use the version as the "Tag version" and "Release title". Add a small description.
 
 Publish a new release in npm registry:
 
