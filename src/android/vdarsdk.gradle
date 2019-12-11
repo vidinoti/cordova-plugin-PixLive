@@ -51,6 +51,7 @@ cdvPluginPostBuildExtras.add({
     compile 'com.facebook.android:facebook-android-sdk:3+'
     compile 'com.android.support:recyclerview-v7:21+'
     compile 'com.github.barteksc:android-pdf-viewer:2.7.0'
+    compile 'com.google.ar:core:1.13.0'
   }
 
 })

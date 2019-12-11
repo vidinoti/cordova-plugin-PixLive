@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
-    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.13.0">
+    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.14.0">
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
@@ -38,6 +38,10 @@
 
         <config-file target="*-Info.plist" parent="PixLiveLicense">
             <string>$LICENSE_KEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NSBluetoothAlwaysUsageDescription">
+            <string>$APP_NAME tailors content based on your location.</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
@@ -94,12 +98,13 @@
         <source-file src="src/ios/HolesView.m" />
         <header-file src="src/ios/HolesView.h" />
         <framework src="Accelerate.framework" />
+        <framework src="ARKit.framework" />
         <framework src="AudioToolbox.framework" />
         <framework src="AVFoundation.framework" />
         <framework src="AVKit.framework" />
+        <framework src="CoreBluetooth.framework" />
         <framework src="CoreGraphics.framework" />
         <framework src="CoreLocation.framework" />
-        <framework src="CoreBluetooth.framework" />
         <framework src="CoreMedia.framework" />
         <framework src="CoreMotion.framework" />
         <framework src="CoreVideo.framework" />
@@ -110,11 +115,14 @@
         <framework src="libz.dylib" />
         <framework src="MediaPlayer.framework" />
         <framework src="MessageUI.framework" />
+        <framework src="Metal.framework" />
+        <framework src="MetalKit.framework" />
         <framework src="OpenGLES.framework" />
         <framework src="QuartzCore.framework" />
         <framework src="Security.framework" />
         <framework src="Social.framework" />
         <framework src="UserNotifications.framework" />
+        <framework src="WebKit.framework" />
         <framework src="vendor/PixLive/VDARSDK.framework" custom="true" />
         <hook type="before_plugin_install" src="scripts/beforePluginInstall.js" />
         <hook type="after_plugin_install" src="scripts/afterPluginInstalliOS.js" />
@@ -127,11 +135,10 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
-        <config-file target="AndroidManifest.xml" parent="/manifest">
 
+        <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permisssion.ACCESS_FINE_LOCATION" />
             <uses-permission android:name="android.permisssion.ACCESS_COARSE_LOCATION" />
-
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
 
@@ -140,7 +147,10 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <meta-data android:name="com.google.ar.core" android:value="optional"/>
+        </config-file>
 
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver android:name="com.vidinoti.pixlive.StartSDKReceiver">
                 <intent-filter>
                     <action android:name="com.vidinoti.vdarsdk.android.START_SDK"/>
@@ -148,10 +158,8 @@
             </receiver>
         </config-file>
 
-
         <source-file src="src/android/PixLive.java" target-dir="src/com/vidinoti/pixlive" />
         <source-file src="src/android/StartSDKReceiver.java" target-dir="src/com/vidinoti/pixlive" />
-
         <source-file src="vendor/PixLive/vdarsdk-release.aar" target-dir="app/libs" />
         <framework src="src/android/vdarsdk.gradle" custom="true" type="gradleReference" />
 

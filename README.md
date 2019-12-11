@@ -191,6 +191,11 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.14.0 - 11 December 2019
+
+* Add dependencies for ARKit and ARCore
+* iOS: Add missing Bluetooth privacy description for Xcode 11
+
 ### Version 1.13.0 - 07 August 2019
 
 requires Vidinoti SDK >= 6.5.14
