@@ -46,6 +46,7 @@ import com.vidinoti.android.vdarsdk.VDARTourPrior;
 import com.vidinoti.android.vdarsdk.VidiBeaconSensor;
 import com.vidinoti.android.vdarsdk.geopoint.VDARGPSPoint;
 import com.vidinoti.android.vdarsdk.geopoint.GeoPointManager;
+import com.vidinoti.android.vdarsdk.geopoint.VDARLocalizationManagerEventReceiver;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -75,7 +76,7 @@ import java.util.Observer;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver,VDARContentEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener {
+public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver,VDARContentEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener, VDARLocalizationManagerEventReceiver {
 
     private static final String TAG ="PixLiveCordova";
 
@@ -212,6 +213,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         VDARSDKController.getInstance().registerEventReceiver(this);
 
         VDARSDKController.getInstance().registerSensorEventReceiver(this);
+
+        VDARSDKController.getInstance().getNearbyGPSManager().registerEventReceiver(this);
 
         VDARSDKController.getInstance().addNewAfterLoadingTask(new Runnable() {
             @Override
@@ -533,7 +536,23 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("enableContextsWithTags")) {
             this.enableContextsWithTags(args.getJSONArray(0), callbackContext);
             return true;
+        } else if (action.equals("startNearbyGPSDetection")) {
+            this.startNearbyGPSDetection();
+            return true;
+        } else if (action.equals("startNearbyGPSDetection") && args.length() >= 2) {
+            this.startNearbyGPSDetection(args.getLong(0), (float) args.getDouble(1));
+            return true;
+        } else if (action.equals("stopNearbyGPSDetection")) {
+            this.stopNearbyGPSDetection();
+            return true;
+        } else if (action.equals("startGPSNotifications")) {
+            this.startGPSNotifications();
+            return true;
+        } else if (action.equals("stopGPSNotifications")) {
+            this.stopGPSNotifications();
+            return true;
         }
+        
         return false;
     }
 
@@ -886,6 +905,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         VDARSDKController.getInstance().unregisterEventReceiver(this);
         VDARSDKController.getInstance().unregisterContentEventReceiver(this);
         VDARSDKController.getInstance().unregisterSensorEventReceiver(this);
+        VDARSDKController.getInstance().getNearbyGPSManager().unregisterEventReceiver(this);
         VDARRemoteController.getInstance().removeProgressListener(this);
 
         this.eventHandler = null;
@@ -1255,6 +1275,51 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             case VDAR_CODE_TYPE_I25       :   return "i25";
             case VDAR_CODE_TYPE_CODE39    :   return "code39";
             case VDAR_CODE_TYPE_QRCODE    :   return "qrcode";
+        }
+    }
+
+    private void startNearbyGPSDetection() {
+        VDARSDKController.getInstance().startNearbyGPSDetection();
+    }
+
+    private void startNearbyGPSDetection(long minGPSIntervalMS, float minGPSDistance, int detectionInterval, float maxDetectionRadius) {
+        VDARSDKController.getInstance().startNearbyGPSDetection(minGPSIntervalMS, minGPSDistance, detectionInterval, maxDetectionRadius);
+    }
+
+    private void stopNearbyGPSDetection() {
+        VDARSDKController.getInstance().stopNearbyGPSDetection();
+    }
+
+    private void startGPSNotifications() {
+        VDARSDKController.getInstance().startGPSNotifications();
+    }
+
+    private void stopGPSNotifications() {
+        VDARSDKController.getInstance().stopGPSNotifications();
+    }
+
+    @Override
+    public void onNewNearbyGPSPoints(List<VDARGPSPoint> newNearbyGPSPoints, float longitude, float latitude) {
+
+        if(this.eventHandler != null) {
+
+            try {
+                JSONObject o = new JSONObject();
+                o.put("type", "newNearbyGPSPoints");
+                o.put("nearbyGPSPoints", new JSONArray(newNearbyGPSPoints));
+                o.put("longitude", longitude);
+                o.put("latitude", latitude);
+                PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+                p.setKeepCallback(true);
+            } catch (JSONException e) {
+
+            }
+
+            try {
+                PixLive.this.eventHandler.sendPluginResult(p);
+            } catch (Exception e) {
+                //To avoid webview crashes
+            }
         }
     }
 

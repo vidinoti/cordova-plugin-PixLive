@@ -549,6 +549,26 @@ PixLive.setInterfaceLanguage = function (languageCode) {
     exec(null, null, "PixLive", "setInterfaceLanguage", [languageCode]);
 };
 
+PixLive.startNearbyGPSDetection = function () {
+    exec(null, null, "PixLive", "startNearbyGPSDetection", []);
+}
+
+PixLive.startNearbyGPSDetection = function (minGPSIntervalMS, minGPSDistance, detectionInterval, maxDetectionRadius) {
+    exec(null, null, "PixLive", "startNearbyGPSDetection", [minGPSIntervalMS, minGPSDistance, detectionInterval, maxDetectionRadius]);
+}
+
+PixLive.stopNearbyGPSDetection = function () {
+    exec(null, null, "PixLive", "stopNearbyGPSDetection", []);
+}
+
+PixLive.startGPSNotifications = function () {
+    exec(null, null, "PixLive", "startGPSNotifications", []);
+}
+
+PixLive.stopGPSNotifications = function () {
+    exec(null, null, "PixLive", "stopGPSNotifications", []);
+}
+
 // Used to signal the plugin that the page is fully loaded
 document.addEventListener("deviceready", function () {
     exec(null, null, "PixLive", "pageLoaded", []);
