@@ -221,16 +221,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             public void run() {
 
                 VDARRemoteController.getInstance().addProgressListener(PixLive.this);
-
-                Intent intent = cordova.getActivity().getIntent();
-
-                if (intent != null && intent.getExtras() != null
-                        && intent.getExtras().getString("nid") != null) {
-
-                    VDARSDKController.getInstance().processNotification(
-                            intent.getExtras().getString("nid"),
-                            intent.getExtras().getBoolean("remote"));
-                }
             }
         });
 
@@ -258,6 +248,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 }
             }
         });
+        
+        VDARSDKController.getInstance().onNewIntent(cordova.getActivity().getIntent());
     }
 
     @Override
@@ -360,13 +352,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     @Override
     public void onNewIntent(Intent intent) {
-        if (intent != null && intent.getExtras() != null
-                && intent.getExtras().getString("nid") != null && VDARSDKController.getInstance()!=null) {
-
-            VDARSDKController.getInstance().processNotification(
-                    intent.getExtras().getString("nid"),
-                    intent.getExtras().getBoolean("remote"));
-        }
+        VDARSDKController.getInstance().onNewIntent(intent);
     }
 
     @Override
