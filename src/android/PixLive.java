@@ -46,7 +46,7 @@ import com.vidinoti.android.vdarsdk.VDARTourPrior;
 import com.vidinoti.android.vdarsdk.VidiBeaconSensor;
 import com.vidinoti.android.vdarsdk.geopoint.VDARGPSPoint;
 import com.vidinoti.android.vdarsdk.geopoint.GeoPointManager;
-import com.vidinoti.android.vdarsdk.geopoint.VDARLocalizationManagerEventReceiver;
+import com.vidinoti.android.vdarsdk.VDARNearbyGPSManagerEventReceiver;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -76,7 +76,7 @@ import java.util.Observer;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver,VDARContentEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener, VDARLocalizationManagerEventReceiver {
+public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver,VDARContentEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener, VDARNearbyGPSManagerEventReceiver {
 
     private static final String TAG ="PixLiveCordova";
 
@@ -539,8 +539,8 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         } else if (action.equals("startNearbyGPSDetection")) {
             this.startNearbyGPSDetection();
             return true;
-        } else if (action.equals("startNearbyGPSDetection") && args.length() >= 2) {
-            this.startNearbyGPSDetection(args.getLong(0), (float) args.getDouble(1));
+        } else if (action.equals("startNearbyGPSDetection") && args.length() >= 4) {
+            this.startNearbyGPSDetection(args.getLong(0), (float) args.getDouble(1), args.getInt(2), (float) args.getDouble(3));
             return true;
         } else if (action.equals("stopNearbyGPSDetection")) {
             this.stopNearbyGPSDetection();
@@ -1311,14 +1311,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 o.put("latitude", latitude);
                 PluginResult p = new PluginResult(PluginResult.Status.OK, o);
                 p.setKeepCallback(true);
+                try {
+                    PixLive.this.eventHandler.sendPluginResult(p);
+                } catch (Exception e) {
+                    //To avoid webview crashes
+                }
             } catch (JSONException e) {
 
-            }
-
-            try {
-                PixLive.this.eventHandler.sendPluginResult(p);
-            } catch (Exception e) {
-                //To avoid webview crashes
             }
         }
     }
