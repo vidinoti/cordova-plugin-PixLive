@@ -875,8 +875,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 view.onPause();
             }
         }
-
-        VDARSDKController.getInstance().getLocalizationManager().stopLocalization();
     }
 
     public void onDestroy() {
