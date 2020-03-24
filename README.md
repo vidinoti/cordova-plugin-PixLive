@@ -159,6 +159,8 @@ PixLive events are:
 * `sensorUpdate` - triggered when a sensor value is updated (e.g. beacon distance).
 * `sensorUntriggered` - triggered when a sensor is untriggered.
 * `eventFromContent` - triggered when a content sends an event to the application (e.g. if a coupon content is opened, the coupon id is sent via this callback).
+* `localizationUpdate` - a new localization is received, this will be called only after starting the localizationManager (startNearbyGPSDetection starts it).
+* `newNearbyGPSPoints` - new nearby gps points are available, this will be called only after calling startNearbyGPSDetection.
 
 For example:
 ```javascript
