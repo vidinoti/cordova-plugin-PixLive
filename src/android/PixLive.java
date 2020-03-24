@@ -76,7 +76,7 @@ import java.util.Observer;
 /**
  * This class echoes a string called from JavaScript.
  */
-public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver,VDARContentEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener, VDARNearbyGPSManagerEventReceiver {
+public class PixLive extends CordovaPlugin implements VDARSDKControllerEventReceiver,VDARContentEventReceiver, VDARSDKSensorEventReceiver, VDARRemoteControllerListener, VDARNearbyGPSManagerEventReceiver, VDARLocalizationManagerEventReceiver {
 
     private static final String TAG ="PixLiveCordova";
 
@@ -1291,6 +1291,30 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 JSONObject o = new JSONObject();
                 o.put("type", "newNearbyGPSPoints");
                 o.put("nearbyGPSPoints", new JSONArray(newNearbyGPSPoints));
+                o.put("longitude", longitude);
+                o.put("latitude", latitude);
+                PluginResult p = new PluginResult(PluginResult.Status.OK, o);
+                p.setKeepCallback(true);
+                try {
+                    PixLive.this.eventHandler.sendPluginResult(p);
+                } catch (Exception e) {
+                    //To avoid webview crashes
+                }
+            } catch (JSONException e) {
+
+            }
+        }
+    }
+
+    @Override
+    public void onLocalizationUpdate(float longitude, float latitude, float searchDistance) {
+
+        if(this.eventHandler != null) {
+
+            try {
+                JSONObject o = new JSONObject();
+                o.put("type", "localizationUpdate");
+                o.put("searchDistance", searchDistance);
                 o.put("longitude", longitude);
                 o.put("latitude", latitude);
                 PluginResult p = new PluginResult(PluginResult.Status.OK, o);
