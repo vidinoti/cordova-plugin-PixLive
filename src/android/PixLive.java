@@ -47,6 +47,7 @@ import com.vidinoti.android.vdarsdk.VidiBeaconSensor;
 import com.vidinoti.android.vdarsdk.geopoint.VDARGPSPoint;
 import com.vidinoti.android.vdarsdk.geopoint.GeoPointManager;
 import com.vidinoti.android.vdarsdk.VDARNearbyGPSManagerEventReceiver;
+import com.vidinoti.android.vdarsdk.VDARLocalizationManagerEventReceiver;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
