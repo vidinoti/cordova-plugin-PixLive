@@ -553,7 +553,7 @@ PixLive.startNearbyGPSDetection = function () {
     exec(null, null, "PixLive", "startNearbyGPSDetection", []);
 }
 
-PixLive.startNearbyGPSDetection = function (minGPSIntervalMS, minGPSDistance, detectionInterval, maxDetectionRadius) {
+PixLive.startNearbyGPSDetectionWithParams = function (minGPSIntervalMS, minGPSDistance, detectionInterval, maxDetectionRadius) {
     exec(null, null, "PixLive", "startNearbyGPSDetection", [minGPSIntervalMS, minGPSDistance, detectionInterval, maxDetectionRadius]);
 }
 
