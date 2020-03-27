@@ -194,6 +194,7 @@
     }];
     
     [VDARRemoteController sharedInstance].delegate=self;
+    [[VDARSDKController sharedInstance] enableGPSNotifications];
 }
 
 -(void)pageLoaded:(CDVInvokedUrlCommand *)command {
@@ -785,6 +786,36 @@
         return;
     }
     [[VDARSDKController sharedInstance] forceLanguage: (NSString*)arguments[0]];
+}
+
+- (void) startNearbyGPSDetection:(CDVInvokedUrlCommand *)command
+{
+    NSArray* arguments = [command arguments];
+    NSUInteger argc = [arguments count];
+    if (argc >= 4) {
+        // The first argument is ignored, it is only used on Android.
+        double dist = [arguments[1] doubleValue];
+        long interval = [arguments[2] longValue];
+        float radius = [arguments[3] floatValue];
+        [[VDARSDKController sharedInstance] startNearbyGPSDetectionWithMinDistance:dist detectionInterval:interval maxDetectionRadius:radius];
+    } else {
+        [[VDARSDKController sharedInstance] startNearbyGPSDetection];
+    }
+}
+
+- (void) stopNearbyGPSDetection:(CDVInvokedUrlCommand *)command
+{
+    [[VDARSDKController sharedInstance] stopNearbyGPSDetection];
+}
+
+- (void) startGPSNotifications:(CDVInvokedUrlCommand *)command
+{
+    [[VDARSDKController sharedInstance] startGPSNotifications];
+}
+
+- (void) stopGPSNotifications:(CDVInvokedUrlCommand *)command
+{
+    [[VDARSDKController sharedInstance] stopGPSNotifications];
 }
 
 #pragma mark - GeoPoint
