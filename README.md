@@ -194,6 +194,10 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.15.0 - 27 March 2020
+
+* Add support for nearby GPS detection and notification
+
 ### Version 1.14.0 - 11 December 2019
 
 * Add dependencies for ARKit and ARCore
