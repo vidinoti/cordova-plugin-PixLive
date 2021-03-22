@@ -203,6 +203,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     private boolean pageLoaded = false;
 
+    private VDARContext currentContext = null;
 
     protected void pluginInitialize() {
 
@@ -537,6 +538,9 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
             return true;
         } else if (action.equals("stopGPSNotifications")) {
             this.stopGPSNotifications();
+            return true;
+        } else if (action.equals("stopContext")) {
+            this.stopContext();
             return true;
         }
         
@@ -1415,6 +1419,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     @Override
     public void onEnterContext(com.vidinoti.android.vdarsdk.VDARContext vdarContext) {
+        this.currentContext = vdarContext;
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
 
@@ -1438,6 +1443,7 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
     @Override
     public void onExitContext(com.vidinoti.android.vdarsdk.VDARContext vdarContext) {
+        this.currentContext = null;
         if(this.eventHandler != null) {
             JSONObject o = new JSONObject();
 
@@ -1669,6 +1675,13 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 });
             }
         });
+    }
+
+    private void stopContext() {
+        VDARContext context = currentContext;
+        if (context != null) {
+            context.stop();
+        }
     }
 }
 

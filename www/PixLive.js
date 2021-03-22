@@ -164,6 +164,13 @@ PixLive.prototype = {
 };
 
 /**
+ * Stops the context if any is playing.
+ */
+PixLive.stopContext = function () {
+    exec(null, null, "PixLive", "stopContext", []);
+};
+
+/**
  * Create a new AR View. Use it only once per ARView. 
  * @param {integer} originx - The x origin of the AR view in pxl
  * @param {integer} originy - The y origin of the AR view in pxl

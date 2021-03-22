@@ -38,6 +38,7 @@
     NSString *eventCallbackId;
     BOOL pageLoaded;
     NSOperationQueue *foregroundOperationQueue; //Queue containing tasks that are ran only when app is loaded and ready
+    VDARContext *currentContext;
 }
 
 #pragma mark - Cordova methods
@@ -250,6 +251,13 @@
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Screenshot failed"];
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+-(void)stopContext:(CDVInvokedUrlCommand *)command {
+    VDARContext *context = currentContext;
+    if (context) {
+        [context stop];
+    }
 }
 
 -(void)beforeLeave:(CDVInvokedUrlCommand *)command {
@@ -1093,6 +1101,7 @@
 }
 
 -(void)didEnterContext:(VDARContext *)context {
+    currentContext = context;
     if(eventCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"enterContext", @"context": context.remoteID ? context.remoteID : @""}];
         
@@ -1103,6 +1112,7 @@
 }
 
 -(void)didExitContext:(VDARContext *)context {
+    context = NULL;
     if(eventCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type":@"exitContext", @"context": context.remoteID ? context.remoteID : @""}];
         

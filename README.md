@@ -194,6 +194,12 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.16.0 - 22 March 2021
+
+requires Vidinoti SDK >= 7.2.9
+
+* Add `stopContext`
+
 ### Version 1.15.0 - 27 March 2020
 
 * Add support for nearby GPS detection and notification
