@@ -194,6 +194,10 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.17.0 - 5 May 2021
+
+* Remove location from the iOS required background modes as it is not really a required mode and may cause problem when submitting app for review.
+
 ### Version 1.16.0 - 22 March 2021
 
 requires Vidinoti SDK >= 7.2.9
