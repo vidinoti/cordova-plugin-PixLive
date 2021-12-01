@@ -5,6 +5,7 @@ This allows a seamless bridge for using Augmented Reality PixLive SDK into your 
 Check [https://www.vidinoti.com/](https://www.vidinoti.com/) for more information and [https://vidinoti.github.io/](https://vidinoti.github.io/) for the complete documentation.
 
 ## 1. Installation
+
 * Create a PixLive Maker account [http://pixlivemaker.com](http://pixlivemaker.com).
 * Register you app, download SDKs and obtain a licence by following the steps described at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview).
 * Install the plugin by passing the PixLive SDK `VDARSDK.framework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:
@@ -13,8 +14,8 @@ Check [https://www.vidinoti.com/](https://www.vidinoti.com/) for more informatio
 cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/vdarsdk-release.aar\"
 ```
 
-
 ## 2. Create an augmented reality app in two minutes!
+
 The best way to start developing your app is with a simple example. This demo app shows you the basis for using PixLive SDK in your cordova project.
 
 * Create a new Cordova project using cordova-template-PixLive.
@@ -38,21 +39,23 @@ cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicens
 ```
 
 * Build your project
+
 ```bash
 cordova build android
 cordova build ios
 ```
 
 * Your demo app is ready, you can already test it!
+
 ```bash
 cordova run android
 ```
-
 
 ## 3. The basis of building an AR app with PixLive SDK
 
 * Content synchronization
 To be able to trigger AR content you need to synchronize your app with your PixLive Maker account first.
+
 ```javascript
 //Synchronize the app with PixLive Maker http://pixlivemaker.com
 if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) {
@@ -62,6 +65,7 @@ if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) 
 ```
 
 * Create an ARview - The first time you open an ARview you need to create it.
+
 ```javascript
 /**
  * Example of arView size
@@ -76,8 +80,8 @@ getArViewSize = function() {
     return [window.screen.width, window.screen.height];
 };
 if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive) {
-	var arViewSize = getArViewSize();
-	var arView = cordova.plugins.PixLive.createARView(0, 0, arViewSize[0], arViewSize[1]);
+    var arViewSize = getArViewSize();
+    var arView = cordova.plugins.PixLive.createARView(0, 0, arViewSize[0], arViewSize[1]);
 }
 ```
 
@@ -87,22 +91,23 @@ If you don't see the AR view, ensure that the DOM element (and it parents) hidin
 
 ![PixLive cordova AR view](pixlivesdk-cordova-arview.png)
 
-
 * Handle the orientation changes
+
 ```javascript
 /**
  * onOrientationchange Event listener
  */
 onOrientationchange = function() {
-	if(arView) {
-	 var screenSize = getSize();
-	 arView.resize(0, 0, screenSize[0], screenSize[1]);
-	}
+    if(arView) {
+     var screenSize = getSize();
+     arView.resize(0, 0, screenSize[0], screenSize[1]);
+    }
 };
 window.addEventListener("orientationchange", onOrientationchange, false);
 ```
 
 * Close the arView
+
 ```javascript
 if(arView) {
    arView.beforeLeave();
@@ -111,6 +116,7 @@ if(arView) {
 ```
 
 * Reopen the arView
+
 ```javascript
 if(arView) {
     arView.beforeEnter();
@@ -120,6 +126,7 @@ if(arView) {
 ```
 
 * Handle PixLive events
+
 ```javascript
 //event listeners for pixlive events
 var pxlEventListeners={};
@@ -137,17 +144,18 @@ var pxlEventHandler = function(event) {
  * @param {function} callback The function to be called when the provided event is generated.
  */
 addListener = function(event, callback) {
-	if(!pxlEventListeners[event]) {
-	    pxlEventListeners[event]=[];
-	}
-	pxlEventListeners[event].push(callback);
+    if(!pxlEventListeners[event]) {
+        pxlEventListeners[event]=[];
+    }
+    pxlEventListeners[event].push(callback);
 }
 //register pxlEventHandler
 if (window.cordova && window.cordova.plugins && window.cordova.plugins.PixLive && !window.cordova.plugins.PixLive.onEventReceived) {
    cordova.plugins.PixLive.onEventReceived = pxlEventHandler;
 }
 ```
-PixLive events are: 
+
+PixLive events are:
 
 * `enterContext` - triggered when entering a context (image recognition, beacon detection, etc.)
 * `exitContext` - triggered when exiting the context.
@@ -163,6 +171,7 @@ PixLive events are:
 * `newNearbyGPSPoints` - new nearby gps points are available, this will be called only after calling startNearbyGPSDetection.
 
 For example:
+
 ```javascript
 //enable PixLive SDK to catch the touch event when a content is displayed
 addListener("presentAnnotations",function(event){
@@ -184,7 +193,7 @@ addListener("codeRecognize",function(event){
 * Update the version number in `plugin.xml` and `package.json`
 * Update the release notes below
 * Commit and push the changes to GitHub
-* Create a new release from GitHub interface (releases > Draft a new release): https://github.com/vidinoti/cordova-plugin-PixLive/releases
+* Create a new release from GitHub interface (releases > Draft a new release): <https://github.com/vidinoti/cordova-plugin-PixLive/releases>
 * Use the version as the "Tag version" and "Release title". Add a small description.
 
 Publish a new release in npm registry:
@@ -193,6 +202,11 @@ Publish a new release in npm registry:
 * `npm publish`
 
 ## Release notes
+
+### Version 1.18.0 - 1 December 2021
+
+* Update Android dependencies
+* Remove Android NotificationFactory
 
 ### Version 1.17.0 - 5 May 2021
 
@@ -225,11 +239,11 @@ requires Vidinoti SDK >= 6.5.12
 
 * Add `updateTagMapping` and `enableContextsWithTags`
 
-### Version 1.11.1 - 17 June 2019
+### Version 1.11.1 - 17 June 2019
 
 * Replace `Q` by native promise for Cordova 9.
 
-### Version 1.11.0 - 18 April 2019
+### Version 1.11.0 - 18 April 2019
 
 * iOS: change encoding from UTF-16 to UTF-8 for .strings file (Xcode 10)
 
