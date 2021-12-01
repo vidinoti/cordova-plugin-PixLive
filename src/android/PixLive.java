@@ -25,7 +25,6 @@ import android.widget.FrameLayout;
 import com.vidinoti.android.vdarsdk.bookmark.BookmarkManager;
 import com.vidinoti.android.vdarsdk.camera.DeviceCameraImageSender;
 import com.vidinoti.android.vdarsdk.IBeaconSensor;
-import android.support.v4.app.NotificationCompat;
 import com.vidinoti.android.vdarsdk.NotificationFactory;
 import com.vidinoti.android.vdarsdk.Sensor;
 import com.vidinoti.android.vdarsdk.VDARAnnotationView;
@@ -303,37 +302,6 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
 
         /* Comment out to disable QR code detection */
         VDARSDKController.getInstance().setEnableCodesRecognition(true);
-
-        VDARSDKController.getInstance().setNotificationFactory(new NotificationFactory() {
-
-            @Override
-            public Notification createNotification(String title, String message, String notificationID) {
-
-                Intent appIntent = c.getPackageManager().getLaunchIntentForPackage(c.getPackageName());
-
-                appIntent.putExtra("nid", notificationID);
-                appIntent.putExtra("remote", false);
-
-                PendingIntent contentIntent = PendingIntent.getActivity(c, 0,
-                        appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                ApplicationInfo ai = c.getApplicationInfo();
-
-                NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(c)
-                                .setSmallIcon(ai.icon != 0 ? ai.icon : android.R.drawable.star_big_off)
-                                .setContentTitle(title)
-                                .setContentText(message)
-                                .setContentIntent(contentIntent)
-                                .setAutoCancel(true)
-                                .setVibrate(new long[]{100, 200, 200, 400})
-                                .setLights(Color.BLUE, 500, 1500);
-
-                mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-
-                return mBuilder.getNotification();
-            }
-        });
     }
 
     public void onReset() {
