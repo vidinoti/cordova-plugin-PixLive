@@ -5,7 +5,7 @@ module.exports = function (context) {
 	var path = require('path');
 
 	//If iOS and Android already exists, don't do anything
-	if (fs.existsSync(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.framework') &&
+	if (fs.existsSync(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.xcframework') &&
 		fs.existsSync(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'vdarsdk-release.aar')) {
 		return true;
 	}
@@ -83,9 +83,9 @@ module.exports = function (context) {
 	};
 
 	if (!variables['PIXLIVE_SDK_IOS_LOCATION']) {
-		console.error("You need to pass the variable PIXLIVE_SDK_IOS_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.framework\"");
-		console.error("Try using default location: ./PixLiveSDK/VDARSDK.framework");
-		variables['PIXLIVE_SDK_IOS_LOCATION'] = './PixLiveSDK/VDARSDK.framework';
+		console.error("You need to pass the variable PIXLIVE_SDK_IOS_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.xcframework\"");
+		console.error("Try using default location: ./PixLiveSDK/VDARSDK.xcframework");
+		variables['PIXLIVE_SDK_IOS_LOCATION'] = './PixLiveSDK/VDARSDK.xcframework';
 	}
 
 	if (!variables['PIXLIVE_SDK_ANDROID_LOCATION']) {
@@ -95,7 +95,7 @@ module.exports = function (context) {
 	}
 
 	try {
-		deleteFolderRecursive(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.framework');
+		deleteFolderRecursive(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.xcframework');
 		deleteFolderRecursive(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'vdarsdk-release.aar');
 	} catch (e) {
 
@@ -109,7 +109,7 @@ module.exports = function (context) {
 	}
 
 	var inFile = variables['PIXLIVE_SDK_IOS_LOCATION'];
-	var outFile = context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.framework';
+	var outFile = context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.xcframework';
 
 	var child = require("child_process");
 
@@ -133,7 +133,7 @@ module.exports = function (context) {
 		copySync(inFile, outFile, function (error) {
 			if (error) {
 				console.error("Copy error: " + error);
-				throw new Error("Unable to copy VDARSDK.framework. Check the path of the PIXLIVE_SDK_IOS_LOCATION variable. Given: '" + inFile + "'");
+				throw new Error("Unable to copy VDARSDK.xcframework. Check the path of the PIXLIVE_SDK_IOS_LOCATION variable. Given: '" + inFile + "'");
 			} else {
 				console.log('Copying PixLive SDK for Android...');
 

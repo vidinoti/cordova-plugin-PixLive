@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
-    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.18.0">
+    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.19.0">
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
@@ -123,11 +123,12 @@
         <framework src="MetalKit.framework" />
         <framework src="OpenGLES.framework" />
         <framework src="QuartzCore.framework" />
+        <framework src="QuickLook.framework" />
         <framework src="Security.framework" />
         <framework src="Social.framework" />
         <framework src="UserNotifications.framework" />
         <framework src="WebKit.framework" />
-        <framework src="vendor/PixLive/VDARSDK.framework" custom="true" />
+        <framework src="vendor/PixLive/VDARSDK.xcframework" custom="true" />
         <hook type="before_plugin_install" src="scripts/beforePluginInstall.js" />
         <hook type="after_plugin_install" src="scripts/afterPluginInstalliOS.js" />
     </platform>
