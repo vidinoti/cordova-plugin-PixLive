@@ -48,7 +48,6 @@ cdvPluginPostBuildExtras.add({
     compile name:'vdarsdk-release', ext:'aar'
     compile 'com.android.support:appcompat-v7:28.+'
     compile 'com.android.support:support-v4:28.+'
-    compile 'com.facebook.android:facebook-android-sdk:3+'
     compile 'com.android.support:recyclerview-v7:28+'
     compile 'com.github.mhiew:android-pdf-viewer:3.2.0-beta.1'
     compile 'com.google.ar:core:1.27.0'

@@ -203,6 +203,10 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.20.0 - 5 September 2022
+
+* Remove Facebook SDK dependency for Android
+
 ### Version 1.19.0 - 12 April 2022
 
 * Update for iOS SDK 7.4.0 (`VDARSDK.xcframework` instead of `VDARSDK.framework`)
