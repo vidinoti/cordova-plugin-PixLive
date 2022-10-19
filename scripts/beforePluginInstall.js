@@ -5,8 +5,7 @@ module.exports = function (context) {
 	var path = require('path');
 
 	//If iOS and Android already exists, don't do anything
-	if (fs.existsSync(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.xcframework') &&
-		fs.existsSync(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'vdarsdk-release.aar')) {
+	if (fs.existsSync(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.xcframework')) {
 		return true;
 	}
 
@@ -41,8 +40,8 @@ module.exports = function (context) {
 	var args = CommandParser.parse(cmdLine, true);
 	var variables = {};
 
-	var argNamePatt = /((?:PIXLIVE_SDK_ANDROID_LOCATION)|(?:PIXLIVE_SDK_IOS_LOCATION))\s*=$/;
-	var argNamePatt2 = /((?:PIXLIVE_SDK_ANDROID_LOCATION)|(?:PIXLIVE_SDK_IOS_LOCATION))\s*=(.+)/;
+	var argNamePatt = /(?:PIXLIVE_SDK_IOS_LOCATION)\s*=$/;
+	var argNamePatt2 = /(?:PIXLIVE_SDK_IOS_LOCATION)\s*=(.+)/;
 
 	for (var i = 0; i < args.length; i++) {
 		var arg = args[i];
@@ -88,12 +87,6 @@ module.exports = function (context) {
 		variables['PIXLIVE_SDK_IOS_LOCATION'] = './PixLiveSDK/VDARSDK.xcframework';
 	}
 
-	if (!variables['PIXLIVE_SDK_ANDROID_LOCATION']) {
-		console.error("You need to pass the variable PIXLIVE_SDK_ANDROID_LOCATION with the cordova plugin command line. E.g.: --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/PixLive/vdarsdk-release.aar\"");
-		console.error("Try using default location: ./PixLiveSDK/vdarsdk-release.aar");
-		variables['PIXLIVE_SDK_ANDROID_LOCATION'] = './PixLiveSDK/vdarsdk-release.aar';
-	}
-
 	try {
 		deleteFolderRecursive(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'VDARSDK.xcframework');
 		deleteFolderRecursive(context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive' + path.sep + 'vdarsdk-release.aar');
@@ -135,20 +128,7 @@ module.exports = function (context) {
 				console.error("Copy error: " + error);
 				throw new Error("Unable to copy VDARSDK.xcframework. Check the path of the PIXLIVE_SDK_IOS_LOCATION variable. Given: '" + inFile + "'");
 			} else {
-				console.log('Copying PixLive SDK for Android...');
-
-				var inFile = variables['PIXLIVE_SDK_ANDROID_LOCATION'];
-
-				var outFile = context.opts.plugin.dir + path.sep + 'vendor' + path.sep + 'PixLive';
-
-				copySync(inFile, outFile, function (error) {
-					if (error) {
-						console.error("Copy error: " + error);
-						reject("Unable to copy PixLive SDK Android AAR library. Check the path of the PIXLIVE_SDK_ANDROID_LOCATION variable. Given: '" + inFile + "'");
-					} else {
-						resolve();
-					}
-				});
+				resolve();
 			}
 		});
 	});

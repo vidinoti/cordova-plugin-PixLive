@@ -1,56 +1,12 @@
 // Apply values after project's build-extras.gradle
 cdvPluginPostBuildExtras.add({
 
-  android {
-    // Fix mips stripping bug (see https://stackoverflow.com/questions/42739916/aarch64-linux-android-strip-file-missing)
-    packagingOptions{
-      doNotStrip '*/mips/*.so'
-      doNotStrip '*/mips64/*.so'
-    }
-
-    // The SDK supports armeabi-v7a, x86, arm64-v8a and x86_64, create the corresponding flavors
-    flavorDimensions "default"
-    productFlavors {
-      armv7 {
-        versionCode defaultConfig.versionCode*10 + 2
-        ndk {
-          abiFilters = ["armeabi-v7a"]
-        }
-      }
-      x86 {
-        versionCode defaultConfig.versionCode*10 + 4
-        ndk {
-          abiFilters = ["x86"]
-        }
-      }
-      arm64 {
-        versionCode defaultConfig.versionCode*10 + 6
-        ndk {
-          abiFilters = ["arm64-v8a"]
-        }
-      }
-      x86_64 {
-        versionCode defaultConfig.versionCode*10 + 8
-        ndk {
-          abiFilters = ["x86_64"]
-        }
-      }
-    }
-  }
-
   repositories {
-    flatDir {
-      dirs 'libs'
-    }
+    maven { url "https://jitpack.io" }
   }
 
   dependencies {
-    compile name:'vdarsdk-release', ext:'aar'
-    compile 'com.android.support:appcompat-v7:28.+'
-    compile 'com.android.support:support-v4:28.+'
-    compile 'com.android.support:recyclerview-v7:28+'
-    compile 'com.github.mhiew:android-pdf-viewer:3.2.0-beta.1'
-    compile 'com.google.ar:core:1.27.0'
+    implementation 'com.github.vidinoti:android-sdk:7.3.5'
   }
 
 })

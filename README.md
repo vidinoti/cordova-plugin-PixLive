@@ -8,10 +8,10 @@ Check [https://www.vidinoti.com/](https://www.vidinoti.com/) for more informatio
 
 * Create a PixLive Maker account [http://pixlivemaker.com](http://pixlivemaker.com).
 * Register you app, download SDKs and obtain a licence by following the steps described at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview).
-* Install the plugin by passing the PixLive SDK `VDARSDK.xcframework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:
+* Install the plugin by passing the PixLive SDK `VDARSDK.xcframework` file path and the license key to the plugin installation command line:
 
 ```bash
-cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.xcframework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/vdarsdk-release.aar\"
+cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.xcframework\"
 ```
 
 ## 2. Create an augmented reality app in two minutes!
@@ -32,10 +32,10 @@ cordova platform add android
 cordova platform add ios
 ```
 
-* If not done already, create a Pixlive Maker account, register you app, download SDKs and obtain a licence by follwing the steps at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview). Add the Cordova plugin for PixLive SDK to your project by passing the PixLive SDK `VDARSDK.xcframework`, `vdarsdk-release.aar` file paths and the license key to the plugin installation command line:
+* If not done already, create a Pixlive Maker account, register you app, download SDKs and obtain a licence by follwing the steps at [https://armanager.vidinoti.com/?page=appview](https://armanager.vidinoti.com/?page=appview). Add the Cordova plugin for PixLive SDK to your project by passing the PixLive SDK `VDARSDK.xcframework` file path and the license key to the plugin installation command line:
 
 ```bash
-cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.xcframework\" --variable PIXLIVE_SDK_ANDROID_LOCATION=\"path/to/android/vdarsdk-release.aar\"
+cordova plugin add cordova-plugin-pixlive@latest --variable LICENSE_KEY=MyLicenseKey --variable PIXLIVE_SDK_IOS_LOCATION=\"path/to/VDARSDK.xcframework\"
 ```
 
 * Build your project
@@ -202,6 +202,11 @@ Publish a new release in npm registry:
 * `npm publish`
 
 ## Release notes
+
+### Version 1.21.0 - 12 October 2022
+
+* Android SDK: replace local .aar with Gradle dependency
+* Android: fix android:exported
 
 ### Version 1.20.0 - 5 September 2022
 

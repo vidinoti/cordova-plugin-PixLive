@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
-    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.20.0">
+    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.21.0">
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
@@ -156,7 +156,7 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:name="com.vidinoti.pixlive.StartSDKReceiver">
+            <receiver android:name="com.vidinoti.pixlive.StartSDKReceiver" android:exported="false">
                 <intent-filter>
                     <action android:name="com.vidinoti.vdarsdk.android.START_SDK"/>
                 </intent-filter>
@@ -165,7 +165,6 @@
 
         <source-file src="src/android/PixLive.java" target-dir="src/com/vidinoti/pixlive" />
         <source-file src="src/android/StartSDKReceiver.java" target-dir="src/com/vidinoti/pixlive" />
-        <source-file src="vendor/PixLive/vdarsdk-release.aar" target-dir="app/libs" />
         <framework src="src/android/vdarsdk.gradle" custom="true" type="gradleReference" />
 
         <hook type="before_plugin_install" src="scripts/beforePluginInstall.js" />
