@@ -203,7 +203,14 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.22.1 - 17 January 2023
+
+* Fix release 1.22.0
+* Android SDK: update to Vidinoti SDK 7.5.0
+
 ### Version 1.22.0 - 17 January 2023
+
+**Do not use this release, update to 1.22.1**
 
 * Android SDK: update to Vidinoti SDK 7.5.0
 
