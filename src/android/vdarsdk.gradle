@@ -6,7 +6,7 @@ cdvPluginPostBuildExtras.add({
   }
 
   dependencies {
-    implementation 'com.github.vidinoti:android-sdk:7.5.1.1'
+    implementation 'com.github.vidinoti:android-sdk:7.6.0'
   }
 
 })
