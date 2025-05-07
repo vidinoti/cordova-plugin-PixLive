@@ -196,6 +196,14 @@ addListener("codeRecognize",function(event){
 * Create a new release from GitHub interface (releases > Draft a new release): <https://github.com/vidinoti/cordova-plugin-PixLive/releases>
 * Use the version as the "Tag version" and "Release title". Add a small description.
 
+You can create a GitHub release via the CLI
+
+```sh
+gh release create <tag> --notes "<release notes>"
+# For instance
+gh release create 1.24.0 --notes "Update Android Vidinoti SDK 7.6.0"
+```
+
 Publish a new release in npm registry:
 
 * if necessary, `npm login`
