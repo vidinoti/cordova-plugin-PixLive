@@ -211,6 +211,11 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.25.0 - 26 June 2025
+
+* Update Vidinoti SDK to version 7.6.1
+* Add the ability to set a custom server endpoint when installing the plugin: `cordova plugin add cordova-plugin-pixlive --variable LICENSE_KEY=MyLicenseKey --API_URL="https://ar.vidinoti.com/api/api.php" --SDK_URL="https://sdk.vidinoti.com"`
+
 ### Version 1.24.0 - 26 August 2024
 
 * Update Android Vidinoti SDK to version 7.6.0

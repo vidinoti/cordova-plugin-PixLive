@@ -161,6 +161,16 @@
     NSString *modelDir=[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"pixliveSDK"];
     
     [VDARSDKController startSDK:modelDir withLicenseKey:apiKey];
+
+    NSString *apiUrl = [infoDict objectForKey:@"PixLiveApiUrl"];
+    if(apiUrl && apiUrl.length > 0) {
+        [VDARRemoteController sharedInstance].customAPIServer = apiUrl;
+    }
+
+    NSString *sdkUrl = [infoDict objectForKey:@"PixLiveSdkUrl"];
+    if(sdkUrl && sdkUrl.length > 0) {
+        [VDARSDKController sharedInstance].customSdkServer = sdkUrl;
+    }
     
     [VDARSDKController sharedInstance].enableCodesRecognition=YES;
     

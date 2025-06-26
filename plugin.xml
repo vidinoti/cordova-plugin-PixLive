@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
-    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.24.0">
+    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.25.0">
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
@@ -27,6 +27,8 @@
     </js-module>
 
     <preference name="LICENSE_KEY" />
+    <preference name="API_URL" default="" />
+    <preference name="SDK_URL" default="" />
 
     <platform name="ios">
         <config-file parent="/*" target="config.xml">
@@ -38,6 +40,12 @@
 
         <config-file target="*-Info.plist" parent="PixLiveLicense">
             <string>$LICENSE_KEY</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="PixLiveApiUrl">
+            <string>$API_URL</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="PixLiveSdkUrl">
+            <string>$SDK_URL</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSBluetoothAlwaysUsageDescription">
@@ -149,6 +157,8 @@
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <meta-data android:name="com.vidinoti.pixlive.LicenseKey" android:value="$LICENSE_KEY"/>
+            <meta-data android:name="com.vidinoti.pixlive.ApiUrl" android:value="$API_URL"/>
+            <meta-data android:name="com.vidinoti.pixlive.SdkUrl" android:value="$SDK_URL"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">

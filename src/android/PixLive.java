@@ -280,11 +280,15 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
                 .getAbsolutePath() + "/pixliveSDK";
 
         String licenseKey = null;
+        String apiUrl = null;
+        String sdkUrl = null;
 
         try {
             ApplicationInfo ai = c.getPackageManager().getApplicationInfo(c.getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = ai.metaData;
             licenseKey = bundle.getString("com.vidinoti.pixlive.LicenseKey");
+            apiUrl = bundle.getString("com.vidinoti.pixlive.ApiUrl");
+            sdkUrl = bundle.getString("com.vidinoti.pixlive.SdkUrl");
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG,"Unable to start PixLive SDK without valid storage and license key.");
             return;
@@ -299,6 +303,14 @@ public class PixLive extends CordovaPlugin implements VDARSDKControllerEventRece
         }
 
         VDARSDKController.startSDK(c, storage, licenseKey);
+
+        if (apiUrl != null && apiUrl.length() > 0) {
+            VDARRemoteController.getInstance().setCustomRemoteApiServerEndpoint(apiUrl);
+        }
+
+        if (sdkUrl != null && sdkUrl.length() > 0) {
+            VDARRemoteController.getInstance().setCustomRemoteSdkApiServerEndpoint(sdkUrl);
+        }
 
         /* Comment out to disable QR code detection */
         VDARSDKController.getInstance().setEnableCodesRecognition(true);
