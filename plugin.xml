@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
-    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.25.0">
+    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-pixlive" version="1.25.1">
     <name>PixLive</name>
     <description>PixLive SDK plugin for Cordova based hybrid apps</description>
     <keywords>augmented reality,iBeacon</keywords>
     <license>MIT</license>
-    <repo>https://github.com/vidinoti/cordova-plugin-PixLive.git</repo>
+    <repo>https://github.com/vidinoti/cordova-plugin-pixlive.git</repo>
     <author>Vidinoti SA</author>
 
     <engines>
@@ -27,8 +27,8 @@
     </js-module>
 
     <preference name="LICENSE_KEY" />
-    <preference name="API_URL" default="" />
-    <preference name="SDK_URL" default="" />
+    <preference name="API_URL" default="https://ar.vidinoti.com/api/api.php" />
+    <preference name="SDK_URL" default="https://sdk.vidinoti.com" />
 
     <platform name="ios">
         <config-file parent="/*" target="config.xml">

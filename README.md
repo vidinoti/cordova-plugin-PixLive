@@ -1,4 +1,4 @@
-# Cordova plugin for PixLive SDK  [https://github.com/vidinoti/cordova-plugin-PixLive](https://github.com/vidinoti/cordova-plugin-PixLive)
+# Cordova plugin for PixLive SDK  [https://github.com/vidinoti/cordova-plugin-pixlive](https://github.com/vidinoti/cordova-plugin-pixlive)
 
 This allows a seamless bridge for using Augmented Reality PixLive SDK into your own Cordova application.
 
@@ -193,7 +193,7 @@ addListener("codeRecognize",function(event){
 * Update the version number in `plugin.xml` and `package.json`
 * Update the release notes below
 * Commit and push the changes to GitHub
-* Create a new release from GitHub interface (releases > Draft a new release): <https://github.com/vidinoti/cordova-plugin-PixLive/releases>
+* Create a new release from GitHub interface (releases > Draft a new release): <https://github.com/vidinoti/cordova-plugin-pixlive/releases>
 * Use the version as the "Tag version" and "Release title". Add a small description.
 
 You can create a GitHub release via the CLI
@@ -211,10 +211,15 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.25.1 - 26 June 2025
+
+* Add default value for variables `API_URL`, `SDK_URL`
+* Rename `cordova-plugin-PixLive` to `cordova-plugin-pixlive`
+
 ### Version 1.25.0 - 26 June 2025
 
 * Update Vidinoti SDK to version 7.6.1
-* Add the ability to set a custom server endpoint when installing the plugin: `cordova plugin add cordova-plugin-pixlive --variable LICENSE_KEY=MyLicenseKey --API_URL="https://ar.vidinoti.com/api/api.php" --SDK_URL="https://sdk.vidinoti.com"`
+* Add the ability to set a custom server endpoint when installing the plugin: `cordova plugin add cordova-plugin-pixlive --variable LICENSE_KEY=MyLicenseKey --variable API_URL="https://ar.vidinoti.com/api/api.php" --variable SDK_URL="https://sdk.vidinoti.com"`
 
 ### Version 1.24.0 - 26 August 2024
 
