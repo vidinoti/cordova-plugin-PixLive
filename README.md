@@ -211,6 +211,10 @@ Publish a new release in npm registry:
 
 ## Release notes
 
+### Version 1.25.2 - 26 June 2025
+
+* Fix property name error in iOS plugin
+
 ### Version 1.25.1 - 26 June 2025
 
 * Add default value for variables `API_URL`, `SDK_URL`

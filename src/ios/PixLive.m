@@ -169,7 +169,7 @@
 
     NSString *sdkUrl = [infoDict objectForKey:@"PixLiveSdkUrl"];
     if(sdkUrl && sdkUrl.length > 0) {
-        [VDARSDKController sharedInstance].customSdkServer = sdkUrl;
+        [VDARRemoteController sharedInstance].customSdkServer = sdkUrl;
     }
     
     [VDARSDKController sharedInstance].enableCodesRecognition=YES;
